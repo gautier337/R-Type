@@ -13,7 +13,7 @@ include_directories(/usr/include)
 add_definitions(-DASIO_STANDALONE)
 
 # Add executable target
-add_executable(RTypeServer src/main.cpp)
+add_executable(RTypeServer src/main.cpp src/server.cpp)
 
 # Link necessary libraries (Threads library for Asio)
 find_package(Threads REQUIRED)

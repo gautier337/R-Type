@@ -12,7 +12,7 @@ const int serverPort = 8000;
 int main()
 {
     try {
-        std::cout << "R-Type Server Starting..." << std::endl;
+        std::cout << "R-Type Server Starting on port " << serverPort << std::endl;
 
         asio::io_context io_context;
         Server server(io_context, serverPort);

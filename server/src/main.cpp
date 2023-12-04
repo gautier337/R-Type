@@ -60,7 +60,7 @@ void start_accept(asio::ip::tcp::acceptor& acceptor, asio::io_context& io_contex
 
 int main() {
     try {
-        std::cout << "R-Type Server Starting..." << std::endl;
+        std::cout << "R-Type Server Starting on port " << serverPort << std::endl;
 
         asio::io_context io_context;
         asio::ip::tcp::endpoint endpoint(asio::ip::tcp::v4(), serverPort);

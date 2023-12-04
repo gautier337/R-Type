@@ -15,8 +15,11 @@ class Server {
     private:
         void start_accept();
         void start_read(std::shared_ptr<Client> client);
+        void handle_tick(const asio::error_code& error);
 
         std::vector<std::shared_ptr<Client>> clients_;
         std::mutex clients_mutex_;
         asio::ip::tcp::acceptor acceptor_;
+        asio::steady_timer tick_timer_;
+        int tick = 0;
 };

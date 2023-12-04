@@ -2,8 +2,10 @@
 #include <iostream>
 
 Server::Server(asio::io_context& io_context, int port)
-    : acceptor_(io_context, asio::ip::tcp::endpoint(asio::ip::tcp::v4(), port)) {
+    : acceptor_(io_context, asio::ip::tcp::endpoint(asio::ip::tcp::v4(), port)),
+      tick_timer_(io_context, std::chrono::seconds(1)) {
     start_accept();
+    handle_tick({});
 }
 
 void Server::broadcast_message(const std::string& message) {
@@ -42,6 +44,7 @@ void Server::start_read(std::shared_ptr<Client> client)
         if (!error) {
             std::string message(buffer->begin(), buffer->begin() + length);
             std::cout << "Received: " << message << std::endl;
+            std::cout << "From: " << client->getSocket()->remote_endpoint().address().to_string() << std::endl;
 
             start_read(client);
         } else {
@@ -50,3 +53,15 @@ void Server::start_read(std::shared_ptr<Client> client)
     });
 }
 
+void Server::handle_tick(const asio::error_code& error)
+{
+    if (!error) {
+        tick++;
+        std::cout << "Tick: " << tick << std::endl;
+
+        tick_timer_.expires_at(tick_timer_.expiry() + std::chrono::seconds(1));
+        tick_timer_.async_wait(std::bind(&Server::handle_tick, this, std::placeholders::_1));
+    } else {
+        std::cerr << "Tick timer error: " << error.message() << std::endl;
+    }
+}

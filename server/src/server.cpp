@@ -59,7 +59,7 @@ void Server::handle_receive(const std::string& data, const asio::ip::udp::endpoi
         std::lock_guard<std::mutex> lock(clients_mutex_);
         client_ids_.erase(endpoint);
         handle_send("Goodbye", endpoint);
-            number_of_player_connected_--;
+        number_of_player_connected_--;
         std::cout << "Client " << clientId << " disconnected, clients left: " << number_of_player_connected_ << std::endl;
     } else {
         handle_send("Received message: " + data, endpoint);   

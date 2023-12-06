@@ -18,6 +18,7 @@ namespace Ecs {
     {
         auto entity = std::make_shared<Entity>(0);
         auto comp = std::make_shared<Position>(0, 0);
+        entity->addComponent(comp);
         _entityList.push_back(entity);
         return entity->getEntityId();
     }

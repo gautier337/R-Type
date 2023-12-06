@@ -5,15 +5,7 @@
 
     # Add your source files here
     set(SOURCES
-        Engine/includes/Entity.hpp
-        Engine/includes/Component.hpp
-        Engine/includes/System.hpp
-        Engine/includes/ECSManager.hpp
-        Engine/src/ECSManager.cpp
-        Engine/src/Entity.cpp
-        Engine/src/System.cpp
-        Engine/src/Component.cpp
-        Engine/main.cpp  # Add your main source file here
+    
     )
 
     add_executable(RTypeGameEngine ${SOURCES})

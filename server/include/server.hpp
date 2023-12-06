@@ -32,6 +32,7 @@ class Server {
         asio::ip::udp::socket socket_;
 
         asio::steady_timer tick_timer_;
+        int number_of_player_connected_ = 0;
         int tick = 0;
         int client_id_counter_ = 0;
 };

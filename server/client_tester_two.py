@@ -19,7 +19,8 @@ def send_test_commands(server_address, server_port):
             time.sleep(1)  # Attendre 1 seconde entre chaque commande
 
         # Attente de 10 secondes avant d'envoyer QUIT
-        time.sleep(10)
+        time.sleep(5)
+        print("Envoi de la commande 'QUIT'")
         send_message_to_server(sock, server_address, server_port, 'QUIT')
 
 if __name__ == "__main__":

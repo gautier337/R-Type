@@ -34,5 +34,5 @@ class Server {
 
         asio::steady_timer tick_timer_;
         int tick = 0;
-        int client_id_counter_ = 1;
+        int client_id_counter_ = 0;
 };

@@ -47,14 +47,16 @@ void Server::handle_receive(const std::string& data, const asio::ip::udp::endpoi
     if (isNewClient) {
         std::string welcomeMessage = std::to_string(clientId) + ", Bienvenue !";
         handle_send(welcomeMessage, endpoint);
+        return;
     }
 
 
-    if (data == "quit") {
+    if (data == "QUIT") {
         std::lock_guard<std::mutex> lock(clients_mutex_);
         clients_.erase(std::remove(clients_.begin(), clients_.end(), endpoint), clients_.end());
         client_ids_.erase(endpoint);
-        std::cout << "Client " << clientId << " disconnected" << std::endl;
+        client_id_counter_--;
+        std::cout << "Client " << clientId << " disconnected, clients left: " << client_id_counter_ << std::endl;
     } else {
         handle_send("Received message: " + data, endpoint);   
     }

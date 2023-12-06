@@ -1,5 +1,8 @@
 #include "server.hpp"
 #include <iostream>
+#include <memory>
+#include <vector>
+#include <thread>
 
 Server::Server(asio::io_context& io_context, int port)
     : socket_(io_context, asio::ip::udp::endpoint(asio::ip::udp::v4(), port)),
@@ -29,6 +32,7 @@ void Server::start_receive() {
 
 void Server::handle_receive(const std::string& data, const asio::ip::udp::endpoint& endpoint) {
     std::cout << "Received message: " << data << " from " << endpoint << std::endl;
+    std::cout << "handle_receive called from thread: " << std::this_thread::get_id() << std::endl;
 
     bool isNewClient = false;
     int clientId;
@@ -65,6 +69,7 @@ void Server::handle_receive(const std::string& data, const asio::ip::udp::endpoi
 void Server::handle_send(const std::string& message, const asio::ip::udp::endpoint& endpoint)
 {
     auto message_data = std::make_shared<std::string>(message);
+    std::cout << "handle_send called from thread: " << std::this_thread::get_id() << std::endl;
 
     socket_.async_send_to(
         asio::buffer(*message_data), endpoint,

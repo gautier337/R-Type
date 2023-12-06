@@ -25,7 +25,7 @@ def client_routine(server_address, server_port, client_id):
 
 if __name__ == "__main__":
     server_address = '127.0.0.1'
-    server_port = 8000
+    server_port = 40000
 
     num_clients = 500 # Nombre de clients à simuler
 

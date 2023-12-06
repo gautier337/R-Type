@@ -38,8 +38,9 @@ void Server::handle_receive(const std::string& data, const asio::ip::udp::endpoi
     int clientId;
     {
         std::lock_guard<std::mutex> lock(clients_mutex_);
-        if (client_ids_.find(endpoint) == client_ids_.end()) {
+        if (client_ids_.find(endpoint) == client_ids_.end() || data == "START") {
             clientId = client_id_counter_++;
+            number_of_player_connected_++;
             client_ids_[endpoint] = clientId;
             isNewClient = true;
             std::cout << "New client added with ID: " << clientId << std::endl;
@@ -54,13 +55,12 @@ void Server::handle_receive(const std::string& data, const asio::ip::udp::endpoi
         return;
     }
 
-
     if (data == "QUIT") {
         std::lock_guard<std::mutex> lock(clients_mutex_);
         client_ids_.erase(endpoint);
-        client_id_counter_--;
         handle_send("Goodbye", endpoint);
-        std::cout << "Client " << clientId << " disconnected, clients left: " << client_id_counter_ << std::endl;
+        number_of_player_connected_--;
+        std::cout << "Client " << clientId << " disconnected, clients left: " << number_of_player_connected_ << std::endl;
     } else {
         handle_send("Received message: " + data, endpoint);   
     }

@@ -27,8 +27,7 @@ class Server {
         void handle_send(const std::string& message, const asio::ip::udp::endpoint& endpoint);
         void handle_receive(const std::string& data, const asio::ip::udp::endpoint& endpoint);
 
-        std::vector<asio::ip::udp::endpoint> clients_;
-        std::unordered_map<asio::ip::udp::endpoint, int> client_ids_; 
+        std::unordered_map<asio::ip::udp::endpoint, int> client_ids_;
         std::mutex clients_mutex_;
         asio::ip::udp::socket socket_;
 

@@ -4,6 +4,8 @@ Dependences:
 sudo apt install cmake
 sudo apt install libasio-dev
 
+CREATE A FOLDER build in first step
+
 go to /build and run:
 
 cmake .. && make && ./RTypeServer

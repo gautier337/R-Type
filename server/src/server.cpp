@@ -2,55 +2,42 @@
 #include <iostream>
 
 Server::Server(asio::io_context& io_context, int port)
-    : acceptor_(io_context, asio::ip::tcp::endpoint(asio::ip::tcp::v4(), port)),
-      tick_timer_(io_context, std::chrono::seconds(1)) {
-    start_accept();
+    : socket_(io_context, asio::ip::udp::endpoint(asio::ip::udp::v4(), port)),
+      tick_timer_(io_context, std::chrono::seconds(3)) {
+    start_receive();
     handle_tick({});
 }
 
-void Server::broadcast_message(const std::string& message) {
-    std::lock_guard<std::mutex> lock(clients_mutex_);
-    for (auto& client : clients_) {
-        client->sendMessage(message);
-    }
-}
+void Server::start_receive() {
+    auto buffer = std::make_shared<std::array<char, 1024>>();
+    auto endpoint = std::make_shared<asio::ip::udp::endpoint>();
 
-void Server::start_accept()
-{
-    auto socket = std::make_shared<asio::ip::tcp::socket>(acceptor_.get_io_context());
-    acceptor_.async_accept(*socket, [this, socket](const asio::error_code& error) {
-        if (!error) {
-            std::cout << "New client connected" << std::endl;
-            auto client = std::make_shared<Client>(socket);
-            {
-                std::lock_guard<std::mutex> lock(clients_mutex_);
-                clients_.push_back(client);
+    socket_.async_receive_from(
+        asio::buffer(*buffer), *endpoint,
+        [this, buffer, endpoint](const asio::error_code& error, std::size_t bytes_recvd) {
+            if (!error && bytes_recvd > 0) {
+                std::string message(buffer->begin(), buffer->begin() + bytes_recvd);
+                handle_receive(message, *endpoint);
+                start_receive();
+            } else {
+                std::cerr << "Receive error: " << error.message() << std::endl;
+                start_receive();
             }
-            client->sendMessage("Welcome to R-Type Server!");
-            start_read(client);
-            start_accept();
-        } else {
-            std::cerr << "Accept error: " << error.message() << std::endl;
         }
-    });
+    );
 }
 
-void Server::start_read(std::shared_ptr<Client> client)
-{
-    auto buffer = std::make_shared<std::vector<char>>(1024);
-    const auto& socket = client->getSocket();
+void Server::handle_receive(const std::string& data, const asio::ip::udp::endpoint& endpoint) {
+    std::cout << "Received message: " << data << " from " << endpoint << std::endl;
 
-    socket->async_read_some(asio::buffer(*buffer), [this, client, buffer](const asio::error_code& error, std::size_t length) {
-        if (!error) {
-            std::string message(buffer->begin(), buffer->begin() + length);
-            std::cout << "Received: " << message << std::endl;
-            std::cout << "From: " << client->getSocket()->remote_endpoint().address().to_string() << std::endl;
+    // here i can update client list or handle the data as needed (todo maybe)
 
-            start_read(client);
-        } else {
-            std::cerr << "Read error: " << error.message() << std::endl;
-        }
-    });
+    socket_.async_send_to(asio::buffer(data), endpoint,
+        [this](const asio::error_code& error, std::size_t /*bytes_sent*/) {
+            if (error) {
+                std::cerr << "Send error: " << error.message() << std::endl;
+            }
+        });
 }
 
 void Server::handle_tick(const asio::error_code& error)

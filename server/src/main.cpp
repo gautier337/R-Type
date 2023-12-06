@@ -4,7 +4,6 @@
 #include <thread>
 #include <mutex>
 #include <asio.hpp>
-#include "client.hpp"
 #include "server.hpp"
 
 const int serverPort = 8000;

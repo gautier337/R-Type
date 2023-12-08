@@ -19,7 +19,7 @@ namespace Constants
 		HITBOX,
 		POSITION,
 		DAMAGES,
-		ACCELERATION,
+		SPEEDSHOOT,
 		WEAPON,
 		AI
 	};
@@ -38,7 +38,7 @@ namespace Constants
     };
 
 	const int damage_missile = 10;
-
+	const int speedShoot = 3;
 }
 
 #endif /* !CONSTANTS_HPP_ */

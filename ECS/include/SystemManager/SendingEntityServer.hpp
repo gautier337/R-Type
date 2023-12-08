@@ -18,7 +18,7 @@ namespace Ecs {
 				std::list<std::shared_ptr<Entity>> &entities,
 				UDPServer &server,
 				boost::asio::ip::udp::endpoint	_endpoint);
-			void run() final;
+			void launch() final;
 
 		private:
 			void drawThisEntity(std::shared_ptr<Entity> entity);

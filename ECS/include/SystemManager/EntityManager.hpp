@@ -35,7 +35,7 @@ namespace Ecs {
 			std::list<std::shared_ptr<Entity>> entities;
 			for (auto &y : _entityList)
 			{
-				if (y.get()->hasComp<T>())
+				if (y.get()->hasComponent<T>())
 					entities.push_back(y);
 			}
 			return entities;
@@ -46,7 +46,7 @@ namespace Ecs {
 			std::list<std::shared_ptr<Entity>> entities;
 			for (auto &y : _entityList)
 			{
-				if (y.get()->hasComps<Other ...>())
+				if (y.get()->hasComponents<Other ...>())
 					entities.push_back(y);
 			}
 			return entities;

@@ -5,7 +5,7 @@
 ** Entity
 */
 
-#include "Entity.hpp"
+#include "../../include/SystemManager/Entity.hpp"
 
 namespace Ecs {
 

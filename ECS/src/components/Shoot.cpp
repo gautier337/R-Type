@@ -5,7 +5,7 @@
 ** Shoot
 */
 
-#include "Shoot.hpp"
+#include "../../include/components/Shoot.hpp"
 
 namespace Ecs {
 

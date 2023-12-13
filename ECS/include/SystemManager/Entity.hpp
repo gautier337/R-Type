@@ -12,7 +12,7 @@
 	#include <list>
 	#include <algorithm>
 	#include <type_traits>
-	#include "components/AComponent.hpp"
+	#include "../components/AComponent.hpp"
 
 namespace Ecs {
 	class Entity {
@@ -85,7 +85,7 @@ namespace Ecs {
 		{
 			T1 _Comps;
 
-			return hasComp<T1>();
+			return hasComponent<T1>();
 		}
 	};
 }

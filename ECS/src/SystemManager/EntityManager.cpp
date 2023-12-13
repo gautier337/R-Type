@@ -5,8 +5,8 @@
 ** EntityManager
 */
 
-#include "EntityManager.hpp"
-#include "components/Position.hpp"
+#include "../../include/SystemManager/EntityManager.hpp"
+#include "../../include/components/Position.hpp"
 
 namespace Ecs {
 

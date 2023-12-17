@@ -5,9 +5,9 @@
 ** ShootSystem
 */
 
-#include "components/Position.hpp"
-#include "components/Shoot.hpp"
-#include "ShootSystem.hpp"
+#include "../../include/components/Position.hpp"
+#include "../../include/components/Shoot.hpp"
+#include "../../include/SystemManager/ShootSystem.hpp"
 
 Ecs::ShootSystem::ShootSystem(std::list<std::shared_ptr<Entity>> &entities)
 	: ASystem(entities)

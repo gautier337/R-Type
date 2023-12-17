@@ -5,10 +5,10 @@
 ** PlayerSystem
 */
 
-#include "PlayerSystem.hpp"
-#include "components/Position.hpp"
-#include "components/Shoot.hpp"
-#include "SystemManager/Entity.hpp"
+#include "../../include/SystemManager/PlayerSystem.hpp"
+#include "../../include/SystemManager/Entity.hpp"
+#include "../../include/components/Position.hpp"
+#include "../../include/components/Shoot.hpp"
 
 namespace Ecs {
     PlayerSystem::PlayerSystem(std::list<std::shared_ptr<Entity>> &entities)

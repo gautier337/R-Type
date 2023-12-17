@@ -9,9 +9,9 @@
     #define PLAYERSYSTEM_HPP_
 
     #include "ASystem.hpp"
-    #include "Constants.hpp"
+    #include "../components/Constants.hpp"
     #include "EntityManager.hpp"
-    #include "components/Position.hpp"
+    #include "../components/Position.hpp"
 
 namespace Ecs {
 

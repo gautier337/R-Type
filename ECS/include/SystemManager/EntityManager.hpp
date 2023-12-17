@@ -41,7 +41,7 @@ namespace Ecs {
 			return entities;
 		};
 		template <class ...Other>
-		std::list<std::shared_ptr<Entity>> &getEntsByComps()
+		std::list<std::shared_ptr<Entity>> getEntsByComps()
 		{
 			std::list<std::shared_ptr<Entity>> entities;
 			for (auto &y : _entityList)
@@ -49,10 +49,9 @@ namespace Ecs {
 				if (y.get()->hasComponents<Other ...>())
 					entities.push_back(y);
 			}
-			return entities;
+			return entities;  // Return a copy, not a reference
 		};
 	};
-
 }
 
 #endif /* !ENTITYMANAGER_HPP_ */

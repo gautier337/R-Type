@@ -25,7 +25,7 @@ namespace Ecs {
 
     std::shared_ptr<Entity> EntityManager::createMonster(int entitySize) noexcept
     {
-        auto entity = std::make_shared<Entity>(0);
+        auto entity = std::make_shared<Entity>(1);
         auto comp = std::make_shared<Position>(0, 0);
         entity->addComponent(comp);
         _entityList.push_back(entity);

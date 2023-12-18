@@ -10,6 +10,7 @@
 #include "../../include/components/Health.hpp"
 #include "../../include/components/Damages.hpp"
 #include "../../include/components/Speed.hpp"
+#include "../../include/components/Constants.hpp"
 
 
 namespace Ecs {
@@ -33,9 +34,11 @@ namespace Ecs {
         auto health = std::make_shared<Health>(5);
         auto damages = std::make_shared<Damages>(3);
         auto position = std::make_shared<Position>(5, 5);
+        auto speed = std::make_shared<Speed>(3);
         player->addComponent(health);
         player->addComponent(damages);
         player->addComponent(position);
+        player->addComponent(speed);
         _entityList.push_back(player);
         return player->getEntityId();
     }

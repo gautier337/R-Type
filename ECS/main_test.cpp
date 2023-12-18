@@ -54,7 +54,7 @@ int main () {
     auto monster = manager.createMonster(1);
 
     // Add Health, Position, Damages, and HitBox components to entities
-    auto health1 = std::make_shared<Ecs::Health>(3); // 3 HP for player
+    auto health1 = std::make_shared<Ecs::Health>(5); // 3 HP for player
     auto damages1 = std::make_shared<Ecs::Damages>(1); // 1 damage for player
     auto position1 = std::make_shared<Ecs::Position>(0, 0); // Position (0, 0) for player
 

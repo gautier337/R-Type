@@ -60,9 +60,9 @@ int main () {
     const int updatesPerSecond = 60;
     const std::chrono::milliseconds updateInterval(1000 / updatesPerSecond);
 
-    while (true) {
-        
-        manager.updateMissiles();
+    while (!manager.isGameOver()) {
+
+        manager.updateMissileEs();
         manager.checkEntitiesState();
 
         for (auto& entity : manager.getEntsByComp<Ecs::Position>()) {

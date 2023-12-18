@@ -22,6 +22,9 @@ namespace Ecs {
 	public:
 		EntityManager();
 		~EntityManager();
+		bool isGameOver() const;
+		int killedMonstersCount;
+		void increaseKilledMonstersCount();
 		unsigned int createPlayer() noexcept;
 		std::shared_ptr<Entity> createMonster(int entitySize, int hp, int dmg, int pos_x, int pos_y) noexcept;
 		std::shared_ptr<Entity> createMissile(int entityID) noexcept;

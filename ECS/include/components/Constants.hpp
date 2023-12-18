@@ -43,6 +43,7 @@ namespace Constants
 	const int speedPlayer = 3;
 	const int maxWidth = 1920;
 	const int maxHeight = 1080;
+	const int monstersToKillForWin = 100;
 }
 
 #endif /* !CONSTANTS_HPP_ */

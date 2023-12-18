@@ -15,7 +15,7 @@
 
 namespace Ecs {
 
-    EntityManager::EntityManager() {}
+    EntityManager::EntityManager() : killedMonstersCount(0) {}
 
     EntityManager::~EntityManager() {}
 
@@ -114,6 +114,8 @@ namespace Ecs {
     {
         for (auto &entity : getEntsByComp<Ecs::Health>()) {
             if (entity->getComponent<Ecs::Health>()->getHp() <= 0) {
+                if (entity->getEntityId() >= 5 && entity->getEntityId() <= 100)
+                    increaseKilledMonstersCount();
                 deleteEntity(entity->getEntityId());
             }
         }
@@ -161,5 +163,17 @@ namespace Ecs {
     int EntityManager::random(const int min, const int max) noexcept
     {
         return (rand() % (max - min + 1)) + min;
+    }
+
+    bool EntityManager::isGameOver() const
+    {
+        if (killedMonstersCount >= Constants::monstersToKillForWin)
+            return true;
+        return false;
+    }
+
+    void EntityManager::increaseKilledMonstersCount()
+    {
+        killedMonstersCount++;
     }
 }

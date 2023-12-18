@@ -1,71 +1,95 @@
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
+#include <iostream>
+#include <string>
 
-int menu()
+class Menu {
+public:
+    Menu() : window(sf::VideoMode(1920, 1080), "Title") {
+        loadAssets();
+        setupSprites();
+        menuMusic.play();
+    }
+
+    void updateSprites(sf::Vector2i mouse_pos) {
+        updateSprite(startGame, 780, 365, mouse_pos);
+        updateSprite(options, 780, 460, mouse_pos);
+        updateSprite(exit, 780, 555, mouse_pos, true);
+    }
+
+    void render() {
+        window.clear();
+        window.draw(background);
+        window.draw(startGame);
+        window.draw(options);
+        window.draw(exit);
+        window.display();
+    }
+
+    sf::RenderWindow& getWindow() {
+        return window;
+    }
+
+private:
+    sf::RenderWindow window;
+    sf::Texture textureBackground, textureStartGame, textureExit, textureOptions;
+    sf::Sprite background, startGame, exit, options;
+    sf::Music menuMusic;
+
+    void loadAssets() {
+        if (!textureStartGame.loadFromFile("../../assets/start_game.png") ||
+            !textureExit.loadFromFile("../../assets/exit.png") ||
+            !textureBackground.loadFromFile("../../assets/background.png") ||
+            !textureOptions.loadFromFile("../../assets/options.png") ||
+            !menuMusic.openFromFile("../../assets/menu_music.ogg")) {
+            throw std::runtime_error("Failed to load assets");
+        }
+    }
+
+    void setupSprites() {
+        background.setTexture(textureBackground);
+        startGame.setTexture(textureStartGame);
+        options.setTexture(textureOptions);
+        exit.setTexture(textureExit);
+    }
+
+    void updateSprite(sf::Sprite& sprite, float posX, float posY, sf::Vector2i mouse_pos, bool exitButton = false) {
+        sprite.setScale(1.10, 1.10);
+        sprite.setPosition(posX, posY);
+        if (sprite.getGlobalBounds().contains(static_cast<sf::Vector2f>(mouse_pos))) {
+            sprite.setScale(1.15, 1.15);
+            sprite.setPosition(posX - 5, posY);
+            if (exitButton && sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
+                window.close();
+            }
+        }
+    }
+};
+
+int run()
 {
-    sf::RenderWindow window(sf::VideoMode(1920, 1080), "Title");
-    sf::Texture texture_background;
-    sf::Texture texture_start_game;
-    sf::Texture texture_exit;
-    sf::Texture texture_options;
-
-    if (!texture_start_game.loadFromFile("../../assets/start_game.png"))
-        return -1;
-    if (!texture_exit.loadFromFile("../../assets/exit.png"))
-        return -1;
-    if (!texture_background.loadFromFile("../../assets/background.png"))
-        return -1;
-    if (!texture_options.loadFromFile("../../assets/options.png"))
-        return -1;
-
-    sf::Sprite background;
-    sf::Sprite start_game;
-    sf::Sprite exit;
-    sf::Sprite options;
-    background.setTexture(texture_background);
-    start_game.setTexture(texture_start_game);
-    options.setTexture(texture_options);
-    exit.setTexture(texture_exit);
+    Menu menu;
+    sf::RenderWindow& window = menu.getWindow();
 
     while (window.isOpen()) {
         sf::Event event;
-        sf ::Vector2i mouse_pos = sf::Mouse::getPosition(window);
+        sf::Vector2i mouse_pos = sf::Mouse::getPosition(window);
 
         while (window.pollEvent(event)) {
             if (event.key.code == sf::Keyboard::Escape)
                 window.close();
         }
-        start_game.setScale(1.10, 1.10);
-        options.setScale(1.10, 1.10);
-        exit.setScale(1.10, 1.10);
-        start_game.setPosition(780, 365);
-        options.setPosition(780, 460);
-        exit.setPosition(780, 555);
-        if (start_game.getGlobalBounds().contains(static_cast<sf::Vector2f>(mouse_pos))) {
-            start_game.setScale(1.15, 1.15);
-            start_game.setPosition(775, 365);
-        }
-        if (options.getGlobalBounds().contains(static_cast<sf::Vector2f>(mouse_pos))) {
-            options.setScale(1.15, 1.15);
-            options.setPosition(775, 460);
-        }
-        if (exit.getGlobalBounds().contains(static_cast<sf::Vector2f>(mouse_pos))) {
-            exit.setPosition(775, 555);
-            exit.setScale(1.15, 1.15);
-            if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
-                window.close();
-        }
-        window.clear();
-        window.draw(background);
-        window.draw(start_game);
-        window.draw(options);
-        window.draw(exit);
-        window.display();
+        menu.updateSprites(mouse_pos);
+        menu.render();
     }
     return 0;
 }
 
-int main()
-{
-    menu();
-    return 0;
+int main() {
+    try {
+        return run();
+    } catch (const std::exception& e) {
+        std::cerr << "Error: " << e.what() << std::endl;
+        return -1;
+    }
 }

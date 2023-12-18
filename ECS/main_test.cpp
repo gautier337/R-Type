@@ -54,16 +54,15 @@ int main () {
     auto monster = manager.createMonster(1, 3, 1, 50, 50);
 
     manager.createMissile(player);
-    manager.createMissile(player);
-    manager.createMissile(player);
-    manager.createMissile(player);
+    manager.createMissile(monster->getEntityId());
 
     // Loop to print every 1/60 of a second the position of all entities and their HP
     const int updatesPerSecond = 60;
     const std::chrono::milliseconds updateInterval(1000 / updatesPerSecond);
 
     while (true) {
-        // Update player and monster positions and health here
+        
+        manager.updateMissiles();
 
         for (auto& entity : manager.getEntsByComp<Ecs::Position>()) {
             std::cout << "Entity " << entity->getEntityId() << " position: (" << entity->getComponent<Ecs::Position>()->getPosition().first << ", " << entity->getComponent<Ecs::Position>()->getPosition().second << ")" << std::endl;

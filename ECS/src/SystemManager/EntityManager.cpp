@@ -9,6 +9,8 @@
 #include "../../include/components/Position.hpp"
 #include "../../include/components/Health.hpp"
 #include "../../include/components/Damages.hpp"
+#include "../../include/components/Speed.hpp"
+
 
 namespace Ecs {
 
@@ -63,7 +65,7 @@ namespace Ecs {
     std::shared_ptr<Entity> EntityManager::createMissile(int entityID) noexcept
     {
         int id = 0;
-        for (unsigned int i = 101; i < 201; i++)
+        for (unsigned int i = 201; i < 501; i++)
         {
             if (!isIdTaken(i))
             {
@@ -71,15 +73,38 @@ namespace Ecs {
                 break;
             }
         }
+
+        int speedToAdd = 0;
+
+        if (entityID < 5)
+            speedToAdd = 3;
+        if (entityID >= 5 && entityID < 101)
+            speedToAdd = -3;
+
         auto missile = std::make_shared<Entity>(id);
         auto health = std::make_shared<Health>(1);
         auto damages = std::make_shared<Damages>(getEntityById(entityID)->getComponent<Ecs::Damages>()->getDamage());
         auto position = std::make_shared<Position>(getEntityById(entityID)->getComponent<Ecs::Position>()->getPosition().first, getEntityById(entityID)->getComponent<Ecs::Position>()->getPosition().second);
+        auto speed = std::make_shared<Speed>(speedToAdd);
         missile->addComponent(health);
         missile->addComponent(damages);
         missile->addComponent(position);
+        missile->addComponent(speed);
         _entityList.push_back(missile);
         return missile;
+    }
+
+    void EntityManager::updateMissiles()
+    {
+        //all entity with id between 100 and 200 move with their speed
+        for (const auto &entity : _entityList)
+        {
+            if (entity->getEntityId() >= 201 && entity->getEntityId() <= 500) {
+                std::pair<int, int> pos = entity->getComponent<Ecs::Position>()->getPosition();
+                entity->getComponent<Ecs::Position>()->set_pox_x(pos.first + entity->getComponent<Ecs::Speed>()->getSpeed());
+                entity->getComponent<Ecs::Position>()->set_pox_y(pos.second + entity->getComponent<Ecs::Speed>()->getSpeed());
+            }
+        }
     }
 
     bool EntityManager::isIdTaken(unsigned int id) const noexcept

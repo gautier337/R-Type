@@ -20,6 +20,7 @@ namespace Constants
 		POSITION,
 		DAMAGES,
 		SPEEDSHOOT,
+		SPEED,
 		WEAPON,
 		AI
 	};

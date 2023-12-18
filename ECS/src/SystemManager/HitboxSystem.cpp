@@ -1,4 +1,4 @@
-S/*
+/*
 ** EPITECH PROJECT, 2023
 ** R-TYPE
 ** File description:
@@ -10,7 +10,6 @@ S/*
 #include "../../include/components/Damages.hpp"
 #include "../../include/components/Health.hpp"
 #include "../../include/components/Position.hpp"
-#include "../../include/components/Shoot.hpp"
 
 Ecs::HitboxSystem::HitboxSystem(std::list<std::shared_ptr<Entity>> &entities)
     : ASystem(entities)

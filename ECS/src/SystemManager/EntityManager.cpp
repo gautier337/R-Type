@@ -28,9 +28,9 @@ namespace Ecs {
             }
         }
         auto player = std::make_shared<Entity>(id);
-        auto health = std::make_shared<Health>(3);
-        auto damages = std::make_shared<Damages>(1);
-        auto position = std::make_shared<Position>(0, 0);
+        auto health = std::make_shared<Health>(5);
+        auto damages = std::make_shared<Damages>(3);
+        auto position = std::make_shared<Position>(5, 5);
         player->addComponent(health);
         player->addComponent(damages);
         player->addComponent(position);
@@ -38,10 +38,10 @@ namespace Ecs {
         return player->getEntityId();
     }
 
-    std::shared_ptr<Entity> EntityManager::createMonster(int entitySize) noexcept
+    std::shared_ptr<Entity> EntityManager::createMonster(int entitySize, int hp, int dmg, int pos_x, int pos_y) noexcept
     {
         int id = 0;
-        for (unsigned int i = 5; i < 101; i++)
+        for (unsigned int i = 5; i < 201; i++)
         {
             if (!isIdTaken(i))
             {
@@ -50,9 +50,9 @@ namespace Ecs {
             }
         }
         auto monster = std::make_shared<Entity>(id);
-        auto health = std::make_shared<Health>(entitySize);
-        auto damages = std::make_shared<Damages>(1);
-        auto position = std::make_shared<Position>(random(0, 1920), random(0, 1080));
+        auto health = std::make_shared<Health>(hp);
+        auto damages = std::make_shared<Damages>(dmg);
+        auto position = std::make_shared<Position>(pos_x, pos_y);
         monster->addComponent(health);
         monster->addComponent(damages);
         monster->addComponent(position);
@@ -60,7 +60,7 @@ namespace Ecs {
         return monster;
     }
 
-    std::shared_ptr<Entity> EntityManager::createMissile(int entitySize, std::pair<int, int> playerPos) noexcept
+    std::shared_ptr<Entity> EntityManager::createMissile(int entityID) noexcept
     {
         int id = 0;
         for (unsigned int i = 101; i < 201; i++)
@@ -72,9 +72,9 @@ namespace Ecs {
             }
         }
         auto missile = std::make_shared<Entity>(id);
-        auto health = std::make_shared<Health>(entitySize);
-        auto damages = std::make_shared<Damages>(1);
-        auto position = std::make_shared<Position>(playerPos.first, playerPos.second);
+        auto health = std::make_shared<Health>(1);
+        auto damages = std::make_shared<Damages>(getEntityById(entityID)->getComponent<Ecs::Damages>()->getDamage());
+        auto position = std::make_shared<Position>(getEntityById(entityID)->getComponent<Ecs::Position>()->getPosition().first, getEntityById(entityID)->getComponent<Ecs::Position>()->getPosition().second);
         missile->addComponent(health);
         missile->addComponent(damages);
         missile->addComponent(position);

@@ -25,7 +25,7 @@ def send_test_commands(server_address, server_port):
 
 if __name__ == "__main__":
     # Adresse et port du serveur
-    server_address = '127.0.0.1'  # L'adresse IP de votre serveur
+    server_address = '192.168.176.1'  # L'adresse IP de votre serveur
     server_port = 8000  # Le port sur lequel votre serveur écoute
 
     send_test_commands(server_address, server_port)

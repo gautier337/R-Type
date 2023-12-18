@@ -6,19 +6,21 @@
 */
 
 #include "../../include/SystemManager/HitboxSystem.hpp"
+#include "../../include/SystemManager/Entity.hpp"
+#include "../../include/components/Speed.hpp"
 #include "../../include/components/HitBox.hpp"
 #include "../../include/components/Damages.hpp"
 #include "../../include/components/Health.hpp"
 #include "../../include/components/Position.hpp"
+#include <iostream>
 
-Ecs::HitboxSystem::HitboxSystem(std::list<std::shared_ptr<Entity>> &entities)
-    : ASystem(entities)
-{}
+Ecs::HitboxSystem::HitboxSystem() {}
 
-void Ecs::HitboxSystem::launch()
+void Ecs::HitboxSystem::launch(std::list<std::shared_ptr<Entity>> entities)
 {
-    for (auto it = _Entities.begin(); it != std::prev(_Entities.end()); ++it) {
-        for (auto it2 = std::next(it); it2 != _Entities.end(); ++it2) {
+    //print entities
+    for (auto it = entities.begin(); it != std::prev(entities.end()); ++it) {
+        for (auto it2 = std::next(it); it2 != entities.end(); ++it2) {
             resolveCollisions(*it, *it2);
         }
     }
@@ -28,6 +30,7 @@ void Ecs::HitboxSystem::resolveCollisions(std::shared_ptr<Entity> entity, std::s
 {
     if (entity->hasComponents<Hitbox, Position, Damages, Health>() &&
         otherEntity->hasComponents<Hitbox, Position, Damages, Health>()) {
+        std::cout << "test4" << std::endl << std::endl << std::endl << std::endl << std::endl << std::endl << std::endl << std::endl << std::endl << std::endl << std::endl;
         checkForDamages(entity, otherEntity);
         checkForDamages(otherEntity, entity);
     }

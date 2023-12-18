@@ -49,6 +49,7 @@ int main () {
 
     // Create player
     auto player = manager.createPlayer();
+    auto player2 = manager.createPlayer();
     // Create monster
     auto monster = manager.createMonster(1);
 
@@ -64,6 +65,9 @@ int main () {
     manager.getEntityById(player)->addComponent(health1);
     manager.getEntityById(player)->addComponent(damages1);
     manager.getEntityById(player)->addComponent(position1);
+    manager.getEntityById(player2)->addComponent(health1);
+    manager.getEntityById(player2)->addComponent(damages1);
+    manager.getEntityById(player2)->addComponent(position1);
     monster->addComponent(health1);
     monster->addComponent(damages1);
     monster->addComponent(position1);

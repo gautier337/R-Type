@@ -7,6 +7,8 @@
 
 #include "../../include/SystemManager/EntityManager.hpp"
 #include "../../include/components/Position.hpp"
+#include "../../include/components/Health.hpp"
+#include "../../include/components/Damages.hpp"
 
 namespace Ecs {
 
@@ -16,29 +18,78 @@ namespace Ecs {
 
     unsigned int EntityManager::createPlayer() noexcept
     {
-        auto entity = std::make_shared<Entity>(0);
-        auto comp = std::make_shared<Position>(0, 0);
-        entity->addComponent(comp);
-        _entityList.push_back(entity);
-        return entity->getEntityId();
+        int id = 0;
+        for (unsigned int i = 1; i < 5; i++)
+        {
+            if (!isIdTaken(i))
+            {
+                id = i;
+                break;
+            }
+        }
+        auto player = std::make_shared<Entity>(id);
+        auto health = std::make_shared<Health>(3);
+        auto damages = std::make_shared<Damages>(1);
+        auto position = std::make_shared<Position>(0, 0);
+        player->addComponent(health);
+        player->addComponent(damages);
+        player->addComponent(position);
+        _entityList.push_back(player);
+        return player->getEntityId();
     }
 
     std::shared_ptr<Entity> EntityManager::createMonster(int entitySize) noexcept
     {
-        auto entity = std::make_shared<Entity>(1);
-        auto comp = std::make_shared<Position>(0, 0);
-        entity->addComponent(comp);
-        _entityList.push_back(entity);
-        return entity;
+        int id = 0;
+        for (unsigned int i = 5; i < 101; i++)
+        {
+            if (!isIdTaken(i))
+            {
+                id = i;
+                break;
+            }
+        }
+        auto monster = std::make_shared<Entity>(id);
+        auto health = std::make_shared<Health>(entitySize);
+        auto damages = std::make_shared<Damages>(1);
+        auto position = std::make_shared<Position>(random(0, 1920), random(0, 1080));
+        monster->addComponent(health);
+        monster->addComponent(damages);
+        monster->addComponent(position);
+        _entityList.push_back(monster);
+        return monster;
     }
 
     std::shared_ptr<Entity> EntityManager::createMissile(int entitySize, std::pair<int, int> playerPos) noexcept
     {
-        auto entity = std::make_shared<Entity>(0);
-        auto comp = std::make_shared<Position>(playerPos.first + entitySize, playerPos.second + entitySize);
-        entity->addComponent(comp);
-        _entityList.push_back(entity);
-        return entity;
+        int id = 0;
+        for (unsigned int i = 101; i < 201; i++)
+        {
+            if (!isIdTaken(i))
+            {
+                id = i;
+                break;
+            }
+        }
+        auto missile = std::make_shared<Entity>(id);
+        auto health = std::make_shared<Health>(entitySize);
+        auto damages = std::make_shared<Damages>(1);
+        auto position = std::make_shared<Position>(playerPos.first, playerPos.second);
+        missile->addComponent(health);
+        missile->addComponent(damages);
+        missile->addComponent(position);
+        _entityList.push_back(missile);
+        return missile;
+    }
+
+    bool EntityManager::isIdTaken(unsigned int id) const noexcept
+    {
+        for (const auto &entity : _entityList)
+        {
+            if (entity->getEntityId() == id)
+                return true;
+        }
+        return false;
     }
 
     unsigned int EntityManager::addEntity(Entity &entity) noexcept

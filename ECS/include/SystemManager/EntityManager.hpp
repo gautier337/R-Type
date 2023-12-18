@@ -25,6 +25,7 @@ namespace Ecs {
 		unsigned int createPlayer() noexcept;
 		std::shared_ptr<Entity> createMonster(int entitySize) noexcept;
 		std::shared_ptr<Entity> createMissile(int entitySize,  std::pair<int, int> playerPos) noexcept;
+		bool isIdTaken(unsigned int id) const noexcept;
 		unsigned int addEntity(Entity &entity) noexcept;
 		std::shared_ptr<Entity> getEntityById(unsigned int id);
 		bool deleteEntity(unsigned int id) noexcept;

@@ -107,6 +107,15 @@ namespace Ecs {
         }
     }
 
+    void EntityManager::checkEntitiesState()
+    {
+        for (auto &entity : getEntsByComp<Ecs::Health>()) {
+            if (entity->getComponent<Ecs::Health>()->getHp() <= 0) {
+                deleteEntity(entity->getEntityId());
+            }
+        }
+    }
+
     bool EntityManager::isIdTaken(unsigned int id) const noexcept
     {
         for (const auto &entity : _entityList)

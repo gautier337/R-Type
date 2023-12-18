@@ -63,6 +63,7 @@ int main () {
     while (true) {
         
         manager.updateMissiles();
+        manager.checkEntitiesState();
 
         for (auto& entity : manager.getEntsByComp<Ecs::Position>()) {
             std::cout << "Entity " << entity->getEntityId() << " position: (" << entity->getComponent<Ecs::Position>()->getPosition().first << ", " << entity->getComponent<Ecs::Position>()->getPosition().second << ")" << std::endl;

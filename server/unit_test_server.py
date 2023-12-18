@@ -43,7 +43,7 @@ if __name__ == "__main__":
     server_address = '127.0.0.1'
     server_port = 8000
 
-    num_clients = 40000
+    num_clients = 20000
 
     # Première phase: Connexion des clients
     for i in range(num_clients):

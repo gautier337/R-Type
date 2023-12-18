@@ -19,6 +19,7 @@ namespace Ecs {
 				std::shared_ptr<Entity> otherEntity);
 			void checkForDamages(std::shared_ptr<Entity> entity,
 				std::shared_ptr<Entity> otherEntity);
+			void resolveCollisions(std::shared_ptr<Entity> entity, std::shared_ptr<Entity> otherEntity);
 		private:
 	};
 

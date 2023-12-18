@@ -11,10 +11,10 @@
 
 namespace Ecs {
 
-	class HitboxSystem : public ASystem {
+	class HitboxSystem {
 		public:
-			HitboxSystem(std::list<std::shared_ptr<Entity>> &entities);
-			void launch() final;
+			HitboxSystem();
+			void launch(std::list<std::shared_ptr<Entity>> entities);
 			void takeDamages(std::shared_ptr<Entity> entity,
 				std::shared_ptr<Entity> otherEntity);
 			void checkForDamages(std::shared_ptr<Entity> entity,

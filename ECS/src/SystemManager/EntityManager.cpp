@@ -10,6 +10,7 @@
 #include "../../include/components/Health.hpp"
 #include "../../include/components/Damages.hpp"
 #include "../../include/components/Speed.hpp"
+#include "../../include/components/HitBox.hpp"
 #include "../../include/components/Constants.hpp"
 
 
@@ -33,12 +34,14 @@ namespace Ecs {
         auto player = std::make_shared<Entity>(id);
         auto health = std::make_shared<Health>(5);
         auto damages = std::make_shared<Damages>(3);
-        auto position = std::make_shared<Position>(5, 5);
+        auto position = std::make_shared<Position>(0, 0);
         auto speed = std::make_shared<Speed>(3);
+        auto hitbox = std::make_shared<Hitbox>(3, 3);
         player->addComponent(health);
         player->addComponent(damages);
         player->addComponent(position);
         player->addComponent(speed);
+        player->addComponent(hitbox);
         _entityList.push_back(player);
         return player->getEntityId();
     }
@@ -80,19 +83,21 @@ namespace Ecs {
         int speedToAdd = 0;
 
         if (entityID < 5)
-            speedToAdd = 3;
+            speedToAdd = 1;
         if (entityID >= 5 && entityID < 101)
-            speedToAdd = -3;
+            speedToAdd = -1;
 
         auto missile = std::make_shared<Entity>(id);
         auto health = std::make_shared<Health>(1);
         auto damages = std::make_shared<Damages>(getEntityById(entityID)->getComponent<Ecs::Damages>()->getDamage());
         auto position = std::make_shared<Position>(getEntityById(entityID)->getComponent<Ecs::Position>()->getPosition().first, getEntityById(entityID)->getComponent<Ecs::Position>()->getPosition().second);
         auto speed = std::make_shared<Speed>(speedToAdd);
+        auto hitbox = std::make_shared<Hitbox>(1, 1);
         missile->addComponent(health);
         missile->addComponent(damages);
         missile->addComponent(position);
         missile->addComponent(speed);
+        missile->addComponent(hitbox);
         _entityList.push_back(missile);
         return missile;
     }
@@ -105,7 +110,6 @@ namespace Ecs {
             if (entity->getEntityId() >= 201 && entity->getEntityId() <= 500) {
                 std::pair<int, int> pos = entity->getComponent<Ecs::Position>()->getPosition();
                 entity->getComponent<Ecs::Position>()->set_pox_x(pos.first + entity->getComponent<Ecs::Speed>()->getSpeed());
-                entity->getComponent<Ecs::Position>()->set_pox_y(pos.second + entity->getComponent<Ecs::Speed>()->getSpeed());
             }
         }
     }

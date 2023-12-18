@@ -16,7 +16,7 @@ namespace Ecs {
 
 	class ASystem : public ISystem {
 	public:
-		ASystem(std::list<std::shared_ptr<Entity>> &entities)
+		ASystem(std::list<std::shared_ptr<Entity>> entities)
 			: _Entities(entities) {};
 	protected:
 		std::list<std::shared_ptr<Entity>> &_Entities;

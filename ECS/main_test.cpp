@@ -1,8 +1,10 @@
 #include "include/SystemManager/Entity.hpp"
 #include "include/SystemManager/EntityManager.hpp"
+#include "include/SystemManager/HitboxSystem.hpp"
 #include "include/components/Health.hpp"
 #include "include/components/Position.hpp"
 #include "include/components/Damages.hpp"
+#include "include/components/HitBox.hpp"
 #include <iostream>
 #include <chrono>
 #include <thread>
@@ -47,11 +49,13 @@ int main () {
 
     Ecs::EntityManager manager;
 
+    Ecs::HitboxSystem hitbox;
+
     // Create player
     auto player = manager.createPlayer();
     auto player2 = manager.createPlayer();
     // Create monster
-    auto monster = manager.createMonster(1, 3, 1, 50, 50);
+    auto monster = manager.createMonster(1, 3, 1, 100, 0);
 
     manager.createMissile(player);
     manager.createMissile(monster->getEntityId());
@@ -64,6 +68,7 @@ int main () {
 
         manager.updateMissileEs();
         manager.checkEntitiesState();
+        hitbox.launch(manager.getEntsByComps<Ecs::Hitbox, Ecs::Position, Ecs::Damages, Ecs::Health>());
 
         for (auto& entity : manager.getEntsByComp<Ecs::Position>()) {
             std::cout << "Entity " << entity->getEntityId() << " position: (" << entity->getComponent<Ecs::Position>()->getPosition().first << ", " << entity->getComponent<Ecs::Position>()->getPosition().second << ")" << std::endl;

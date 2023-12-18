@@ -1,0 +1,31 @@
+
+La manière dont chaque thread sait quelle tâche exécuter dans un environnement utilisant ASIO, comme dans votre code, repose sur le fonctionnement de l'io_context d'ASIO. Voici une explication détaillée :
+
+Fonctionnement de l'io_context
+Planification des Tâches :
+
+Quand vous appelez des méthodes asynchrones (comme async_receive_from, async_send_to, async_wait), vous planifiez des tâches asynchrones dans l'io_context.
+Ces appels spécifient non seulement l'action à effectuer (par exemple, recevoir des données du réseau) mais aussi un callback à exécuter lorsque l'action est complétée.
+Queue de Tâches dans l'io_context :
+
+L'io_context maintient une file d'attente de ces tâches asynchrones. Chaque tâche reste dans la file d'attente jusqu'à ce qu'elle soit prête à être exécutée (par exemple, des données arrivent sur un socket réseau).
+Fonctionnement des Threads
+Exécution de io_context.run() :
+
+Dans votre programme principal, vous créez plusieurs threads, et chaque thread appelle io_context.run().
+L'appel à io_context.run() dans un thread indique à ce thread de commencer à traiter les tâches de la file d'attente de l'io_context.
+Traitement des Tâches par les Threads :
+
+Quand un thread exécute io_context.run(), il récupère et exécute les tâches de la file d'attente de l'io_context.
+Si une tâche asynchrone est prête (par exemple, des données sont arrivées et doivent être traitées), le thread exécute le callback associé à cette tâche.
+Exécution Concurrente :
+
+Comme plusieurs threads exécutent io_context.run(), ils peuvent traiter les tâches de manière concurrente. L'io_context s'assure que les tâches sont distribuées entre les threads disponibles.
+Synchronisation :
+
+ASIO gère la synchronisation nécessaire pour que plusieurs threads puissent travailler sur l'io_context sans causer de conditions de course ou d'autres problèmes de concurrence.
+Résumé
+Les tâches asynchrones sont planifiées dans l'io_context lorsque vous appelez des méthodes asynchrones dans votre classe Server.
+Les threads lancés dans votre programme principal exécutent io_context.run(), ce qui les met au travail sur la file d'attente de l'io_context.
+Chaque thread traitera les tâches de l'io_context dès qu'elles seront prêtes, en exécutant les callbacks associés à ces tâches.
+En conclusion, c'est l'io_context qui orchestre quelles tâches sont exécutées et quand, tandis que les threads fournissent les ressources pour exécuter ces tâches. La logique de votre programme détermine quelles tâches sont planifiées, et l'io_context avec les threads s'occupent de leur exécution.

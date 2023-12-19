@@ -53,11 +53,11 @@ int main () {
 
     // Create player
     auto player = manager.createPlayer();
-    auto player2 = manager.createPlayer();
+    //auto player2 = manager.createPlayer();
     // Create monster
     auto monster = manager.createMonster(1, 3, 1, 100, 0);
 
-    manager.createMissile(player);
+    //manager.createMissile(player);
     manager.createMissile(monster->getEntityId());
 
     // Loop to print every 1/60 of a second the position of all entities and their HP
@@ -66,9 +66,11 @@ int main () {
 
     while (!manager.isGameOver()) {
 
-        manager.updateMissileEs();
+        manager.updateMissiles();
         manager.checkEntitiesState();
         hitbox.launch(manager.getEntsByComps<Ecs::Hitbox, Ecs::Position, Ecs::Damages, Ecs::Health>());
+        //print monster hitbox
+        //std::cout << "Monster hitbox: (" << monster->getComponent<Ecs::Hitbox>()->getHitBoxSize().first << ", " << monster->getComponent<Ecs::Hitbox>()->getHitBoxSize().second << ")" << std::endl;
 
         for (auto& entity : manager.getEntsByComp<Ecs::Position>()) {
             std::cout << "Entity " << entity->getEntityId() << " position: (" << entity->getComponent<Ecs::Position>()->getPosition().first << ", " << entity->getComponent<Ecs::Position>()->getPosition().second << ")" << std::endl;

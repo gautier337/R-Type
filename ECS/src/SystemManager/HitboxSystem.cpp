@@ -30,7 +30,6 @@ void Ecs::HitboxSystem::resolveCollisions(std::shared_ptr<Entity> entity, std::s
 {
     if (entity->hasComponents<Hitbox, Position, Damages, Health>() &&
         otherEntity->hasComponents<Hitbox, Position, Damages, Health>()) {
-        std::cout << "test4" << std::endl << std::endl << std::endl << std::endl << std::endl << std::endl << std::endl << std::endl << std::endl << std::endl << std::endl;
         checkForDamages(entity, otherEntity);
         checkForDamages(otherEntity, entity);
     }

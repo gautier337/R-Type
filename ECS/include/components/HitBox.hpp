@@ -13,9 +13,9 @@
 
 namespace Ecs {
 
-	class Hitbox : public Ecs::AComponent {
+	class Hitbox : public AComponent {
 		public:
-			Hitbox(int height = 1, int width = 1) noexcept;
+			Hitbox(int height = 1, int width = 1);
 			~Hitbox();
 			inline std::pair<int, int> getHitBoxSize()
 			{

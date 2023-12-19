@@ -8,7 +8,7 @@
 #include "../../include/SystemManager/PlayerSystem.hpp"
 #include "../../include/SystemManager/Entity.hpp"
 #include "../../include/components/Position.hpp"
-#include "../../include/components/Shoot.hpp"
+#include "../../include/components/Speed.hpp"
 
 namespace Ecs {
     PlayerSystem::PlayerSystem(std::list<std::shared_ptr<Entity>> &entities)
@@ -37,8 +37,8 @@ namespace Ecs {
     void PlayerSystem::movePlayer(std::shared_ptr<Entity> entity, int direction) {
         std::pair<int, int> pos = entity->getComponent<Position>()->getPosition();
 
-        if (entity->hasComponent<Shoot>()) {
-            auto speedPlayer = entity->getComponent<Shoot>()->getSpeedShoot();
+        if (entity->hasComponent<Speed>()) {
+            auto speedPlayer = entity->getComponent<Speed>()->getSpeed();
 
             if (direction == Constants::DIRECTION::RIGHT) {
                 entity->getComponent<Position>()->set_pox_x(pos.first + speedPlayer);

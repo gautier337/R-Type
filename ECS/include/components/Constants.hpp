@@ -20,6 +20,7 @@ namespace Constants
 		POSITION,
 		DAMAGES,
 		SPEEDSHOOT,
+		SPEED,
 		WEAPON,
 		AI
 	};
@@ -39,6 +40,10 @@ namespace Constants
 
 	const int damage_missile = 10;
 	const int speedShoot = 3;
+	const int speedPlayer = 3;
+	const int maxWidth = 1920;
+	const int maxHeight = 1080;
+	const int monstersToKillForWin = 100;
 }
 
 #endif /* !CONSTANTS_HPP_ */

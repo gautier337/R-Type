@@ -9,9 +9,4 @@ namespace Ecs {
     }
 
     Hitbox::~Hitbox() {}
-
-    std::pair<int, int> Hitbox::getHitBoxSize()
-    {
-        return std::pair<int, int>(_height, _width);
-    }
 }

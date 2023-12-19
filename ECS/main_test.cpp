@@ -1,8 +1,10 @@
 #include "include/SystemManager/Entity.hpp"
 #include "include/SystemManager/EntityManager.hpp"
+#include "include/SystemManager/HitboxSystem.hpp"
 #include "include/components/Health.hpp"
 #include "include/components/Position.hpp"
 #include "include/components/Damages.hpp"
+#include "include/components/HitBox.hpp"
 #include <iostream>
 #include <chrono>
 #include <thread>
@@ -47,39 +49,28 @@ int main () {
 
     Ecs::EntityManager manager;
 
+    Ecs::HitboxSystem hitbox;
+
     // Create player
     auto player = manager.createPlayer();
     auto player2 = manager.createPlayer();
     // Create monster
-    auto monster = manager.createMonster(1);
+    auto monster = manager.createMonster(1, 3, 1, 100, 0);
 
-    // Add Health, Position, Damages, and HitBox components to entities
-    auto health1 = std::make_shared<Ecs::Health>(3); // 3 HP for player
-    auto damages1 = std::make_shared<Ecs::Damages>(1); // 1 damage for player
-    auto position1 = std::make_shared<Ecs::Position>(0, 0); // Position (0, 0) for player
-
-    auto health2 = std::make_shared<Ecs::Health>(3); // 3 HP for monster
-    auto damages2 = std::make_shared<Ecs::Damages>(1); // 1 damage for monster
-    auto position2 = std::make_shared<Ecs::Position>(0, 0); // Position (0, 0) for monster
-
-    manager.getEntityById(player)->addComponent(health1);
-    manager.getEntityById(player)->addComponent(damages1);
-    manager.getEntityById(player)->addComponent(position1);
-    manager.getEntityById(player2)->addComponent(health1);
-    manager.getEntityById(player2)->addComponent(damages1);
-    manager.getEntityById(player2)->addComponent(position1);
-    monster->addComponent(health1);
-    monster->addComponent(damages1);
-    monster->addComponent(position1);
+    manager.createMissile(player);
+    manager.createMissile(monster->getEntityId());
 
     // Loop to print every 1/60 of a second the position of all entities and their HP
     const int updatesPerSecond = 60;
     const std::chrono::milliseconds updateInterval(1000 / updatesPerSecond);
 
-    while (true) {
-        // Update player and monster positions and health here
+    while (!manager.isGameOver()) {
 
-        for (auto& entity : manager.getEntsByComps<Ecs::Position, Ecs::Health>()) {
+        manager.updateMissileEs();
+        manager.checkEntitiesState();
+        hitbox.launch(manager.getEntsByComps<Ecs::Hitbox, Ecs::Position, Ecs::Damages, Ecs::Health>());
+
+        for (auto& entity : manager.getEntsByComp<Ecs::Position>()) {
             std::cout << "Entity " << entity->getEntityId() << " position: (" << entity->getComponent<Ecs::Position>()->getPosition().first << ", " << entity->getComponent<Ecs::Position>()->getPosition().second << ")" << std::endl;
             std::cout << "Entity " << entity->getEntityId() << " HP: " << entity->getComponent<Ecs::Health>()->getHp() << std::endl;
         }

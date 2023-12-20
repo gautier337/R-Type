@@ -42,7 +42,7 @@ void Server::start_receive() {
 
 void Server::handle_receive(const std::string& data, const asio::ip::udp::endpoint& endpoint) {
     std::cout << "Received message: " << data << " from " << endpoint << std::endl;
-    std::cout << "handle_receive called from thread: " << std::this_thread::get_id() << std::endl;
+    // std::cout << "handle_receive called from thread: " << std::this_thread::get_id() << std::endl;
 
     bool isNewClient = false;
     int clientId;
@@ -50,13 +50,13 @@ void Server::handle_receive(const std::string& data, const asio::ip::udp::endpoi
         std::lock_guard<std::mutex> lock(clients_mutex_);
         if (client_ids_.find(endpoint) == client_ids_.end() || data == "START") {
             number_of_player_connected_++;
-            int id_client = manager.createPlayer();
-            if (id_client == 0) {
+            int clientId = manager.createPlayer();
+            if (clientId == 0) {
                 std::string welcomeMessage = "The room is full !";
                 handle_send(welcomeMessage, endpoint);
                 return;
             }
-            client_ids_[endpoint] = id_client;
+            client_ids_[endpoint] = clientId;
             isNewClient = true;
             std::cout << "New client added with ID: " << clientId << std::endl;
         } else {
@@ -87,7 +87,7 @@ void Server::handle_receive(const std::string& data, const asio::ip::udp::endpoi
     } else if (data == "SHOOT") {
         manager.handlePlayerInput(clientId, 5);
     } else {
-        handle_send("Received message: " + data, endpoint);   
+        handle_send("Unknow Command received: " + data, endpoint);   
     }
 }
 
@@ -100,8 +100,6 @@ void Server::handle_send(const std::string& message, const asio::ip::udp::endpoi
         [this, message_data](const asio::error_code& error, std::size_t /*bytes_sent*/) {
             if (error) {
                 std::cerr << "Send error: " << error.message() << std::endl;
-            } else {
-                std::cout << "Sent message: " << *message_data << std::endl;
             }
         }
     );

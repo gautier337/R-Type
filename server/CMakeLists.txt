@@ -23,6 +23,7 @@ add_executable(RTypeServer
     ../ECS/src/components/Position.cpp
     ../ECS/src/components/Speed.cpp
     ../ECS/src/components/HitBox.cpp
+    ../ECS/src/components/ShootCooldown.cpp
     ../ECS/src/SystemManager/HitboxSystem.cpp
 )
 

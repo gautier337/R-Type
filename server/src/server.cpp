@@ -87,7 +87,7 @@ void Server::handle_receive(const std::string& data, const asio::ip::udp::endpoi
     } else if (data == "SHOOT") {
         manager.handlePlayerInput(clientId, 5);
     } else {
-        handle_send("Received message: " + data, endpoint);   
+        handle_send("Unknow Command received: " + data, endpoint);   
     }
 }
 

@@ -32,6 +32,7 @@ namespace Ecs {
 		void checkEntitiesState();
 		void generateMonsters();
 		void updateMonsters();
+		void handlePlayerInput(int id, int input) noexcept;
 		bool isIdTaken(unsigned int id) const noexcept;
 		unsigned int addEntity(Entity &entity) noexcept;
 		std::shared_ptr<Entity> getEntityById(unsigned int id);

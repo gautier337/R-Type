@@ -59,6 +59,34 @@ namespace Ecs {
         return player->getEntityId();
     }
 
+    void EntityManager::handlePlayerInput(int id, int input) noexcept
+    {
+        //Down
+        if (input == 1) {
+            if (getEntityById(id)->getComponent<Ecs::Position>()->getPosition().second > 0)
+                getEntityById(id)->getComponent<Ecs::Position>()->set_pox_y(getEntityById(id)->getComponent<Ecs::Position>()->getPosition().second - getEntityById(id)->getComponent<Ecs::Speed>()->getSpeed());
+        }
+        //Up
+        if (input == 2) {
+            if (getEntityById(id)->getComponent<Ecs::Position>()->getPosition().second < 800)
+                getEntityById(id)->getComponent<Ecs::Position>()->set_pox_y(getEntityById(id)->getComponent<Ecs::Position>()->getPosition().second + getEntityById(id)->getComponent<Ecs::Speed>()->getSpeed());
+        }
+        //Left
+        if (input == 3) {
+            if (getEntityById(id)->getComponent<Ecs::Position>()->getPosition().first > 0)
+                getEntityById(id)->getComponent<Ecs::Position>()->set_pox_x(getEntityById(id)->getComponent<Ecs::Position>()->getPosition().first - getEntityById(id)->getComponent<Ecs::Speed>()->getSpeed());
+        }
+        //Right
+        if (input == 4) {
+            if (getEntityById(id)->getComponent<Ecs::Position>()->getPosition().first < 1000)
+                getEntityById(id)->getComponent<Ecs::Position>()->set_pox_x(getEntityById(id)->getComponent<Ecs::Position>()->getPosition().first + getEntityById(id)->getComponent<Ecs::Speed>()->getSpeed());
+        }
+        //Shoot
+        if (input == 5) {
+            createMissile(id);
+        }
+    }
+
     std::shared_ptr<Entity> EntityManager::createMonster(int entitySize, int hp, int dmg, int pos_x, int pos_y) noexcept
     {
         int id = 0;

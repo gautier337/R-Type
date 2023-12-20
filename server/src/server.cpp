@@ -42,7 +42,7 @@ void Server::start_receive() {
 
 void Server::handle_receive(const std::string& data, const asio::ip::udp::endpoint& endpoint) {
     std::cout << "Received message: " << data << " from " << endpoint << std::endl;
-    std::cout << "handle_receive called from thread: " << std::this_thread::get_id() << std::endl;
+    // std::cout << "handle_receive called from thread: " << std::this_thread::get_id() << std::endl;
 
     bool isNewClient = false;
     int clientId;
@@ -100,8 +100,6 @@ void Server::handle_send(const std::string& message, const asio::ip::udp::endpoi
         [this, message_data](const asio::error_code& error, std::size_t /*bytes_sent*/) {
             if (error) {
                 std::cerr << "Send error: " << error.message() << std::endl;
-            } else {
-                std::cout << "Sent message: " << *message_data << std::endl;
             }
         }
     );

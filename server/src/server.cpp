@@ -18,7 +18,6 @@ Server::Server(asio::io_context& io_context, int port)
     : socket_(io_context, asio::ip::udp::endpoint(asio::ip::udp::v4(), port)),
         tick_timer_(io_context, std::chrono::milliseconds(16)) {
     start_receive();
-    manager.createPlayer();
     handle_tick({});
 }
 
@@ -52,7 +51,13 @@ void Server::handle_receive(const std::string& data, const asio::ip::udp::endpoi
         if (client_ids_.find(endpoint) == client_ids_.end() || data == "START") {
             clientId = client_id_counter_++;
             number_of_player_connected_++;
-            client_ids_[endpoint] = clientId;
+            int id_client = manager.createPlayer();
+            if (id_client == 0) {
+                std::string welcomeMessage = "The room is full !";
+                handle_send(welcomeMessage, endpoint);
+                return;
+            }
+            client_ids_[endpoint] = id_client;
             isNewClient = true;
             std::cout << "New client added with ID: " << clientId << std::endl;
         } else {
@@ -98,7 +103,6 @@ void Server::handle_tick(const asio::error_code& error)
 {
     if (!error) {
         tick++;
-        std::cout << "Tick: " << tick << std::endl;
         manager.updateMissiles();
         manager.checkEntitiesState();
         manager.generateMonsters();

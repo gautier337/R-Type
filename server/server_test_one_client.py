@@ -27,8 +27,8 @@ def client_routine(server_address, server_port, client_id):
         print(f"Client {client_id}: Reçu ID '{server_client_id}' du serveur")
         
         # Envoi de la commande 'QUIT' au serveur
-        send_message_to_server(sock, server_address, server_port, 'QUIT')
-        print(f"Client {client_id}: Envoi de la commande 'QUIT'")
+        # send_message_to_server(sock, server_address, server_port, 'QUIT')
+        # print(f"Client {client_id}: Envoi de la commande 'QUIT'")
 
 if __name__ == "__main__":
     server_address = '127.0.0.1'

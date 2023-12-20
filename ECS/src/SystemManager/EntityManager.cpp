@@ -12,6 +12,7 @@
 #include "../../include/components/Speed.hpp"
 #include "../../include/components/HitBox.hpp"
 #include "../../include/components/Constants.hpp"
+#include <random>
 
 
 namespace Ecs {
@@ -22,6 +23,10 @@ namespace Ecs {
 
     unsigned int EntityManager::createPlayer() noexcept
     {
+        std::random_device rd;
+        std::mt19937 gen(rd());
+        std::uniform_int_distribution<> distrib(0, 100);
+
         int id = 0;
         for (unsigned int i = 1; i < 5; i++)
         {
@@ -34,7 +39,7 @@ namespace Ecs {
         auto player = std::make_shared<Entity>(id);
         auto health = std::make_shared<Health>(5);
         auto damages = std::make_shared<Damages>(3);
-        auto position = std::make_shared<Position>(0, 0);
+        auto position = std::make_shared<Position>(distrib(gen), distrib(gen));
         auto hitbox = std::make_shared<Hitbox>(3, 3);
         auto speed = std::make_shared<Speed>(3);
         player->addComponent(health);

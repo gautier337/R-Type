@@ -111,7 +111,9 @@ void Server::handle_tick(const asio::error_code& error)
 
         for (auto& entity : manager.getEntsByComp<Ecs::Position>()) {
             std::cout << "Entity " << entity->getEntityId() << " position: (" << entity->getComponent<Ecs::Position>()->getPosition().first << ", " << entity->getComponent<Ecs::Position>()->getPosition().second << ")" << std::endl;
-            std::cout << "Entity " << entity->getEntityId() << " HP: " << entity->getComponent<Ecs::Health>()->getHp() << std::endl;
+            //check if entity has health component
+            if (entity->hasComponent<Ecs::Health>())
+                std::cout << "Entity " << entity->getEntityId() << " HP: " << entity->getComponent<Ecs::Health>()->getHp() << std::endl;
         }
 
         tick_timer_.expires_at(tick_timer_.expiry() + std::chrono::milliseconds(16));

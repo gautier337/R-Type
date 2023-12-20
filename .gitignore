@@ -4,3 +4,5 @@ notes
 build
 a.out
 .vscode
+.DS_Store
+*.o

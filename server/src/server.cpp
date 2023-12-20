@@ -49,7 +49,6 @@ void Server::handle_receive(const std::string& data, const asio::ip::udp::endpoi
     {
         std::lock_guard<std::mutex> lock(clients_mutex_);
         if (client_ids_.find(endpoint) == client_ids_.end() || data == "START") {
-            clientId = client_id_counter_++;
             number_of_player_connected_++;
             int id_client = manager.createPlayer();
             if (id_client == 0) {
@@ -77,6 +76,16 @@ void Server::handle_receive(const std::string& data, const asio::ip::udp::endpoi
         handle_send("Goodbye", endpoint);
         number_of_player_connected_--;
         std::cout << "Client " << clientId << " disconnected, clients left: " << number_of_player_connected_ << std::endl;
+    } else if (data == "LEFT") {
+        manager.handlePlayerInput(clientId, 3);
+    } else if (data == "RIGHT") {
+        manager.handlePlayerInput(clientId, 4);
+    } else if (data == "UP") {
+        manager.handlePlayerInput(clientId, 1);
+    } else if (data == "DOWN") {
+        manager.handlePlayerInput(clientId, 2);
+    } else if (data == "SHOOT") {
+        manager.handlePlayerInput(clientId, 5);
     } else {
         handle_send("Received message: " + data, endpoint);   
     }
@@ -85,7 +94,6 @@ void Server::handle_receive(const std::string& data, const asio::ip::udp::endpoi
 void Server::handle_send(const std::string& message, const asio::ip::udp::endpoint& endpoint)
 {
     auto message_data = std::make_shared<std::string>(message);
-    std::cout << "handle_send called from thread: " << std::this_thread::get_id() << std::endl;
 
     socket_.async_send_to(
         asio::buffer(*message_data), endpoint,
@@ -109,11 +117,22 @@ void Server::handle_tick(const asio::error_code& error)
         manager.updateMonsters();
         hitbox.launch(manager.getEntsByComps<Ecs::Hitbox, Ecs::Position, Ecs::Damages, Ecs::Health>());
 
+        std::stringstream ss;
         for (auto& entity : manager.getEntsByComp<Ecs::Position>()) {
-            std::cout << "Entity " << entity->getEntityId() << " position: (" << entity->getComponent<Ecs::Position>()->getPosition().first << ", " << entity->getComponent<Ecs::Position>()->getPosition().second << ")" << std::endl;
-            //check if entity has health component
-            if (entity->hasComponent<Ecs::Health>())
-                std::cout << "Entity " << entity->getEntityId() << " HP: " << entity->getComponent<Ecs::Health>()->getHp() << std::endl;
+            ss << "Entity " << entity->getEntityId() << " position: ("
+               << entity->getComponent<Ecs::Position>()->getPosition().first << ", "
+               << entity->getComponent<Ecs::Position>()->getPosition().second << ")";
+            
+            if (entity->hasComponent<Ecs::Health>()) {
+                ss << " HP: " << entity->getComponent<Ecs::Health>()->getHp();
+            }
+            ss << "\n";
+        }
+
+        std::string message = ss.str();
+        std::lock_guard<std::mutex> lock(clients_mutex_);
+        for (auto& client : client_ids_) {
+            handle_send(message, client.first);
         }
 
         tick_timer_.expires_at(tick_timer_.expiry() + std::chrono::milliseconds(16));

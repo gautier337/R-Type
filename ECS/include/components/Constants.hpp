@@ -21,6 +21,7 @@ namespace Constants
 		DAMAGES,
 		SPEEDSHOOT,
 		SPEED,
+		SHOOTCD,
 		WEAPON,
 		AI
 	};

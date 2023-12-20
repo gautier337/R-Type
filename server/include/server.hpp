@@ -6,6 +6,13 @@
 #include <mutex>
 #include <functional>
 #include <asio.hpp>
+#include "../../ECS/include/SystemManager/Entity.hpp"
+#include "../../ECS/include/SystemManager/EntityManager.hpp"
+#include "../../ECS/include/SystemManager/HitboxSystem.hpp"
+#include "../../ECS/include/components/Health.hpp"
+#include "../../ECS/include/components/Position.hpp"
+#include "../../ECS/include/components/Damages.hpp"
+#include "../../ECS/include/components/HitBox.hpp"
 
 namespace std
 {
@@ -20,6 +27,8 @@ namespace std
 class Server {
     public:
         Server(asio::io_context& io_context, int port);
+        Ecs::EntityManager manager;
+        Ecs::HitboxSystem hitbox;
 
     private:
         void start_receive();

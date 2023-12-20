@@ -3,11 +3,22 @@
 #include <memory>
 #include <vector>
 #include <thread>
+#include "../../ECS/include/SystemManager/Entity.hpp"
+#include "../../ECS/include/SystemManager/EntityManager.hpp"
+#include "../../ECS/include/SystemManager/HitboxSystem.hpp"
+#include "../../ECS/include/components/Health.hpp"
+#include "../../ECS/include/components/Position.hpp"
+#include "../../ECS/include/components/Damages.hpp"
+#include "../../ECS/include/components/HitBox.hpp"
+#include <iostream>
+#include <chrono>
+#include <thread>
 
 Server::Server(asio::io_context& io_context, int port)
     : socket_(io_context, asio::ip::udp::endpoint(asio::ip::udp::v4(), port)),
-      tick_timer_(io_context, std::chrono::seconds(3)) {
+        tick_timer_(io_context, std::chrono::milliseconds(16)) {
     start_receive();
+    manager.createPlayer();
     handle_tick({});
 }
 
@@ -87,9 +98,19 @@ void Server::handle_tick(const asio::error_code& error)
 {
     if (!error) {
         tick++;
-        // std::cout << "Tick: " << tick << std::endl;
+        std::cout << "Tick: " << tick << std::endl;
+        manager.updateMissiles();
+        manager.checkEntitiesState();
+        manager.generateMonsters();
+        manager.updateMonsters();
+        hitbox.launch(manager.getEntsByComps<Ecs::Hitbox, Ecs::Position, Ecs::Damages, Ecs::Health>());
 
-        tick_timer_.expires_at(tick_timer_.expiry() + std::chrono::seconds(1));
+        for (auto& entity : manager.getEntsByComp<Ecs::Position>()) {
+            std::cout << "Entity " << entity->getEntityId() << " position: (" << entity->getComponent<Ecs::Position>()->getPosition().first << ", " << entity->getComponent<Ecs::Position>()->getPosition().second << ")" << std::endl;
+            std::cout << "Entity " << entity->getEntityId() << " HP: " << entity->getComponent<Ecs::Health>()->getHp() << std::endl;
+        }
+
+        tick_timer_.expires_at(tick_timer_.expiry() + std::chrono::milliseconds(16));
         tick_timer_.async_wait(std::bind(&Server::handle_tick, this, std::placeholders::_1));
     } else {
         std::cerr << "Tick timer error: " << error.message() << std::endl;

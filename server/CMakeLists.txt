@@ -12,8 +12,19 @@ include_directories(/usr/include)
 # Add definitions
 add_definitions(-DASIO_STANDALONE)
 
-# Add executable target
-add_executable(RTypeServer src/main.cpp src/server.cpp)
+# Add executable target with new source files
+add_executable(RTypeServer 
+    src/main.cpp 
+    src/server.cpp
+    ../ECS/src/SystemManager/Entity.cpp
+    ../ECS/src/components/Health.cpp
+    ../ECS/src/components/Damages.cpp
+    ../ECS/src/SystemManager/EntityManager.cpp
+    ../ECS/src/components/Position.cpp
+    ../ECS/src/components/Speed.cpp
+    ../ECS/src/components/HitBox.cpp
+    ../ECS/src/SystemManager/HitboxSystem.cpp
+)
 
 # Link necessary libraries (Threads library for Asio)
 find_package(Threads REQUIRED)

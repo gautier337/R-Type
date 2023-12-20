@@ -50,13 +50,13 @@ void Server::handle_receive(const std::string& data, const asio::ip::udp::endpoi
         std::lock_guard<std::mutex> lock(clients_mutex_);
         if (client_ids_.find(endpoint) == client_ids_.end() || data == "START") {
             number_of_player_connected_++;
-            int id_client = manager.createPlayer();
-            if (id_client == 0) {
+            int clientId = manager.createPlayer();
+            if (clientId == 0) {
                 std::string welcomeMessage = "The room is full !";
                 handle_send(welcomeMessage, endpoint);
                 return;
             }
-            client_ids_[endpoint] = id_client;
+            client_ids_[endpoint] = clientId;
             isNewClient = true;
             std::cout << "New client added with ID: " << clientId << std::endl;
         } else {

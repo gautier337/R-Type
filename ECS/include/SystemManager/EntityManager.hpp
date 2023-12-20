@@ -30,6 +30,8 @@ namespace Ecs {
 		std::shared_ptr<Entity> createMissile(int entityID) noexcept;
 		void updateMissiles();
 		void checkEntitiesState();
+		void generateMonsters();
+		void updateMonsters();
 		bool isIdTaken(unsigned int id) const noexcept;
 		unsigned int addEntity(Entity &entity) noexcept;
 		std::shared_ptr<Entity> getEntityById(unsigned int id);

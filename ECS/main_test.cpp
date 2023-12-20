@@ -68,6 +68,8 @@ int main () {
 
         manager.updateMissiles();
         manager.checkEntitiesState();
+        manager.generateMonsters();
+        manager.updateMonsters();
         hitbox.launch(manager.getEntsByComps<Ecs::Hitbox, Ecs::Position, Ecs::Damages, Ecs::Health>());
         //print monster hitbox
         //std::cout << "Monster hitbox: (" << monster->getComponent<Ecs::Hitbox>()->getHitBoxSize().first << ", " << monster->getComponent<Ecs::Hitbox>()->getHitBoxSize().second << ")" << std::endl;

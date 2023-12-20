@@ -134,6 +134,16 @@ namespace Ecs {
         }
     }
 
+    void EntityManager::generateMonsters()
+    {
+        return;
+    }
+
+    void EntityManager::updateMonsters()
+    {
+        return;
+    }
+
     bool EntityManager::isIdTaken(unsigned int id) const noexcept
     {
         for (const auto &entity : _entityList)

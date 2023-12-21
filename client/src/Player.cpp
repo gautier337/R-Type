@@ -7,7 +7,7 @@
 
 #include "../include/Player.hpp"
 
-Player::Player(float x, float y, float speed) : speed(speed), velocity(0, 0) {
+Player::Player(float x, float y, float initSpeed) : speed(initSpeed), velocity(0, 0) {
     shape.setSize(sf::Vector2f(30, 30));
     shape.setPosition(x, y);
     shape.setFillColor(sf::Color::White);

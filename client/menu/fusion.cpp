@@ -7,8 +7,20 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 #include <cstring>
+#include <thread>
 
 class Client {
+
+    void listenToServer() {
+        while (listening) {
+            socklen_t addrlen = sizeof(server_addr);
+            ssize_t recvd = recvfrom(sock, buffer, buffer_size, 0, (struct sockaddr *)&server_addr, &addrlen);
+            if (recvd > 0) {
+                std::cout << "Message reçu du serveur: " << buffer << std::endl;
+            }
+        }
+    }
+
     public:
         Client(const char* server_address, int server_port) {
             sock = socket(AF_INET, SOCK_DGRAM, 0);
@@ -21,17 +33,19 @@ class Client {
             if (inet_pton(AF_INET, server_address, &server_addr.sin_addr) <= 0) { 
                 throw std::runtime_error("Erreur inet_pton");
             }
+            listenThread = std::thread(&Client::listenToServer, this);
         }
 
         ~Client() {
+            close(sock);
+            if (listenThread.joinable()) {
+                listenThread.join();
+            }
             close(sock);
         }
 
         void send_message_to_server(const char* message) {
             sendto(sock, message, strlen(message), 0, (const struct sockaddr *)&server_addr, sizeof(server_addr));
-            socklen_t addrlen = sizeof(server_addr);
-            recvfrom(sock, buffer, buffer_size, 0, (struct sockaddr *)&server_addr, &addrlen);
-            std::cout << "Message reçu du serveur: " << buffer << std::endl;
         }
 
     private:
@@ -39,6 +53,8 @@ class Client {
         sockaddr_in server_addr;
         static const size_t buffer_size = 4096;
         char buffer[buffer_size];
+        std::thread listenThread;
+        bool listening;
 };
 
 class Menu {

@@ -14,7 +14,6 @@ public:
     Player(float x, float y, float speed);
     void update();
     void draw(sf::RenderWindow &window);
-
     void setVelocityX(float x);
     void setVelocityY(float y);
     void resetVelocity();

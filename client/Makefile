@@ -5,12 +5,7 @@
 ## Makefile
 ##
 
-SRC			=	src/Client.cpp	\
-				src/Player.cpp
-
-MENU 		= 	menu/fusion.cpp 			\
-
-PROTOCOLE 	= 	menu/protocol.cpp 	\
+SRC 		= 	src/Menu.cpp 			\
 
 OBJ = $(SRC:.cpp=.o)
 OBJ += $(COMMON_SRC:.cpp=.o)
@@ -26,13 +21,7 @@ LDFLAGS = -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio
 all:			$(NAME)
 
 $(NAME):		$(OBJ)
-				g++ -o $(NAME) src/Main.cpp $^ $(CPPFLAGS) $(CXXFLAGS) $(LDFLAGS)
-
-menu:			$(NAME)
-				g++ -o $(NAME) $(MENU) $(CPPFLAGS) $(CXXFLAGS) $(LDFLAGS)
-
-protocol:		$(NAME)
-				g++ -o $(NAME) $(PROTOCOLE) $(CPPFLAGS) $(CXXFLAGS) $(LDFLAGS)
+				g++ -o $(NAME) $(SRC) $(CPPFLAGS) $(CXXFLAGS) $(LDFLAGS)
 
 clean:
 				@find . -type f | xargs touch

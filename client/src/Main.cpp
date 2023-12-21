@@ -5,7 +5,7 @@
 ** main
 */
 
-#include "../include/Client.hpp"
+// #include "../include/Client.hpp"
 
 ////////////////////////////////////////////////////////////
 //
@@ -14,12 +14,12 @@
 // @param argc the number of argument
 // @param argv the content of argument
 ////////////////////////////////////////////////////////////
-int main()
-{
-    // if (argc != 3)
-    //     return 84;
+// int main()
+// {
+//     // if (argc != 3)
+//     //     return 84;
 
-    Client client = Client();
-    client.run();
-    return int(client.getStatus());
-}
+//     Client client = Client();
+//     client.run();
+//     return int(client.getStatus());
+// }

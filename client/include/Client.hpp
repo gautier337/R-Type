@@ -43,6 +43,7 @@ class Client {
         sf::RenderWindow m_window;
         Game m_game;
         Menu m_menu;
+        TextureManager m_texture;
 };
 
 #endif /* !CLIENT_HPP_ */

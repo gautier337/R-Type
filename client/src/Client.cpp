@@ -7,7 +7,7 @@
 
 #include "../include/Client.hpp"
 
-Client::Client() : m_window(sf::VideoMode(800, 600), "RTYPE CLIENT")
+Client::Client() : m_window(sf::VideoMode(1920, 1080), "RTYPE CLIENT")
 {
 }
 
@@ -25,12 +25,12 @@ void Client::init()
     setStatus(ClientStep::InitiationState);
     m_game = Game();
     m_menu = Menu();
+    m_texture = TextureManager();
 
-    TextureManager texture = TextureManager();
+    m_texture.loadTexture("menu", "../assets/background.png");
+    m_menu.m_background.setTexture(m_texture.getTexture("menu"));
+    m_menu.m_background.setScale(sf::Vector2f(0.8, 0.8));
 
-    texture.loadTexture("menu", "../assets/background.png");
-    m_menu.m_background.setTexture(texture.getTexture("menu"));
-    m_menu.m_background.setPosition(0, 0);
 }
 
 void Client::run()
@@ -41,6 +41,8 @@ void Client::run()
     while (m_window.isOpen()) {
         sf::Event event;
         while (m_window.pollEvent(event)) {
+            m_window.clear();
+
             if (m_currentScene == ClientScene::MENU) {
                 m_window.draw(m_menu.m_background);
             } else {
@@ -52,7 +54,10 @@ void Client::run()
                 m_window.close();
             else if (event.type == sf::Event::KeyPressed)
                 handleInput(event.key.code);
+
+            m_window.display();
         }
+
     }
 }
 

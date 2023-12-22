@@ -6,6 +6,8 @@
 */
 
 #include "../include/Client.hpp"
+#include <iostream>
+#include <string>
 
 ////////////////////////////////////////////////////////////
 //
@@ -16,10 +18,9 @@
 ////////////////////////////////////////////////////////////
 int main()
 {
-    // if (argc != 3)
-    //     return 84;
+    Client client = Client("127.0.0.1", 8000);
+    std::cout << "Client class initiated" << std::endl;
 
-    Client client = Client();
     client.init();
     client.run();
     return int(client.getStatus());

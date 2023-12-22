@@ -7,10 +7,7 @@
 
 SRC			=	src/Client.cpp	\
 				src/Game.cpp	\
-
-MENU 		= 	menu/fusion.cpp 			\
-
-PROTOCOLE 	= 	menu/protocol.cpp 	\
+				src/Protocole.cpp
 
 OBJ = $(SRC:.cpp=.o)
 OBJ += $(COMMON_SRC:.cpp=.o)
@@ -26,13 +23,7 @@ LDFLAGS = -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio
 all:			$(NAME)
 
 $(NAME):		$(OBJ)
-				g++ -o $(NAME) src/Main.cpp $^ $(CPPFLAGS) $(CXXFLAGS) $(LDFLAGS)
-
-menu:			$(NAME)
-				g++ -o $(NAME) $(MENU) $(CPPFLAGS) $(CXXFLAGS) $(LDFLAGS)
-
-protocol:		$(NAME)
-				g++ -o $(NAME) $(PROTOCOLE) $(CPPFLAGS) $(CXXFLAGS) $(LDFLAGS)
+				g++ -o $(NAME) $(SRC) $(CPPFLAGS) $(CXXFLAGS) $(LDFLAGS)
 
 clean:
 				@find . -type f | xargs touch

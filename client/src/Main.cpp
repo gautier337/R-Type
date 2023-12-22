@@ -5,21 +5,23 @@
 ** main
 */
 
-// #include "../include/Client.hpp"
+#include "../include/Client.hpp"
+#include <iostream>
+#include <string>
 
 ////////////////////////////////////////////////////////////
 //
-// Gets the file and store it in the m_content vector
+// Create an instance of client class then init / run it
 //
 // @param argc the number of argument
 // @param argv the content of argument
 ////////////////////////////////////////////////////////////
-// int main()
-// {
-//     // if (argc != 3)
-//     //     return 84;
+int main()
+{
+    Client client = Client("127.0.0.1", 8000);
+    std::cout << "Client class initiated" << std::endl;
 
-//     Client client = Client();
-//     client.run();
-//     return int(client.getStatus());
-// }
+    client.init();
+    client.run();
+    return int(client.getStatus());
+}

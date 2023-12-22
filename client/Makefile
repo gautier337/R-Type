@@ -5,7 +5,9 @@
 ## Makefile
 ##
 
-SRC 		= 	src/Menu.cpp 			\
+SRC			=	src/Client.cpp	\
+				src/Game.cpp	\
+				src/Protocole.cpp
 
 OBJ = $(SRC:.cpp=.o)
 OBJ += $(COMMON_SRC:.cpp=.o)

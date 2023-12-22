@@ -11,28 +11,38 @@
 #pragma once
 
 #include <SFML/Graphics.hpp>
-#include "Player.hpp"
+#include "Game.hpp"
+#include "Menu.hpp"
 
-enum class ConnectionStep {
-    WaitingForServer,
-    ConnectedToServer,
+enum class ClientStep {
+    InitiationState,
+    RunState,
     GameRunning,
     ConnectionEnded,
+};
+
+enum class ClientScene {
+    MENU,
+    GAME,
 };
 
 class Client {
     public:
         Client();
         ~Client();
-        ConnectionStep getStatus() const { return m_status;};
+        ClientStep getStatus() const { return m_status;};
         void handleInput(sf::Keyboard::Key key);
-        void setStatus(ConnectionStep newStatus) { m_status = newStatus; }
+        void setStatus(ClientStep newStatus) { m_status = newStatus; }
+        void setScene(ClientScene newScene) {m_currentScene = newScene; }
         void run();
+        void init();
 
     private:
-        ConnectionStep m_status;
+        ClientStep m_status;
+        ClientScene m_currentScene;
         sf::RenderWindow m_window;
-        Player m_player;
+        Game m_game;
+        Menu m_menu;
 };
 
 #endif /* !CLIENT_HPP_ */

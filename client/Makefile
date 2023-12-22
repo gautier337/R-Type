@@ -6,7 +6,7 @@
 ##
 
 SRC			=	src/Client.cpp	\
-				src/Player.cpp
+				src/Game.cpp	\
 
 MENU 		= 	menu/fusion.cpp 			\
 

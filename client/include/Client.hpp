@@ -50,18 +50,23 @@ class Client {
 
 
     private:
+        sf::RenderWindow m_window;
         ClientStep m_status;
         ClientScene m_currentScene;
-        sf::RenderWindow m_window;
+
         Game m_game;
         Menu m_menu;
         TextureManager m_texture;
-        int sock;
-        sockaddr_in server_addr;
-        static const size_t buffer_size = 4096;
-        char buffer[buffer_size];
-        std::thread listenThread;
-        bool listening = true;
+
+        int m_sock;
+        sockaddr_in m_server_addr;
+
+        static const size_t m_buffer_size = 4096;
+        char m_buffer[m_buffer_size];
+        std::thread m_listenThread;
+        bool m_listening = true;
+
+        int m_server_client_id;
 };
 
 #endif //CLIENT_HPP

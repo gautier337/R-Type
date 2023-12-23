@@ -5,7 +5,7 @@ set(CMAKE_CXX_STANDARD 17)
 
 # Add your source files here
 set(SOURCES
-    ECS/src/components/Shoot.cpp
+    # ECS/src/components/Shoot.cpp
     ECS/SystemManager/Entity.cpp
     ECS/SystemManager/EntityManager.cpp
     ECS/SystemManager/HitboxSystem.cpp

@@ -17,8 +17,6 @@ Game::~Game()
 
 void Game::run()
 {
-    // std::cout << "Le jeu se lance" << std::endl;
-
 }
 void Game::LoadAllTexture()
 {

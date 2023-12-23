@@ -38,7 +38,8 @@ void Client::listenToServer()
         socklen_t addrlen = sizeof(m_server_addr);
         ssize_t recvd = recvfrom(m_sock, m_buffer, m_buffer_size, 0, (struct sockaddr *)&m_server_addr, &addrlen);
         if (recvd > 0) {
-            std::cout << "Message reçu du serveur: " << m_buffer << std::endl;
+            std::cout << "";
+            // std::cout << "Message reçu du serveur: " << m_buffer << std::endl;
         }
     }
 }
@@ -80,40 +81,75 @@ void Client::init()
     m_menu.m_background.setTexture(m_texture.getTexture("menu"));
     m_menu.m_background.setScale(sf::Vector2f(0.8, 0.8));
 
+    // Le player
+    m_texture.loadTexture("player", "../assets/player.gif");
+    SpriteObject ship(m_texture.getTexture("player"), sf::Vector2i(33, 17), 5, 10);
+    ship.setPosition(100, 100);
+    ship.sprite.setScale(sf::Vector2f(2, 2));
+    ship.sprite.setTextureRect(sf::IntRect(0, 0, 33, 17));
+    m_game.m_object.push_back(ship);
+    // Sbire chelou
+    m_texture.loadTexture("basic_sbire", "../assets/basic_sbire.gif");
+    SpriteObject basic_sbire(m_texture.getTexture("basic_sbire"), sf::Vector2i(65, 50), 3, 8);
+    basic_sbire.setPosition(800, 300);
+    basic_sbire.sprite.setScale(sf::Vector2f(2, 2));
+    basic_sbire.sprite.setTextureRect(sf::IntRect(0, 0, 65, 50));
+    m_game.m_object.push_back(basic_sbire);
+    // Sbire normal
+    m_texture.loadTexture("sbire", "../assets/sbire.gif");
+    SpriteObject sbire(m_texture.getTexture("sbire"), sf::Vector2i(33, 34), 3, 15);
+    sbire.setPosition(900, 700);
+    sbire.sprite.setScale(sf::Vector2f(2, 2));
+    sbire.sprite.setTextureRect(sf::IntRect(0, 0, 33, 34));
+    m_game.m_object.push_back(sbire);
+    // Missile
+    m_texture.loadTexture("missile", "../assets/missile.gif");
+    SpriteObject missile(m_texture.getTexture("missile"), sf::Vector2i(17, 18), 12, 4);
+    missile.setPosition(200, 600);
+    // missile.sprite.setScale(sf::Vector2f(2, 2));
+    missile.sprite.setTextureRect(sf::IntRect(0, 0, 17, 18));
+    m_game.m_object.push_back(missile);
 }
 
-void Client::run()
-{
+void Client::run() {
     setStatus(ClientStep::RunState);
     setScene(ClientScene::MENU);
 
+    sf::Clock clock;
+
     while (m_window.isOpen()) {
+        sf::Time deltaTime = clock.restart();
+
+        // Gestion des événements
         sf::Event event;
         while (m_window.pollEvent(event)) {
-            m_window.clear();
-
-            if (m_currentScene == ClientScene::MENU) {
-                m_window.draw(m_menu.m_background);
-            } else {
-                if (getStatus() != ClientStep::GameRunning) {
-                    if ((m_server_client_id = parse_client_id(m_buffer)) > 0)
-                        setStatus(ClientStep::GameRunning);
-                    std::cout << "Reçu ID '" << m_server_client_id << "' du serveur" << std::endl;
-                } else {
-                    m_game.run();
-                    std::cout << "Reçu '" << m_buffer << "' du serveur" << std::endl;
-                }
-            }
-
             if (event.type == sf::Event::Closed)
                 m_window.close();
             else if (event.type == sf::Event::KeyPressed)
                 handleInput(event.key.code);
-
-            m_window.display();
         }
 
+        // Mise à jour et dessin de la scène
+        m_window.clear();
+        if (m_currentScene == ClientScene::MENU) {
+            m_window.draw(m_menu.m_background);
+        } else {
+            if (getStatus() != ClientStep::GameRunning) {
+                if ((m_server_client_id = parse_client_id(m_buffer)) > 0) {
+                    setStatus(ClientStep::GameRunning);
+                }
+                std::cout << "Reçu ID '" << m_server_client_id << "' du serveur" << std::endl;
+            } else {
+                // Mettre à jour et dessiner chaque SpriteObject
+                for (auto& element: m_game.m_object) {
+                    element.update(deltaTime);
+                    element.draw(m_window);
+                }
+            }
+        }
+        m_window.display();
     }
+
     send_message_to_server("QUIT");
     std::cout << "Envoi de la commande 'QUIT'" << std::endl;
     close(m_sock);

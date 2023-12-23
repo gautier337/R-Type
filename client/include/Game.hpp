@@ -20,9 +20,9 @@ class Game {
         ~Game();
         void run();
         void LoadAllTexture();
+        std::vector<SpriteObject> m_object;
 
     private:
-        std::vector<SpriteObject> m_object;
         TextureManager m_textureManager;
 };
 

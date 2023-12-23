@@ -9,6 +9,7 @@
 #define SPRITEOBJECT_HPP_
 
 #include <SFML/Graphics.hpp>
+#include <iostream>
 
 class SpriteObject {
     public:
@@ -21,10 +22,13 @@ class SpriteObject {
 
         void update(sf::Time deltaTime) {
             elapsedTime += deltaTime.asMilliseconds();
+            std::cout << "Temps écoulé: " << elapsedTime << std::endl; // Message de débogage
+
             if (elapsedTime >= frameDelay) {
                 elapsedTime = 0;
                 currentFrame = (currentFrame + 1) % frameCount;
                 updateFrame();
+                std::cout << "Frame actuelle: " << currentFrame << std::endl; // Message de débogage
             }
         }
 
@@ -39,14 +43,15 @@ class SpriteObject {
         void setTexture(const sf::Texture& texture) {
             sprite.setTexture(texture);
         }
+        sf::Sprite sprite;
 
     protected:
-        sf::Sprite sprite;
         sf::Vector2i frameSize;
         int frameCount;
         int frameDelay;
         int currentFrame;
         int elapsedTime;
+        bool m_toShow = true;
 
         void updateFrame() {
             int frameX = frameSize.x * (currentFrame % frameCount);

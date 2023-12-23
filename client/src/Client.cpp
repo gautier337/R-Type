@@ -7,12 +7,45 @@
 
 #include "../include/Client.hpp"
 
-Client::Client() : m_window(sf::VideoMode(1920, 1080), "RTYPE CLIENT")
+Client::Client(const char *server_address, int server_port): m_window(sf::VideoMode(1920, 1080), "RTYPE CLIENT")
 {
+    std::cout << "Client created" << std::endl;
+    sock = socket(AF_INET, SOCK_DGRAM, 0);
+    if (sock < 0) {
+        throw std::runtime_error("Erreur lors de la création du socket");
+    }
+
+    server_addr.sin_family = AF_INET;
+    server_addr.sin_port = htons(server_port);
+    if (inet_pton(AF_INET, server_address, &server_addr.sin_addr) <= 0) {
+        throw std::runtime_error("Erreur inet_pton");
+    }
+    listenThread = std::thread(&Client::listenToServer, this);
 }
 
 Client::~Client()
 {
+    close(sock);
+    if (listenThread.joinable()) {
+        listenThread.join();
+    }
+    close(sock);
+}
+
+void Client::listenToServer()
+{
+    while (listening) {
+        socklen_t addrlen = sizeof(server_addr);
+        ssize_t recvd = recvfrom(sock, buffer, buffer_size, 0, (struct sockaddr *)&server_addr, &addrlen);
+        if (recvd > 0) {
+            std::cout << "Message reçu du serveur: " << buffer << std::endl;
+        }
+    }
+}
+
+void Client::send_message_to_server(const char* message)
+{
+    sendto(sock, message, strlen(message), 0, (const struct sockaddr *)&server_addr, sizeof(server_addr));
 }
 
 ////////////////////////////////////////////////////////////

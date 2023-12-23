@@ -7,7 +7,7 @@
 
 SRC			=	src/Client.cpp	\
 				src/Game.cpp	\
-				src/Protocole.cpp
+				src/ProtocoleClient.cpp
 
 OBJ = $(SRC:.cpp=.o)
 OBJ += $(COMMON_SRC:.cpp=.o)

@@ -46,8 +46,9 @@ class Client {
         //connection
         void listenToServer();
         void send_message_to_server(const char *message);
-        bool started = false;
 
+        bool started = false;
+        sf::Sprite m_background;
 
     private:
         sf::RenderWindow m_window;

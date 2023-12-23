@@ -22,13 +22,11 @@ class SpriteObject {
 
         void update(sf::Time deltaTime) {
             elapsedTime += deltaTime.asMilliseconds();
-            std::cout << "Temps écoulé: " << elapsedTime << std::endl; // Message de débogage
 
             if (elapsedTime >= frameDelay) {
                 elapsedTime = 0;
                 currentFrame = (currentFrame + 1) % frameCount;
                 updateFrame();
-                std::cout << "Frame actuelle: " << currentFrame << std::endl; // Message de débogage
             }
         }
 

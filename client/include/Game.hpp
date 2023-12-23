@@ -18,12 +18,17 @@ class Game {
     public:
         Game();
         ~Game();
-        void run();
+        void run(sf::RenderWindow& window, std::string buffer, sf::Time deltaTime);
         void LoadAllTexture();
-        std::vector<SpriteObject> m_object;
 
-    private:
+        SpriteObject createPlayer(int posX, int posY);
+        SpriteObject createSbire(int posX, int posY);
+        SpriteObject createBasicSbire(int posX, int posY);
+        SpriteObject createBullet(int posX, int posY);
+
+        std::vector<SpriteObject> m_object;
         TextureManager m_textureManager;
+    private:
 };
 
 #endif /* !GAME_HPP_ */

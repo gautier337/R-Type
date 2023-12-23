@@ -13,8 +13,8 @@
 
 class SpriteObject {
     public:
-        SpriteObject(const sf::Texture& texture, sf::Vector2i frameSize, int frameCount, int frameDelay)
-        : sprite(texture), frameSize(frameSize), frameCount(frameCount), frameDelay(frameDelay), currentFrame(0), elapsedTime(0) {
+        SpriteObject(const sf::Texture& texture, sf::Vector2i frameSize, int frameCount, int frameDelay, int id)
+        : sprite(texture), frameSize(frameSize), m_id(id), frameCount(frameCount), frameDelay(frameDelay), currentFrame(0), elapsedTime(0) {
             updateFrame();
         }
 
@@ -41,10 +41,13 @@ class SpriteObject {
         void setTexture(const sf::Texture& texture) {
             sprite.setTexture(texture);
         }
+        int getId() const { return m_id; }
+
         sf::Sprite sprite;
 
     protected:
         sf::Vector2i frameSize;
+        int m_id;
         int frameCount;
         int frameDelay;
         int currentFrame;

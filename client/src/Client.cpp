@@ -114,7 +114,7 @@ void Client::run() {
                 handleInput(event.key.code);
         }
 
-        // Mise à jour et dessin de la scène
+        // On nettoie puis on redessine
         m_window.clear();
         if (m_currentScene == ClientScene::MENU) {
             m_window.draw(m_menu.m_background);
@@ -127,7 +127,6 @@ void Client::run() {
             } else {
                 m_window.draw(m_background);
                 m_game.run(m_window, m_buffer, deltaTime);
-                // Mettre à jour et dessiner chaque SpriteObject
             }
         }
         m_window.display();

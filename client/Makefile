@@ -16,9 +16,9 @@ NAME		=	client_rtype
 
 CXXFLAGS	+=	-std=c++17
 
-CPPFLAGS	=	-I./include -W -Wall -Wextra -Wshadow -Werror -pedantic
+CPPFLAGS	=	-I./include -W -Wall -Wextra -Werror -pedantic
 
-LDFLAGS = -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio
+LDFLAGS = -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio -pthread
 
 all:			$(NAME)
 

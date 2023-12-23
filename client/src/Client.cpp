@@ -54,7 +54,8 @@ int parse_client_id(const char* response)
         throw std::invalid_argument("No comma found in response");
     } catch (std::exception &e) {
         std::cerr << "Erreur lors du parsing de l'ID: " << e.what() << ", response=" << response << std::endl;
-        exit(1);
+        return -1;
+        // exit(1); // Je mets en commentaire comme ça on exit pas si on a pas l'id on retente juste
     }
 }
 
@@ -94,8 +95,14 @@ void Client::run()
             if (m_currentScene == ClientScene::MENU) {
                 m_window.draw(m_menu.m_background);
             } else {
-                m_game.run();
-                // std::cout << "Scene de jeu" << std::endl;
+                if (getStatus() != ClientStep::GameRunning) {
+                    if ((m_server_client_id = parse_client_id(m_buffer)) > 0)
+                        setStatus(ClientStep::GameRunning);
+                    std::cout << "Reçu ID '" << m_server_client_id << "' du serveur" << std::endl;
+                } else {
+                    m_game.run();
+                    std::cout << "Reçu '" << m_buffer << "' du serveur" << std::endl;
+                }
             }
 
             if (event.type == sf::Event::Closed)
@@ -119,9 +126,6 @@ void Client::handleInput(sf::Keyboard::Key key)
         case sf::Keyboard::Space:
             setScene(ClientScene::GAME);
             send_message_to_server("START");
-            // std::cout << "Reçu '" << m_buffer << "' du serveur" << std::endl;
-            m_server_client_id = parse_client_id(m_buffer);
-            std::cout << "Reçu ID '" << m_server_client_id << "' du serveur" << std::endl;
             break;
         default:
             break;

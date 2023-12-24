@@ -15,7 +15,7 @@ class SpriteObject {
     public:
         SpriteObject(const sf::Texture& texture, sf::Vector2i frameSize, int frameCount, int frameDelay, int id)
         : sprite(texture), frameSize(frameSize), m_id(id), frameCount(frameCount), frameDelay(frameDelay), currentFrame(0), elapsedTime(0) {
-            updateFrame();
+            updateFrame(m_id);
         }
 
         ~SpriteObject() {}  // Destructeur virtuel
@@ -26,7 +26,7 @@ class SpriteObject {
             if (elapsedTime >= frameDelay) {
                 elapsedTime = 0;
                 currentFrame = (currentFrame + 1) % frameCount;
-                updateFrame();
+                updateFrame(m_id);
             }
         }
 
@@ -54,9 +54,15 @@ class SpriteObject {
         int elapsedTime;
         bool m_toShow = true;
 
-        void updateFrame() {
+        void updateFrame(int id) {
             int frameX = frameSize.x * (currentFrame % frameCount);
             int frameY = frameSize.y * (currentFrame / frameCount);
+            if (id == 2)
+                frameY = 17;
+            if (id == 3)
+                frameY = 34;
+            if (id == 4)
+                frameY = 51;
             sprite.setTextureRect(sf::IntRect(frameX, frameY, frameSize.x, frameSize.y));
         }
 };

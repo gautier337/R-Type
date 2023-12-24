@@ -49,8 +49,8 @@ namespace Ecs {
         auto health = std::make_shared<Health>(5);
         auto damages = std::make_shared<Damages>(3);
         auto position = std::make_shared<Position>(pos.first, pos.second);
-        auto hitbox = std::make_shared<Hitbox>(3, 3);
-        auto speed = std::make_shared<Speed>(3);
+        auto hitbox = std::make_shared<Hitbox>(17, 18);
+        auto speed = std::make_shared<Speed>(10);
         player->addComponent(health);
         player->addComponent(damages);
         player->addComponent(position);
@@ -103,7 +103,7 @@ namespace Ecs {
         auto health = std::make_shared<Health>(hp);
         auto damages = std::make_shared<Damages>(dmg);
         auto position = std::make_shared<Position>(pos_x, pos_y);
-        auto hitbox = std::make_shared<Hitbox>(entitySize, entitySize);
+        auto hitbox = std::make_shared<Hitbox>(33, 34);
         auto speed = std::make_shared<Speed>(speedM);
         auto shootCooldown = std::make_shared<ShootCD>();
         monster->addComponent(health);
@@ -132,19 +132,19 @@ namespace Ecs {
         int spawnPos = 0;
 
         if (entityID < 5) {
-            spawnPos = 5;
-            speedToAdd = 1;
+            spawnPos = 25;
+            speedToAdd = 15;
         }
         if (entityID >= 5 && entityID < 101) {
-            spawnPos = -5;
-            speedToAdd = -1;
+            spawnPos = -40;
+            speedToAdd = -15;
         }
 
         auto missile = std::make_shared<Entity>(id);
         auto health = std::make_shared<Health>(1);
         auto damages = std::make_shared<Damages>(getEntityById(entityID)->getComponent<Ecs::Damages>()->getDamage());
         auto position = std::make_shared<Position>(getEntityById(entityID)->getComponent<Ecs::Position>()->getPosition().first + spawnPos, getEntityById(entityID)->getComponent<Ecs::Position>()->getPosition().second);
-        auto hitbox = std::make_shared<Hitbox>(1, 1);
+        auto hitbox = std::make_shared<Hitbox>(17, 18);
         auto speed = std::make_shared<Speed>(speedToAdd);
         missile->addComponent(health);
         missile->addComponent(damages);

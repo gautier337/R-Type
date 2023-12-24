@@ -141,9 +141,24 @@ void Client::handleInput(sf::Keyboard::Key key)
 {
     switch (key) {
         case sf::Keyboard::Escape: exit(0);
-        case sf::Keyboard::Space:
+        case sf::Keyboard::Enter:
             setScene(ClientScene::GAME);
             send_message_to_server("START");
+            break;
+        case sf::Keyboard::Space:
+            send_message_to_server("SHOOT");
+            break;
+        case sf::Keyboard::Left:
+            send_message_to_server("LEFT");
+            break;
+        case sf::Keyboard::Right:
+            send_message_to_server("RIGHT");
+            break;
+        case sf::Keyboard::Up:
+            send_message_to_server("UP");
+            break;
+        case sf::Keyboard::Down:
+            send_message_to_server("DOWN");
             break;
         default:
             break;

@@ -18,13 +18,18 @@ Game::~Game()
 SpriteObject Game::createPlayer(int posX, int posY, int id)
 {
     SpriteObject ship(m_textureManager.getTexture("player"), sf::Vector2i(33, 17), 5, 10, id);
+    int top = (id - 1) * 17; // Calculate the top coordinate based on the ID
+    int left = 0;
 
     ship.setPosition(posX, posY);
     ship.sprite.setScale(sf::Vector2f(2, 2));
-    ship.sprite.setTextureRect(sf::IntRect(0, 0, 33, 17));
+    ship.sprite.setTextureRect(sf::IntRect(top, left, 33, 17));
+    sf::FloatRect bounds = ship.sprite.getLocalBounds();
+    ship.sprite.setOrigin(bounds.width / 2.0f, bounds.height / 2.0f);
 
     return ship;
 }
+
 
 SpriteObject Game::createBullet(int posX, int posY, int id)
 {
@@ -32,6 +37,8 @@ SpriteObject Game::createBullet(int posX, int posY, int id)
     bullet.setPosition(posX, posY);
     // bullet.sprite.setScale(sf::Vector2f(2, 2));
     bullet.sprite.setTextureRect(sf::IntRect(0, 0, 17, 18));
+    sf::FloatRect bounds = bullet.sprite.getLocalBounds();
+    bullet.sprite.setOrigin(bounds.width / 2.0f, bounds.height / 2.0f);
     return bullet;
 }
 
@@ -41,6 +48,8 @@ SpriteObject Game::createSbire(int posX, int posY, int id)
     sbire.setPosition(posX, posY);
     sbire.sprite.setScale(sf::Vector2f(2, 2));
     sbire.sprite.setTextureRect(sf::IntRect(0, 0, 33, 34));
+    sf::FloatRect bounds = sbire.sprite.getLocalBounds();
+    sbire.sprite.setOrigin(bounds.width / 2.0f, bounds.height / 2.0f);
     return sbire;
 }
 

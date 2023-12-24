@@ -5,6 +5,7 @@
 #include <mutex>
 #include <asio.hpp>
 #include "server.hpp"
+#include <fstream>
 
 const int serverPort = 8000;
 
@@ -19,7 +20,19 @@ int main()
         std::vector<std::thread> threads;
         for (int i = 0; i < std::thread::hardware_concurrency(); ++i) {
             threads.emplace_back([&io_context]() {
-                io_context.run();
+                try {
+                    io_context.run();
+                } catch (std::exception& e) {
+                    std::cerr << "Exception: " << e.what() << "\n";
+
+                    std::ofstream logFile("log.txt", std::ios::app);
+                    if (logFile.is_open()) {
+                        logFile << "Exception in thread: " << e.what() << "\n";
+                        logFile.close();
+                    } else {
+                        std::cerr << "Unable to open log file.\n";
+                    }
+                }
             });
         }
 

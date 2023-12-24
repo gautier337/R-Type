@@ -12,7 +12,7 @@
 #include "../../ECS/include/components/HitBox.hpp"
 #include <iostream>
 #include <chrono>
-#include <thread>
+#include <fstream>
 
 Server::Server(asio::io_context& io_context, int port)
     : socket_(io_context, asio::ip::udp::endpoint(asio::ip::udp::v4(), port)),
@@ -107,35 +107,47 @@ void Server::handle_send(const std::string& message, const asio::ip::udp::endpoi
 
 void Server::handle_tick(const asio::error_code& error)
 {
-    if (!error) {
-        tick++;
-        manager.updateMissiles();
-        manager.checkEntitiesState();
-        manager.generateMonsters();
-        manager.updateMonsters();
-        hitbox.launch(manager.getEntsByComps<Ecs::Hitbox, Ecs::Position, Ecs::Damages, Ecs::Health>());
+    try {
+        if (!error) {
+            tick++;
+            manager.updateMissiles();
+            manager.checkEntitiesState();
+            manager.generateMonsters();
+            manager.updateMonsters();
+            hitbox.launch(manager.getEntsByComps<Ecs::Hitbox, Ecs::Position, Ecs::Damages, Ecs::Health>());
 
-        std::stringstream ss;
-        for (auto& entity : manager.getEntsByComp<Ecs::Position>()) {
-            ss << "Entity " << entity->getEntityId() << " position: ("
-               << entity->getComponent<Ecs::Position>()->getPosition().first << ", "
-               << entity->getComponent<Ecs::Position>()->getPosition().second << ")";
-            
-            if (entity->hasComponent<Ecs::Health>()) {
-                ss << " HP: " << entity->getComponent<Ecs::Health>()->getHp();
+            std::stringstream ss;
+            for (auto& entity : manager.getEntsByComp<Ecs::Position>()) {
+                ss << "Entity " << entity->getEntityId() << " position: ("
+                << entity->getComponent<Ecs::Position>()->getPosition().first << ", "
+                << entity->getComponent<Ecs::Position>()->getPosition().second << ")";
+                
+                if (entity->hasComponent<Ecs::Health>()) {
+                    ss << " HP: " << entity->getComponent<Ecs::Health>()->getHp();
+                }
+                ss << "\n";
             }
-            ss << "\n";
-        }
 
-        std::string message = ss.str();
-        std::lock_guard<std::mutex> lock(clients_mutex_);
-        for (auto& client : client_ids_) {
-            handle_send(message, client.first);
-        }
+            std::string message = ss.str();
+            std::lock_guard<std::mutex> lock(clients_mutex_);
+            for (auto& client : client_ids_) {
+                handle_send(message, client.first);
+            }
 
-        tick_timer_.expires_at(tick_timer_.expiry() + std::chrono::milliseconds(16));
-        tick_timer_.async_wait(std::bind(&Server::handle_tick, this, std::placeholders::_1));
-    } else {
-        std::cerr << "Tick timer error: " << error.message() << std::endl;
+            tick_timer_.expires_at(tick_timer_.expiry() + std::chrono::milliseconds(16));
+            tick_timer_.async_wait(std::bind(&Server::handle_tick, this, std::placeholders::_1));
+        } else {
+            std::cerr << "Tick timer error: " << error.message() << std::endl;
+        }
+    } catch (std::exception& e) {
+        std::cerr << "Exception: " << e.what() << "\n";
+
+        std::ofstream logFile("log.txt", std::ios::app);
+        if (logFile.is_open()) {
+            logFile << "Exception in thread: " << e.what() << "\n";
+            logFile.close();
+        } else {
+            std::cerr << "Unable to open log file.\n";
+        }
     }
 }

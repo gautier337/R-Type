@@ -1,0 +1,17 @@
+[requires]
+boost/1.67.0@conan/stable
+sfml/2.5.0@bincrafters/stable
+
+[options]
+boost:shared=True
+sfml/2.5.0@bincrafters/stable:graphics=True
+sfml/2.5.0@bincrafters/stable:window=True
+sfml/2.5.0@bincrafters/stable:audio=True
+sfml/2.5.0@bincrafters/stable:network=True
+# Uncomment the line below if you want to use shared libraries for sfml
+#sfml/2.5.0@bincrafters/stable:shared=True
+
+[generators]
+cmake
+
+[imports]

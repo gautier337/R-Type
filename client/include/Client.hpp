@@ -46,9 +46,7 @@ class Client {
         //connection
         void listenToServer();
         void send_message_to_server(const char *message);
-
-        bool started = false;
-        sf::Sprite m_background;
+        void checkButtonHover(sf::Sprite& button, const sf::Vector2i& mousePos);
 
     private:
         sf::RenderWindow m_window;
@@ -57,7 +55,7 @@ class Client {
 
         Game m_game;
         Menu m_menu;
-        sf::Music m_music;
+        sf::Sprite m_background;
         TextureManager m_texture;
 
         int m_sock;

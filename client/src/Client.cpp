@@ -57,7 +57,6 @@ int parse_client_id(const char* response)
     } catch (std::exception &e) {
         std::cerr << "Erreur lors du parsing de l'ID: " << e.what() << ", response=" << response << std::endl;
         return -1;
-        // exit(1); // Je mets en commentaire comme ça on exit pas si on a pas l'id on retente juste
     }
 }
 
@@ -79,20 +78,35 @@ void Client::init()
     m_texture = TextureManager();
     std::string music_path = "../assets/menu_music.ogg";
 
+    //menu
     m_texture.loadTexture("menu", "../assets/background.png");
+    m_texture.loadTexture("startgame", "../assets/start_game.png");
+    m_texture.loadTexture("exit", "../assets/exit.png");
+    m_texture.loadTexture("options", "../assets/options.png");
     m_menu.m_background.setTexture(m_texture.getTexture("menu"));
+
+    m_menu.m_startGame.setTexture(m_texture.getTexture("startgame"));
+    m_menu.m_startGame.setPosition(630, 295);
+    m_menu.m_startGame.setScale(sf::Vector2f(0.85, 0.85));
+
+    m_menu.m_Options.setTexture(m_texture.getTexture("options"));
+    m_menu.m_Options.setPosition(630, 370);
+    m_menu.m_Options.setScale(sf::Vector2f(0.85, 0.85));
+
+    m_menu.m_Exit.setTexture(m_texture.getTexture("exit"));
+    m_menu.m_Exit.setPosition(630, 445);
+    m_menu.m_Exit.setScale(sf::Vector2f(0.85, 0.85));
+
     m_menu.m_background.setScale(sf::Vector2f(0.8, 0.8));
-    if (!m_music.openFromFile(music_path)) {
-        std::cerr << "Failed to load music from: " << music_path << std::endl;
-        exit(1);
-    } else {
+    if (!m_menu.m_music.openFromFile("../assets/menu_music.ogg")) {
+        std::cerr << "Failed to load menu music" << std::endl;
+        std::exit(1);
+    } else
         std::cout << "Music loaded successfully from: " << music_path << std::endl;
-    }
 
     m_texture.loadTexture("background", "../assets/galaxy.png");
     m_background.setTexture(m_texture.getTexture("background"));
     // m_background.setScale(sf::Vector2f(0.8, 0.8));
-
     // Le player
     m_texture.loadTexture("player", "../assets/player.gif");
     // Sbire chelou
@@ -104,37 +118,74 @@ void Client::init()
     m_game.m_textureManager = m_texture;
 }
 
-void Client::run() {
+void Client::checkButtonHover(sf::Sprite& button, const sf::Vector2i& mousePos)
+{
+    sf::FloatRect bounds = button.getGlobalBounds();
+    float x = bounds.left + bounds.width / 2;
+    float y = bounds.top + bounds.height / 2;
+    if (bounds.contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
+        button.setScale(0.9f, 0.9f);
+        button.setPosition(x - button.getGlobalBounds().width / 2, y - button.getGlobalBounds().height / 2);
+    } else {
+        button.setScale(0.85f, 0.85f);
+        button.setPosition(x - button.getGlobalBounds().width / 2, y - button.getGlobalBounds().height / 2);
+    }
+}
+
+void Client::run()
+{
     if (!m_window.isOpen()) {
         std::cerr << "Window or music not initialized properly." << std::endl;
-        return; // Exit if there's an issue with window or music initialization
+        return;
     }
 
     setStatus(ClientStep::RunState);
-    setScene(ClientScene::MENU); // Ensure the scene is set to MENU at the start
+    setScene(ClientScene::MENU);
     sf::Clock clock;
 
     while (m_window.isOpen()) {
         sf::Time deltaTime = clock.restart();
-
         sf::Event event;
         while (m_window.pollEvent(event)) {
             if (event.type == sf::Event::Closed) {
                 m_window.close();
             } else if (event.type == sf::Event::KeyPressed) {
-                handleInput(event.key.code);  // Make sure this method is correctly changing the scene
+                handleInput(event.key.code);
                 if (event.key.code == sf::Keyboard::Enter) {
-                    setScene(ClientScene::GAME); // Or whatever your game scene is called
+                    setScene(ClientScene::GAME);
+                }
+            } else if (event.type == sf::Event::MouseButtonPressed) {
+                if (event.mouseButton.button == sf::Mouse::Left) {
+                    sf::Vector2i mousePos = sf::Mouse::getPosition(m_window);
+                    sf::FloatRect exitBounds = m_menu.m_Exit.getGlobalBounds();
+                    sf::FloatRect startGameBounds = m_menu.m_startGame.getGlobalBounds();
+
+                    if (exitBounds.contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
+                        m_window.close();
+                        std::exit(0);
+                    }
+                    if (startGameBounds.contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
+                        setScene(ClientScene::GAME);
+                        send_message_to_server("START");
+                    }
                 }
             }
         }
 
+        sf::Vector2i mousePos = sf::Mouse::getPosition(m_window);
+        checkButtonHover(m_menu.m_startGame, mousePos);
+        checkButtonHover(m_menu.m_Exit, mousePos);
+        checkButtonHover(m_menu.m_Options, mousePos);
+
         if (m_window.isOpen()) {
             m_window.clear();
             if (m_currentScene == ClientScene::MENU) {
-                if (m_music.getStatus() != sf::SoundSource::Status::Playing)
-                    m_music.play();
+                if (m_menu.m_music.getStatus() != sf::SoundSource::Status::Playing)
+                    m_menu.m_music.play();
                 m_window.draw(m_menu.m_background);
+                m_window.draw(m_menu.m_startGame);
+                m_window.draw(m_menu.m_Exit);
+                m_window.draw(m_menu.m_Options);
             } else if (m_currentScene == ClientScene::GAME) {
                 m_window.draw(m_background);
                 m_game.run(m_window, m_buffer, deltaTime);
@@ -146,6 +197,7 @@ void Client::run() {
     std::cout << "Sending 'QUIT' command" << std::endl;
     close(m_sock);
 }
+
 
 void Client::handleInput(sf::Keyboard::Key key)
 {

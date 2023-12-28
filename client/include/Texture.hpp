@@ -27,6 +27,7 @@ class TextureManager {
 
     private:
         std::map<std::string, sf::Texture> textures;
+        sf::Texture textureBackground, textureStartGame, textureExit, textureOptions;
 };
 
 #endif /* !TEXTURE_HPP_ */

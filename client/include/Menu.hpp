@@ -10,6 +10,7 @@
 
 #include <vector>
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 #include "Client.hpp"
 
 class Menu {

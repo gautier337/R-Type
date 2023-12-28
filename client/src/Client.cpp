@@ -6,6 +6,7 @@
 */
 
 #include "../include/Client.hpp"
+#include <iostream>
 
 Client::Client(const char *server_address, int server_port): m_window(sf::VideoMode(1920, 1080), "RTYPE CLIENT")
 {
@@ -76,10 +77,17 @@ void Client::init()
     m_game = Game();
     m_menu = Menu();
     m_texture = TextureManager();
+    std::string music_path = "../assets/menu_music.ogg";
 
     m_texture.loadTexture("menu", "../assets/background.png");
     m_menu.m_background.setTexture(m_texture.getTexture("menu"));
     m_menu.m_background.setScale(sf::Vector2f(0.8, 0.8));
+    if (!m_music.openFromFile(music_path)) {
+        std::cerr << "Failed to load music from: " << music_path << std::endl;
+        exit(1);
+    } else {
+        std::cout << "Music loaded successfully from: " << music_path << std::endl;
+    }
 
     m_texture.loadTexture("background", "../assets/galaxy.png");
     m_background.setTexture(m_texture.getTexture("background"));
@@ -97,43 +105,45 @@ void Client::init()
 }
 
 void Client::run() {
-    setStatus(ClientStep::RunState);
-    setScene(ClientScene::MENU);
+    if (!m_window.isOpen()) {
+        std::cerr << "Window or music not initialized properly." << std::endl;
+        return; // Exit if there's an issue with window or music initialization
+    }
 
+    setStatus(ClientStep::RunState);
+    setScene(ClientScene::MENU); // Ensure the scene is set to MENU at the start
     sf::Clock clock;
 
     while (m_window.isOpen()) {
         sf::Time deltaTime = clock.restart();
 
-        // Gestion des événements
         sf::Event event;
         while (m_window.pollEvent(event)) {
-            if (event.type == sf::Event::Closed)
+            if (event.type == sf::Event::Closed) {
                 m_window.close();
-            else if (event.type == sf::Event::KeyPressed)
-                handleInput(event.key.code);
+            } else if (event.type == sf::Event::KeyPressed) {
+                handleInput(event.key.code);  // Make sure this method is correctly changing the scene
+                if (event.key.code == sf::Keyboard::Enter) {
+                    setScene(ClientScene::GAME); // Or whatever your game scene is called
+                }
+            }
         }
 
-        // On nettoie puis on redessine
-        m_window.clear();
-        if (m_currentScene == ClientScene::MENU) {
-            m_window.draw(m_menu.m_background);
-        } else {
-            if (getStatus() != ClientStep::GameRunning) {
-                if ((m_server_client_id = parse_client_id(m_buffer)) > 0) {
-                    setStatus(ClientStep::GameRunning);
-                }
-                std::cout << "Reçu ID '" << m_server_client_id << "' du serveur" << std::endl;
-            } else {
+        if (m_window.isOpen()) {
+            m_window.clear();
+            if (m_currentScene == ClientScene::MENU) {
+                if (m_music.getStatus() != sf::SoundSource::Status::Playing)
+                    m_music.play();
+                m_window.draw(m_menu.m_background);
+            } else if (m_currentScene == ClientScene::GAME) {
                 m_window.draw(m_background);
                 m_game.run(m_window, m_buffer, deltaTime);
             }
+            m_window.display();
         }
-        m_window.display();
     }
-
     send_message_to_server("QUIT");
-    std::cout << "Envoi de la commande 'QUIT'" << std::endl;
+    std::cout << "Sending 'QUIT' command" << std::endl;
     close(m_sock);
 }
 

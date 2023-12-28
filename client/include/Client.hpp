@@ -57,6 +57,7 @@ class Client {
 
         Game m_game;
         Menu m_menu;
+        sf::Music m_music;
         TextureManager m_texture;
 
         int m_sock;
@@ -67,7 +68,7 @@ class Client {
         std::thread m_listenThread;
         bool m_listening = true;
 
-        int m_server_client_id;
+        // int m_server_client_id;
 };
 
 #endif //CLIENT_HPP

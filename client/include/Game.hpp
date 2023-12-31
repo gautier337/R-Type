@@ -6,7 +6,7 @@
 */
 
 #ifndef GAME_HPP_
-#define GAME_HPP_
+    #define GAME_HPP_
 
 #include "Player.hpp"
 #include "Texture.hpp"

@@ -10,9 +10,11 @@
 #ifndef CLIENT_HPP
     #define CLIENT_HPP
 
-#include <SFML/Graphics.hpp>
 #include "Game.hpp"
 #include "Menu.hpp"
+#include "Options.hpp"
+#include <SFML/Graphics.hpp>
+#include <vector>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
@@ -30,6 +32,7 @@ enum class ClientStep {
 enum class ClientScene {
     MENU,
     GAME,
+    OPTIONS,
 };
 
 class Client {
@@ -55,6 +58,7 @@ class Client {
 
         Game m_game;
         Menu m_menu;
+        Options m_options;
         sf::Sprite m_background;
         TextureManager m_texture;
 

@@ -75,8 +75,8 @@ void Client::init()
     setStatus(ClientStep::InitiationState);
     m_game = Game();
     m_menu = Menu();
+    m_options = Options();
     m_texture = TextureManager();
-    std::string music_path = "../assets/menu_music.ogg";
 
     //menu
     m_texture.loadTexture("menu", "../assets/background.png");
@@ -102,7 +102,7 @@ void Client::init()
         std::cerr << "Failed to load menu music" << std::endl;
         std::exit(1);
     } else
-        std::cout << "Music loaded successfully from: " << music_path << std::endl;
+        std::cout << "Menu music loaded successfully" << std::endl;
 
     m_texture.loadTexture("background", "../assets/galaxy.png");
     m_background.setTexture(m_texture.getTexture("background"));
@@ -116,6 +116,35 @@ void Client::init()
     // Missile
     m_texture.loadTexture("bullet", "../assets/bullet.gif");
     m_game.m_textureManager = m_texture;
+
+    //scene options
+    m_options.m_texture_background_options.loadFromFile("../assets/background_options.png");
+    m_options.m_background_options.setTexture(m_options.m_texture_background_options);
+    m_options.m_background_options.setScale(sf::Vector2f(0.8, 0.8));
+    m_options.m_texture_30fps.loadFromFile("../assets/30fps.png");
+    m_options.m_30fps.setTexture(m_options.m_texture_30fps);
+    m_options.m_30fps.setPosition(630, 295);
+    m_options.m_30fps.setScale(sf::Vector2f(0.85, 0.85));
+    m_options.m_texture_60fps.loadFromFile("../assets/60fps.png");
+    m_options.m_60fps.setTexture(m_options.m_texture_60fps);
+    m_options.m_60fps.setPosition(630, 370);
+    m_options.m_60fps.setScale(sf::Vector2f(0.85, 0.85));
+    m_options.m_texture_1920.loadFromFile("../assets/1920x1080.png");
+    m_options.m_button1920.setTexture(m_options.m_texture_1920);
+    m_options.m_button1920.setPosition(630, 445);
+    m_options.m_button1920.setScale(sf::Vector2f(0.85, 0.85));
+    m_options.m_texture_3024.loadFromFile("../assets/3024x1964.png");
+    m_options.m_button3024.setTexture(m_options.m_texture_3024);
+    m_options.m_button3024.setPosition(630, 520);
+    m_options.m_button3024.setScale(sf::Vector2f(0.85, 0.85));
+    m_options.m_texture_off_sound.loadFromFile("../assets/off_button.png");
+    m_options.m_off_sound.setTexture(m_options.m_texture_off_sound);
+    m_options.m_off_sound.setPosition(630, 595);
+    m_options.m_off_sound.setScale(sf::Vector2f(0.85, 0.85));
+    m_options.m_texture_on_sound.loadFromFile("../assets/on_button.png");
+    m_options.m_on_sound.setTexture(m_options.m_texture_on_sound);
+    m_options.m_on_sound.setPosition(630, 670);
+    m_options.m_on_sound.setScale(sf::Vector2f(0.85, 0.85));
 }
 
 void Client::checkButtonHover(sf::Sprite& button, const sf::Vector2i& mousePos)
@@ -135,7 +164,7 @@ void Client::checkButtonHover(sf::Sprite& button, const sf::Vector2i& mousePos)
 void Client::run()
 {
     if (!m_window.isOpen()) {
-        std::cerr << "Window or music not initialized properly." << std::endl;
+        std::cerr << "Window" << std::endl;
         return;
     }
 
@@ -159,6 +188,7 @@ void Client::run()
                     sf::Vector2i mousePos = sf::Mouse::getPosition(m_window);
                     sf::FloatRect exitBounds = m_menu.m_Exit.getGlobalBounds();
                     sf::FloatRect startGameBounds = m_menu.m_startGame.getGlobalBounds();
+                    sf::FloatRect optionsBounds = m_menu.m_Options.getGlobalBounds();
 
                     if (exitBounds.contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
                         m_window.close();
@@ -167,6 +197,9 @@ void Client::run()
                     if (startGameBounds.contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
                         setScene(ClientScene::GAME);
                         send_message_to_server("START");
+                    }
+                    if (optionsBounds.contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
+                        setScene(ClientScene::OPTIONS);
                     }
                 }
             }
@@ -189,6 +222,8 @@ void Client::run()
             } else if (m_currentScene == ClientScene::GAME) {
                 m_window.draw(m_background);
                 m_game.run(m_window, m_buffer, deltaTime);
+            } else if (m_currentScene == ClientScene::OPTIONS) {
+                m_window.draw(m_options.m_background_options);
             }
             m_window.display();
         }

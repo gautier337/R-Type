@@ -95,7 +95,6 @@ void Game::parseBuffer(const std::string& buffer)
     }
 }
 
-
 void Game::run(sf::RenderWindow& window, std::string buffer, sf::Time deltaTime)
 {
     parseBuffer(buffer);

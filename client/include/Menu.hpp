@@ -5,13 +5,10 @@
 ** Menu
 */
 
-#ifndef MENU_HPP_
-#define MENU_HPP_
+#pragma once
 
-#include <vector>
-#include <SFML/Graphics.hpp>
-#include <SFML/Audio.hpp>
 #include "Client.hpp"
+#include <SFML/Audio.hpp>
 
 class Menu {
     public:
@@ -36,5 +33,3 @@ class Menu {
 
     private:
 };
-
-#endif /* !MENU_HPP_ */

@@ -121,30 +121,36 @@ void Client::init()
     m_options.m_texture_background_options.loadFromFile("../assets/background_options.png");
     m_options.m_background_options.setTexture(m_options.m_texture_background_options);
     m_options.m_background_options.setScale(sf::Vector2f(0.8, 0.8));
-    m_options.m_texture_30fps.loadFromFile("../assets/30fps.png");
-    m_options.m_30fps.setTexture(m_options.m_texture_30fps);
-    m_options.m_30fps.setPosition(630, 295);
-    m_options.m_30fps.setScale(sf::Vector2f(0.85, 0.85));
-    m_options.m_texture_60fps.loadFromFile("../assets/60fps.png");
-    m_options.m_60fps.setTexture(m_options.m_texture_60fps);
-    m_options.m_60fps.setPosition(630, 370);
-    m_options.m_60fps.setScale(sf::Vector2f(0.85, 0.85));
-    m_options.m_texture_1920.loadFromFile("../assets/1920x1080.png");
-    m_options.m_button1920.setTexture(m_options.m_texture_1920);
-    m_options.m_button1920.setPosition(630, 445);
-    m_options.m_button1920.setScale(sf::Vector2f(0.85, 0.85));
-    m_options.m_texture_3024.loadFromFile("../assets/3024x1964.png");
-    m_options.m_button3024.setTexture(m_options.m_texture_3024);
-    m_options.m_button3024.setPosition(630, 520);
-    m_options.m_button3024.setScale(sf::Vector2f(0.85, 0.85));
+
     m_options.m_texture_off_sound.loadFromFile("../assets/off_button.png");
     m_options.m_off_sound.setTexture(m_options.m_texture_off_sound);
-    m_options.m_off_sound.setPosition(630, 595);
+    m_options.m_off_sound.setPosition(0, 325);
     m_options.m_off_sound.setScale(sf::Vector2f(0.85, 0.85));
+
     m_options.m_texture_on_sound.loadFromFile("../assets/on_button.png");
     m_options.m_on_sound.setTexture(m_options.m_texture_on_sound);
-    m_options.m_on_sound.setPosition(630, 670);
+    m_options.m_on_sound.setPosition(160, 325);
     m_options.m_on_sound.setScale(sf::Vector2f(0.85, 0.85));
+
+    m_options.m_texture_30fps.loadFromFile("../assets/30fps.png");
+    m_options.m_30fps.setTexture(m_options.m_texture_30fps);
+    m_options.m_30fps.setPosition(1390, 320);
+    m_options.m_30fps.setScale(sf::Vector2f(0.85, 0.85));
+
+    m_options.m_texture_60fps.loadFromFile("../assets/60fps.png");
+    m_options.m_60fps.setTexture(m_options.m_texture_60fps);
+    m_options.m_60fps.setPosition(1240, 320);
+    m_options.m_60fps.setScale(sf::Vector2f(0.85, 0.85));
+
+    m_options.m_texture_1920.loadFromFile("../assets/1920x1080.png");
+    m_options.m_button1920.setTexture(m_options.m_texture_1920);
+    m_options.m_button1920.setPosition(690, 345);
+    m_options.m_button1920.setScale(sf::Vector2f(0.85, 0.85));
+
+    m_options.m_texture_3024.loadFromFile("../assets/3024x1964.png");
+    m_options.m_button3024.setTexture(m_options.m_texture_3024);
+    m_options.m_button3024.setPosition(690, 390);
+    m_options.m_button3024.setScale(sf::Vector2f(0.85, 0.85));
 }
 
 void Client::checkButtonHover(sf::Sprite& button, const sf::Vector2i& mousePos)
@@ -189,6 +195,12 @@ void Client::run()
                     sf::FloatRect exitBounds = m_menu.m_Exit.getGlobalBounds();
                     sf::FloatRect startGameBounds = m_menu.m_startGame.getGlobalBounds();
                     sf::FloatRect optionsBounds = m_menu.m_Options.getGlobalBounds();
+                    // sf::FloatRect fps30Bounds = m_options.m_30fps.getGlobalBounds();
+                    // sf::FloatRect fps60Bounds = m_options.m_60fps.getGlobalBounds();
+                    sf::FloatRect soundOnBounds = m_options.m_on_sound.getGlobalBounds();
+                    sf::FloatRect soundOffBounds = m_options.m_off_sound.getGlobalBounds();
+                    // sf::FloatRect button1920Bounds = m_options.m_button1920.getGlobalBounds();
+                    // sf::FloatRect button3024Bounds = m_options.m_button3024.getGlobalBounds();
 
                     if (exitBounds.contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
                         m_window.close();
@@ -201,6 +213,18 @@ void Client::run()
                     if (optionsBounds.contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
                         setScene(ClientScene::OPTIONS);
                     }
+                    // if (fps30Bounds.contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
+                    //     m_game.setFps(30);
+                    // }
+                    // if (fps60Bounds.contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
+                    //     m_game.setFps(60);
+                    // }
+                    if (soundOffBounds.contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
+                        m_menu.m_music.setVolume(0);
+                    }
+                    if (soundOnBounds.contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
+                        m_menu.m_music.setVolume(100);
+                    }
                 }
             }
         }
@@ -209,6 +233,12 @@ void Client::run()
         checkButtonHover(m_menu.m_startGame, mousePos);
         checkButtonHover(m_menu.m_Exit, mousePos);
         checkButtonHover(m_menu.m_Options, mousePos);
+        checkButtonHover(m_options.m_button1920, mousePos);
+        checkButtonHover(m_options.m_button3024, mousePos);
+        checkButtonHover(m_options.m_30fps, mousePos);
+        checkButtonHover(m_options.m_60fps, mousePos);
+        checkButtonHover(m_options.m_off_sound, mousePos);
+        checkButtonHover(m_options.m_on_sound, mousePos);
 
         if (m_window.isOpen()) {
             m_window.clear();
@@ -224,6 +254,12 @@ void Client::run()
                 m_game.run(m_window, m_buffer, deltaTime);
             } else if (m_currentScene == ClientScene::OPTIONS) {
                 m_window.draw(m_options.m_background_options);
+                m_window.draw(m_options.m_30fps);
+                m_window.draw(m_options.m_60fps);
+                m_window.draw(m_options.m_button1920);
+                m_window.draw(m_options.m_button3024);
+                m_window.draw(m_options.m_off_sound);
+                m_window.draw(m_options.m_on_sound);
             }
             m_window.display();
         }
@@ -233,11 +269,13 @@ void Client::run()
     close(m_sock);
 }
 
-
 void Client::handleInput(sf::Keyboard::Key key)
 {
     switch (key) {
-        case sf::Keyboard::Escape: exit(0);
+        case sf::Keyboard::Escape:
+            setScene(ClientScene::MENU);
+            break;
+        case sf::Keyboard::Q: exit(0);
         case sf::Keyboard::Enter:
             setScene(ClientScene::GAME);
             send_message_to_server("START");

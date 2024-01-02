@@ -29,9 +29,9 @@ def client_routine(server_address, server_port, client_id):
         # Envoi de la commande 'QUIT' au serveur
         # send_message_to_server(sock, server_address, server_port, 'QUIT')
         # print(f"Client {client_id}: Envoi de la commande 'QUIT'")
-        while True:
-            data, server = sock.recvfrom(4096)
-            print(f"Client {client_id}: Reçu '{data.decode()}' du serveur")
+        # while True:
+        #     data, server = sock.recvfrom(4096)
+        #     print(f"Client {client_id}: Reçu '{data.decode()}' du serveur")
 
 
 if __name__ == "__main__":

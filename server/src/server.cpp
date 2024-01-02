@@ -50,7 +50,7 @@ void Server::handle_receive(const std::string& data, const asio::ip::udp::endpoi
         std::lock_guard<std::mutex> lock(clients_mutex_);
         if (client_ids_.find(endpoint) == client_ids_.end() || data == "START") {
             number_of_player_connected_++;
-            int clientId = manager.createPlayer();
+            clientId = manager.createPlayer();
             if (clientId == 0) {
                 std::string welcomeMessage = "The room is full !";
                 handle_send(welcomeMessage, endpoint);
@@ -131,7 +131,8 @@ void Server::handle_tick(const asio::error_code& error)
             std::string message = ss.str();
             std::lock_guard<std::mutex> lock(clients_mutex_);
             for (auto& client : client_ids_) {
-                handle_send(message, client.first);
+                if (manager.isIdTaken(client.second))
+                    handle_send(message, client.first);
             }
 
             tick_timer_.expires_at(tick_timer_.expiry() + std::chrono::milliseconds(16));

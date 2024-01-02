@@ -182,7 +182,7 @@ namespace Ecs {
         //check if missile is out of bounds
         for (auto &entity : getEntsByComp<Ecs::Position>()) {
             if (entity->getEntityId() >= 201 && entity->getEntityId() <= 500) {
-                if (entity->getComponent<Ecs::Position>()->getPosition().first > 1920 || entity->getComponent<Ecs::Position>()->getPosition().first < 0)
+                if (entity->getComponent<Ecs::Position>()->getPosition().first > 1930 || entity->getComponent<Ecs::Position>()->getPosition().first < -10)
                     deleteEntity(entity->getEntityId());
             }
         }

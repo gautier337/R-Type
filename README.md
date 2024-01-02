@@ -40,7 +40,7 @@ cmake .. && make
 After successful compilation, start the R-TYPE server:
 
 ```bash
-./RTypeServer
+./r-type_server
 ```
 
 ### Launching the Client
@@ -62,7 +62,7 @@ make
 3. Launch the R-TYPE client:
 
 ```bash
-./client_rtype
+./r-type_client
 ```
 
 ## Gameplay

@@ -8,7 +8,7 @@ CREATE A FOLDER build in first step
 
 go to /build and run:
 
-cmake .. && make && ./RTypeServer
+cmake .. && make && ./r-type_server
 
 pour envoyer un message au serveur avec netcat par exemple:
 

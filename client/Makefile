@@ -12,7 +12,7 @@ SRC			=	src/Client.cpp	\
 OBJ = $(SRC:.cpp=.o)
 OBJ += $(COMMON_SRC:.cpp=.o)
 
-NAME		=	client_rtype
+NAME		=	r-type_client
 
 CXXFLAGS	+=	-std=c++17
 

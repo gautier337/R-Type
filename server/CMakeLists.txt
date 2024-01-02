@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.10)
-project(RTypeServer)
+project(r-type_server)
 
 set(CMAKE_CXX_STANDARD 17)
 
@@ -13,7 +13,7 @@ include_directories(/usr/include)
 add_definitions(-DASIO_STANDALONE)
 
 # Add executable target with new source files
-add_executable(RTypeServer 
+add_executable(r-type_server 
     src/main.cpp 
     src/server.cpp
     ../ECS/src/SystemManager/Entity.cpp
@@ -29,4 +29,4 @@ add_executable(RTypeServer
 
 # Link necessary libraries (Threads library for Asio)
 find_package(Threads REQUIRED)
-target_link_libraries(RTypeServer PRIVATE Threads::Threads)
+target_link_libraries(r-type_server PRIVATE Threads::Threads)

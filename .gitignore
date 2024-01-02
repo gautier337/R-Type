@@ -7,3 +7,5 @@ a.out
 .DS_Store
 *.o
 .vs
+r-type_server
+r-type_client

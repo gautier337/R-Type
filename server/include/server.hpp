@@ -5,7 +5,6 @@
 #include <memory>
 #include <mutex>
 #include <functional>
-#include <asio.hpp>
 #include "../../ECS/include/SystemManager/Entity.hpp"
 #include "../../ECS/include/SystemManager/EntityManager.hpp"
 #include "../../ECS/include/SystemManager/HitboxSystem.hpp"

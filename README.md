@@ -44,6 +44,13 @@ sudo apt install cmake
 sudo apt install libasio-dev
 ```
 
+#### Fedora:
+
+```bash
+sudo dnf install cmake
+sudo dnf install asio-devel
+```
+
 #### Mac OS:
 
 ```bash

@@ -37,21 +37,21 @@ This command copies all the necessary game files to your system.
 
 If you don't have the necessary libraries start by installing them:
 
-# Ubuntu:
+#### Ubuntu:
 
 ```bash
 sudo apt install cmake
 sudo apt install libasio-dev
 ```
 
-# Mac OS:
+#### Mac OS:
 
 ```bash
 brew install cmake
 brew install asio
 ```
 
-# and then run the build script again with ./build.sh
+#### and then run the build script again with ./build.sh
 
 ### Let's play now
 

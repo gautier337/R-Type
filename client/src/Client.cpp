@@ -33,30 +33,31 @@ Client::~Client()
     close(m_sock);
 }
 
+int parse_client_id(const std::string& response) {
+    try {
+        size_t commaPos = response.find(',');
+        if (commaPos == std::string::npos) {
+            throw std::runtime_error("Format de réponse invalide");
+        }
+
+        std::string idPart = response.substr(0, commaPos);
+        return std::stoi(idPart);
+    } catch (const std::exception& e) {
+        std::cerr << "Erreur lors du parsing de l'ID: " << e.what() << ", response=" << response << std::endl;
+        exit(1);
+    }
+}
+
 void Client::listenToServer()
 {
     while (m_listening) {
         socklen_t addrlen = sizeof(m_server_addr);
         ssize_t recvd = recvfrom(m_sock, m_buffer, m_buffer_size, 0, (struct sockaddr *)&m_server_addr, &addrlen);
         if (recvd > 0) {
-            std::cout << "";
-            std::cout << "Message reçu du serveur: " << m_buffer << std::endl;
+            if (client_id == 0) {
+                client_id = parse_client_id(m_buffer);
+            }
         }
-    }
-}
-
-int parse_client_id(const char* response)
-{
-    try {
-        std::string resp(response);
-        size_t comma_pos = resp.find(',');
-        if (comma_pos != std::string::npos) {
-            return std::stoi(resp.substr(0, comma_pos));
-        }
-        throw std::invalid_argument("No comma found in response");
-    } catch (std::exception &e) {
-        std::cerr << "Erreur lors du parsing de l'ID: " << e.what() << ", response=" << response << std::endl;
-        return -1;
     }
 }
 
@@ -284,8 +285,10 @@ void Client::handleInput(sf::Keyboard::Key key)
             break;
         case sf::Keyboard::Q: exit(0);
         case sf::Keyboard::Enter:
-            setScene(ClientScene::GAME);
-            send_message_to_server("START");
+            if (client_id == 0) {
+                setScene(ClientScene::GAME);
+                send_message_to_server("START");
+            }
             break;
         case sf::Keyboard::Space:
             send_message_to_server("SHOOT");

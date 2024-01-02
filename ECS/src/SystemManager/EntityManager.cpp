@@ -62,6 +62,9 @@ namespace Ecs {
 
     void EntityManager::handlePlayerInput(int id, int input) noexcept
     {
+        //check if entity exist
+        if (!isIdTaken(id))
+            return;
         //Down
         if (input == 1) {
             if (getEntityById(id)->getComponent<Ecs::Position>()->getPosition().second > 0)

@@ -97,7 +97,7 @@ void Client::init()
     m_menu.m_Exit.setPosition(630, 445);
     m_menu.m_Exit.setScale(sf::Vector2f(0.85, 0.85));
 
-    m_menu.m_background.setScale(sf::Vector2f(0.8, 0.8));
+    m_menu.m_background.setScale(sf::Vector2f(1, 1));
     if (!m_menu.m_music.openFromFile("../assets/menu_music.ogg")) {
         std::cerr << "Failed to load menu music" << std::endl;
         std::exit(1);
@@ -120,7 +120,7 @@ void Client::init()
     //scene options
     m_options.m_texture_background_options.loadFromFile("../assets/background_options.png");
     m_options.m_background_options.setTexture(m_options.m_texture_background_options);
-    m_options.m_background_options.setScale(sf::Vector2f(0.8, 0.8));
+    m_options.m_background_options.setScale(sf::Vector2f(1, 1));
 
     m_options.m_texture_off_sound.loadFromFile("../assets/off_button.png");
     m_options.m_off_sound.setTexture(m_options.m_texture_off_sound);

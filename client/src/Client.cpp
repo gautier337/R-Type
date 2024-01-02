@@ -98,16 +98,12 @@ void Client::init()
     m_menu.m_Exit.setPosition(630, 445);
     m_menu.m_Exit.setScale(sf::Vector2f(0.85, 0.85));
 
-    m_menu.m_background.setScale(sf::Vector2f(1, 1));
+    m_menu.m_background.setScale(sf::Vector2f(0.8, 0.8));
     if (!m_menu.m_music.openFromFile("../assets/menu_music.ogg")) {
         std::cerr << "Failed to load menu music" << std::endl;
         std::exit(1);
     } else
         std::cout << "Menu music loaded successfully" << std::endl;
-
-    m_texture.loadTexture("background", "../assets/galaxy.png");
-    m_background.setTexture(m_texture.getTexture("background"));
-    // m_background.setScale(sf::Vector2f(0.8, 0.8));
     // Le player
     m_texture.loadTexture("player", "../assets/player.gif");
     // Sbire chelou
@@ -118,10 +114,16 @@ void Client::init()
     m_texture.loadTexture("bullet", "../assets/bullet.gif");
     m_game.m_textureManager = m_texture;
 
+    //parallax
+    m_parallax_texture.loadFromFile("../assets/parallax.png");
+    m_parallax_texture.setRepeated(true);
+    m_parallax.setTexture(m_parallax_texture);
+    m_parallax.setScale(sf::Vector2f(5.07042253521, 5.07042253521));
+
     //scene options
     m_options.m_texture_background_options.loadFromFile("../assets/background_options.png");
     m_options.m_background_options.setTexture(m_options.m_texture_background_options);
-    m_options.m_background_options.setScale(sf::Vector2f(1, 1));
+    m_options.m_background_options.setScale(sf::Vector2f(0.8, 0.8));
 
     m_options.m_texture_off_sound.loadFromFile("../assets/off_button.png");
     m_options.m_off_sound.setTexture(m_options.m_texture_off_sound);
@@ -154,6 +156,19 @@ void Client::init()
     m_options.m_button3024.setScale(sf::Vector2f(0.85, 0.85));
 }
 
+void move_parallax(sf::Sprite& parallax, sf::Time deltaTime)
+{
+    sf::Vector2f parallaxPos = parallax.getPosition();
+    // Increase the multiplier for testing purposes.
+    parallaxPos.x -= 2.0 * deltaTime.asMilliseconds(); 
+
+    if (parallaxPos.x <= -parallax.getGlobalBounds().width) {
+        parallaxPos.x = 0;
+    }
+
+    parallax.setPosition(parallaxPos);
+}
+
 void Client::checkButtonHover(sf::Sprite& button, const sf::Vector2i& mousePos)
 {
     sf::FloatRect bounds = button.getGlobalBounds();
@@ -171,7 +186,7 @@ void Client::checkButtonHover(sf::Sprite& button, const sf::Vector2i& mousePos)
 void Client::run()
 {
     if (!m_window.isOpen()) {
-        std::cerr << "Window" << std::endl;
+        std::cerr << "Window not open" << std::endl;
         return;
     }
 
@@ -196,12 +211,8 @@ void Client::run()
                     sf::FloatRect exitBounds = m_menu.m_Exit.getGlobalBounds();
                     sf::FloatRect startGameBounds = m_menu.m_startGame.getGlobalBounds();
                     sf::FloatRect optionsBounds = m_menu.m_Options.getGlobalBounds();
-                    // sf::FloatRect fps30Bounds = m_options.m_30fps.getGlobalBounds();
-                    // sf::FloatRect fps60Bounds = m_options.m_60fps.getGlobalBounds();
                     sf::FloatRect soundOnBounds = m_options.m_on_sound.getGlobalBounds();
                     sf::FloatRect soundOffBounds = m_options.m_off_sound.getGlobalBounds();
-                    // sf::FloatRect button1920Bounds = m_options.m_button1920.getGlobalBounds();
-                    // sf::FloatRect button3024Bounds = m_options.m_button3024.getGlobalBounds();
 
                     if (exitBounds.contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
                         m_window.close();
@@ -214,12 +225,6 @@ void Client::run()
                     if (optionsBounds.contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
                         setScene(ClientScene::OPTIONS);
                     }
-                    // if (fps30Bounds.contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
-                    //     m_game.setFps(30);
-                    // }
-                    // if (fps60Bounds.contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
-                    //     m_game.setFps(60);
-                    // }
                     if (soundOffBounds.contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
                         m_menu.m_music.setVolume(0);
                     }
@@ -251,8 +256,9 @@ void Client::run()
                 m_window.draw(m_menu.m_Exit);
                 m_window.draw(m_menu.m_Options);
             } else if (m_currentScene == ClientScene::GAME) {
-                m_window.draw(m_background);
-                m_game.run(m_window, m_buffer, deltaTime);
+                move_parallax(m_parallax, deltaTime); // Update parallax position
+                m_window.draw(m_parallax); // Draw the parallax background first
+                m_game.run(m_window, m_buffer, deltaTime); // Then draw the game on top
             } else if (m_currentScene == ClientScene::OPTIONS) {
                 m_window.draw(m_options.m_background_options);
                 m_window.draw(m_options.m_30fps);
@@ -269,6 +275,7 @@ void Client::run()
     std::cout << "Sending 'QUIT' command" << std::endl;
     close(m_sock);
 }
+
 
 void Client::handleInput(sf::Keyboard::Key key)
 {

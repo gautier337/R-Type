@@ -62,7 +62,8 @@ class Client {
         Game m_game;
         Menu m_menu;
         Options m_options;
-        sf::Sprite m_background;
+        sf::Texture m_parallax_texture;
+        sf::Sprite m_parallax;
         TextureManager m_texture;
         int client_id = 0;
 

@@ -28,14 +28,30 @@ git clone git@github.com:MaxPeix/R-TYPE.git
 
 This command copies all the necessary game files to your system.
 
-### Launching the Server
+### Installation
 
-Once the repository is cloned, navigate to the server build directory and compile the server code:
 
 ```bash
-cd server/build
-cmake .. && make
+./build.sh
 ```
+
+If you don't have the necessary libraries start by installing them:
+
+on ubuntu:
+
+```bash
+sudo apt install cmake
+sudo apt install libasio-dev
+```
+
+on mac:
+
+```bash
+brew install cmake
+brew install asio
+```
+
+### Let's play now
 
 After successful compilation, start the R-TYPE server:
 
@@ -43,23 +59,7 @@ After successful compilation, start the R-TYPE server:
 ./r-type_server
 ```
 
-### Launching the Client
-
-With the server up and running, it's time to start the client-side of the game:
-
-1. Navigate to the client directory:
-
-```bash
-cd client
-```
-
-2. Compile the client code:
-
-```bash
-make
-```
-
-3. Launch the R-TYPE client:
+And start the R-TYPE client:
 
 ```bash
 ./r-type_client

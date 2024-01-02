@@ -99,6 +99,9 @@ void Game::parseBuffer(const std::string& buffer)
                 }
             }
         }
+        if (line.rfind("DEAD", 0) == 0) {
+            std::cout << "Player DEAD" << std::endl;
+        }
     }
 
     // Iterate through m_object and remove elements with IDs not present in the current buffer

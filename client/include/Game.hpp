@@ -21,6 +21,7 @@ struct EntityData {
         int id;
         sf::Vector2f position;
         int hp;
+        int dead;
     };
 
 class Game {

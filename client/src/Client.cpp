@@ -80,10 +80,10 @@ void Client::init()
     m_texture = TextureManager();
 
     //menu
-    m_texture.loadTexture("menu", "../assets/background.png");
-    m_texture.loadTexture("startgame", "../assets/start_game.png");
-    m_texture.loadTexture("exit", "../assets/exit.png");
-    m_texture.loadTexture("options", "../assets/options.png");
+    m_texture.loadTexture("menu", "assets/background.png");
+    m_texture.loadTexture("startgame", "assets/start_game.png");
+    m_texture.loadTexture("exit", "assets/exit.png");
+    m_texture.loadTexture("options", "assets/options.png");
     m_menu.m_background.setTexture(m_texture.getTexture("menu"));
 
     m_menu.m_startGame.setTexture(m_texture.getTexture("startgame"));
@@ -99,58 +99,58 @@ void Client::init()
     m_menu.m_Exit.setScale(sf::Vector2f(0.85, 0.85));
 
     m_menu.m_background.setScale(sf::Vector2f(0.8, 0.8));
-    if (!m_menu.m_music.openFromFile("../assets/menu_music.ogg")) {
+    if (!m_menu.m_music.openFromFile("assets/menu_music.ogg")) {
         std::cerr << "Failed to load menu music" << std::endl;
         std::exit(1);
     } else
         std::cout << "Menu music loaded successfully" << std::endl;
     // Le player
-    m_texture.loadTexture("player", "../assets/player.gif");
+    m_texture.loadTexture("player", "assets/player.gif");
     // Sbire chelou
-    m_texture.loadTexture("basic_sbire", "../assets/basic_sbire.gif");;
+    m_texture.loadTexture("basic_sbire", "assets/basic_sbire.gif");;
     // Sbire normal
-    m_texture.loadTexture("sbire", "../assets/sbire.gif");
+    m_texture.loadTexture("sbire", "assets/sbire.gif");
     // Missile
-    m_texture.loadTexture("bullet", "../assets/bullet.gif");
+    m_texture.loadTexture("bullet", "assets/bullet.gif");
     m_game.m_textureManager = m_texture;
 
     //parallax
-    m_parallax_texture.loadFromFile("../assets/parallax.png");
+    m_parallax_texture.loadFromFile("assets/parallax.png");
     m_parallax_texture.setRepeated(true);
     m_parallax.setTexture(m_parallax_texture);
     m_parallax.setScale(sf::Vector2f(5.07042253521, 5.07042253521));
 
     //scene options
-    m_options.m_texture_background_options.loadFromFile("../assets/background_options.png");
+    m_options.m_texture_background_options.loadFromFile("assets/background_options.png");
     m_options.m_background_options.setTexture(m_options.m_texture_background_options);
     m_options.m_background_options.setScale(sf::Vector2f(0.8, 0.8));
 
-    m_options.m_texture_off_sound.loadFromFile("../assets/off_button.png");
+    m_options.m_texture_off_sound.loadFromFile("assets/off_button.png");
     m_options.m_off_sound.setTexture(m_options.m_texture_off_sound);
     m_options.m_off_sound.setPosition(0, 325);
     m_options.m_off_sound.setScale(sf::Vector2f(0.85, 0.85));
 
-    m_options.m_texture_on_sound.loadFromFile("../assets/on_button.png");
+    m_options.m_texture_on_sound.loadFromFile("assets/on_button.png");
     m_options.m_on_sound.setTexture(m_options.m_texture_on_sound);
     m_options.m_on_sound.setPosition(160, 325);
     m_options.m_on_sound.setScale(sf::Vector2f(0.85, 0.85));
 
-    m_options.m_texture_30fps.loadFromFile("../assets/30fps.png");
+    m_options.m_texture_30fps.loadFromFile("assets/30fps.png");
     m_options.m_30fps.setTexture(m_options.m_texture_30fps);
     m_options.m_30fps.setPosition(1390, 320);
     m_options.m_30fps.setScale(sf::Vector2f(0.85, 0.85));
 
-    m_options.m_texture_60fps.loadFromFile("../assets/60fps.png");
+    m_options.m_texture_60fps.loadFromFile("assets/60fps.png");
     m_options.m_60fps.setTexture(m_options.m_texture_60fps);
     m_options.m_60fps.setPosition(1240, 320);
     m_options.m_60fps.setScale(sf::Vector2f(0.85, 0.85));
 
-    m_options.m_texture_1920.loadFromFile("../assets/1920x1080.png");
+    m_options.m_texture_1920.loadFromFile("assets/1920x1080.png");
     m_options.m_button1920.setTexture(m_options.m_texture_1920);
     m_options.m_button1920.setPosition(690, 345);
     m_options.m_button1920.setScale(sf::Vector2f(0.85, 0.85));
 
-    m_options.m_texture_3024.loadFromFile("../assets/3024x1964.png");
+    m_options.m_texture_3024.loadFromFile("assets/3024x1964.png");
     m_options.m_button3024.setTexture(m_options.m_texture_3024);
     m_options.m_button3024.setPosition(690, 390);
     m_options.m_button3024.setScale(sf::Vector2f(0.85, 0.85));
@@ -159,7 +159,6 @@ void Client::init()
 void move_parallax(sf::Sprite& parallax, sf::Time deltaTime)
 {
     sf::Vector2f parallaxPos = parallax.getPosition();
-    // Increase the multiplier for testing purposes.
     parallaxPos.x -= 2.0 * deltaTime.asMilliseconds(); 
 
     if (parallaxPos.x <= -parallax.getGlobalBounds().width) {

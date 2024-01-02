@@ -72,7 +72,7 @@ namespace Ecs {
         }
         //Up
         if (input == 2) {
-            if (getEntityById(id)->getComponent<Ecs::Position>()->getPosition().second < 800)
+            if (getEntityById(id)->getComponent<Ecs::Position>()->getPosition().second < 1080)
                 getEntityById(id)->getComponent<Ecs::Position>()->set_pox_y(getEntityById(id)->getComponent<Ecs::Position>()->getPosition().second + getEntityById(id)->getComponent<Ecs::Speed>()->getSpeed());
         }
         //Left
@@ -82,7 +82,7 @@ namespace Ecs {
         }
         //Right
         if (input == 4) {
-            if (getEntityById(id)->getComponent<Ecs::Position>()->getPosition().first < 1000)
+            if (getEntityById(id)->getComponent<Ecs::Position>()->getPosition().first < 500)
                 getEntityById(id)->getComponent<Ecs::Position>()->set_pox_x(getEntityById(id)->getComponent<Ecs::Position>()->getPosition().first + getEntityById(id)->getComponent<Ecs::Speed>()->getSpeed());
         }
         //Shoot
@@ -182,7 +182,7 @@ namespace Ecs {
         //check if missile is out of bounds
         for (auto &entity : getEntsByComp<Ecs::Position>()) {
             if (entity->getEntityId() >= 201 && entity->getEntityId() <= 500) {
-                if (entity->getComponent<Ecs::Position>()->getPosition().first > 1080 || entity->getComponent<Ecs::Position>()->getPosition().first < 0)
+                if (entity->getComponent<Ecs::Position>()->getPosition().first > 1930 || entity->getComponent<Ecs::Position>()->getPosition().first < -10)
                     deleteEntity(entity->getEntityId());
             }
         }

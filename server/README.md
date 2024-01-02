@@ -16,4 +16,4 @@ echo "1 Z" | nc -u -q 0 127.0.0.1 8000
 
 pour essayer le serveur avec une simulation de client grace au programme python (il faut que le serveur soit lancé) :
 
-python3 client_tester_two.py
+python3 server_test_one_client.py

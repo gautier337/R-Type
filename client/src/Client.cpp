@@ -45,21 +45,6 @@ void Client::listenToServer()
     }
 }
 
-int parse_client_id(const char* response)
-{
-    try {
-        std::string resp(response);
-        size_t comma_pos = resp.find(',');
-        if (comma_pos != std::string::npos) {
-            return std::stoi(resp.substr(0, comma_pos));
-        }
-        throw std::invalid_argument("No comma found in response");
-    } catch (std::exception &e) {
-        std::cerr << "Erreur lors du parsing de l'ID: " << e.what() << ", response=" << response << std::endl;
-        return -1;
-    }
-}
-
 void Client::send_message_to_server(const char* message)
 {
     sendto(m_sock, message, strlen(message), 0, (const struct sockaddr *)&m_server_addr, sizeof(m_server_addr));
@@ -269,6 +254,40 @@ void Client::run()
     close(m_sock);
 }
 
+int parse_client_id(const std::string& response) {
+    try {
+        size_t commaPos = response.find(',');
+        if (commaPos == std::string::npos) {
+            throw std::runtime_error("Format de réponse invalide");
+        }
+
+        std::string idPart = response.substr(0, commaPos);
+        return std::stoi(idPart);
+    } catch (const std::exception& e) {
+        std::cerr << "Erreur lors du parsing de l'ID: " << e.what() << ", response=" << response << std::endl;
+        exit(1);
+    }
+}
+
+std::string Client::send_message_to_server_with_reponse(const char* message)
+{
+    // Envoyer le message au serveur
+    sendto(m_sock, message, strlen(message), 0, (const struct sockaddr *)&m_server_addr, sizeof(m_server_addr));
+
+    // Préparer le buffer pour recevoir la réponse
+    char buffer[1024];
+    socklen_t addrlen = sizeof(m_server_addr);
+
+    // Recevoir la réponse du serveur
+    ssize_t recvd = recvfrom(m_sock, buffer, sizeof(buffer) - 1, 0, (struct sockaddr *)&m_server_addr, &addrlen);
+    if (recvd > 0) {
+        buffer[recvd] = '\0'; // Assurez-vous que la chaîne est terminée
+        return std::string(buffer);
+    }
+
+    return "";
+}
+
 void Client::handleInput(sf::Keyboard::Key key)
 {
     switch (key) {
@@ -277,8 +296,12 @@ void Client::handleInput(sf::Keyboard::Key key)
             break;
         case sf::Keyboard::Q: exit(0);
         case sf::Keyboard::Enter:
-            setScene(ClientScene::GAME);
-            send_message_to_server("START");
+            if (client_id == 0) {
+                setScene(ClientScene::GAME);
+                std::string response = send_message_to_server_with_reponse("START");
+                client_id = parse_client_id(response.c_str());
+                std::cout << "ID du client reçu: " << client_id << std::endl;
+            }
             break;
         case sf::Keyboard::Space:
             send_message_to_server("SHOOT");

@@ -21,6 +21,8 @@
 #include <unistd.h>
 #include <cstring>
 #include <thread>
+#include <string>
+#include <stdexcept>
 
 enum class ClientStep {
     InitiationState,
@@ -50,6 +52,7 @@ class Client {
         void listenToServer();
         void send_message_to_server(const char *message);
         void checkButtonHover(sf::Sprite& button, const sf::Vector2i& mousePos);
+        std::string send_message_to_server_with_reponse(const char *message);
 
     private:
         sf::RenderWindow m_window;
@@ -61,6 +64,7 @@ class Client {
         Options m_options;
         sf::Sprite m_background;
         TextureManager m_texture;
+        int client_id = 0;
 
         int m_sock;
         sockaddr_in m_server_addr;

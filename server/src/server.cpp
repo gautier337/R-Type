@@ -131,8 +131,11 @@ void Server::handle_tick(const asio::error_code& error)
             std::string message = ss.str();
             std::lock_guard<std::mutex> lock(clients_mutex_);
             for (auto& client : client_ids_) {
-                if (manager.isIdTaken(client.second))
-                    handle_send(message, client.first);
+                if (!manager.isIdTaken(client.second)) {
+                    std::string dead_message = "DEAD";
+                    handle_send(dead_message, client.first);
+                }
+                handle_send(message, client.first);
             }
 
             tick_timer_.expires_at(tick_timer_.expiry() + std::chrono::milliseconds(16));

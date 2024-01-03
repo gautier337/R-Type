@@ -158,14 +158,12 @@ void Client::init()
 
 void move_parallax(sf::Sprite& parallax, sf::Time deltaTime)
 {
-    sf::Vector2f parallaxPos = parallax.getPosition();
-    parallaxPos.x -= 2.0 * deltaTime.asMilliseconds(); 
+    float speed = 100.0f;
+    sf::Vector2f movement(-speed * deltaTime.asSeconds(), 0);
+    parallax.move(movement);
 
-    if (parallaxPos.x <= -parallax.getGlobalBounds().width) {
-        parallaxPos.x = 0;
-    }
-
-    parallax.setPosition(parallaxPos);
+    if (parallax.getPosition().x <= -6500)
+        parallax.setPosition(0, parallax.getPosition().y);
 }
 
 void Client::checkButtonHover(sf::Sprite& button, const sf::Vector2i& mousePos)

@@ -31,10 +31,16 @@ class SpriteObject {
             }
         }
 
-        void moveHorizontally(float offset) { // Fonction pour déplacer le parallax
-            sf::Vector2f position = sprite.getPosition();
-            position.x += offset;
-            sprite.setPosition(position);
+        void moveHorizontally(int offset) { // Fonction pour déplacer le parallax
+            sf::IntRect textureRect = sprite.getTextureRect();
+            // Déplacer le rectangle de texture horizontalement
+            textureRect.left += offset;
+
+            // Appliquer le nouveau rectangle de texture
+            sprite.setTextureRect(textureRect);
+            // sf::Vector2f position = sprite.getPosition();
+            // position.x += offset;
+            // sprite.setPosition(position);
         }
 
         void draw(sf::RenderWindow& window) {

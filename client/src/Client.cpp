@@ -183,9 +183,8 @@ void Client::run()
     sf::Clock clock;
 
     const float moveInterval = 0.1f; // Perfect settings faut pas toucher
-    const float moveOffset = -2.0f;
+    const int moveOffset = 2;
     float timeSinceLastMove = 0.0f;
-
 
     while (m_window.isOpen()) {
 

@@ -13,6 +13,7 @@
 
 class SpriteObject {
     public:
+        SpriteObject() = default;
         SpriteObject(const sf::Texture& texture, sf::Vector2i frameSize, int frameCount, int frameDelay, int id)
         : sprite(texture), frameSize(frameSize), m_id(id), frameCount(frameCount), frameDelay(frameDelay), currentFrame(0), elapsedTime(0) {
             updateFrame(m_id);
@@ -28,6 +29,12 @@ class SpriteObject {
                 currentFrame = (currentFrame + 1) % frameCount;
                 updateFrame(m_id);
             }
+        }
+
+        void moveHorizontally(float offset) { // Fonction pour déplacer le parallax
+            sf::Vector2f position = sprite.getPosition();
+            position.x += offset;
+            sprite.setPosition(position);
         }
 
         void draw(sf::RenderWindow& window) {

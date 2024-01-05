@@ -81,3 +81,7 @@ Upon launching the client, you'll enter the R-TYPE universe, where you can join 
 ## Conclusion
 
 R-TYPE represents a seamless blend of engaging gameplay and advanced technical design. By choosing the ECS method for our game engine, we've ensured a flexible, performant, and scalable environment that enhances the gaming experience. Whether you're a seasoned gamer or new to the world of multiplayer network games, R-TYPE promises hours of entertainment and camaraderie. Get ready to clone, compile, and conquer the cosmos with R-TYPE!
+
+## Developpement part communication protocol
+
+A communication can be found in pdf format in the root of the project "Communication Protocol R Type.pdf"

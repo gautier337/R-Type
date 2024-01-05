@@ -76,8 +76,6 @@ void Game::parseBuffer(const std::string& buffer)
 {
     std::istringstream stream(buffer);
     std::string line;
-
-    // Create a set to store the IDs present in the current buffer
     std::set<int> currentIds;
 
     while (std::getline(stream, line)) {
@@ -85,7 +83,6 @@ void Game::parseBuffer(const std::string& buffer)
             EntityData data;
             std::sscanf(line.c_str(), "Entity %d position: (%f, %f) HP: %d", &data.id, &data.position.x, &data.position.y, &data.hp);
 
-            // Update the set with the current entity's ID
             currentIds.insert(data.id);
 
             auto it = std::find_if(m_object.begin(), m_object.end(), [&data](const SpriteObject& obj) {
@@ -93,7 +90,6 @@ void Game::parseBuffer(const std::string& buffer)
             });
 
             if (it != m_object.end()) {
-                // If the entity exists, update its position
                 it->setPosition(data.position.x, data.position.y);
             } else {
                 if (data.id >= 1 && data.id <= 4) {
@@ -109,16 +105,15 @@ void Game::parseBuffer(const std::string& buffer)
             }
         }
         if (line.rfind("DEAD", 0) == 0) {
+            m_game_is_over = true;
             std::cout << "Player DEAD" << std::endl;
         }
     }
 
-    // Iterate through m_object and remove elements with IDs not present in the current buffer
     auto it = std::remove_if(m_object.begin(), m_object.end(), [&currentIds](const SpriteObject& obj) {
         return currentIds.find(obj.getId()) == currentIds.end();
     });
 
-    // Erase the elements marked for removal
     m_object.erase(it, m_object.end());
 }
 

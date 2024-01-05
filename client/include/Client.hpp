@@ -37,6 +37,7 @@ enum class ClientScene {
     MENU,
     GAME,
     OPTIONS,
+    GAME_OVER,
 };
 
 class Client {
@@ -67,8 +68,6 @@ class Client {
         Game m_game;
         Menu m_menu;
         Options m_options;
-        // sf::Texture m_parallax_texture;
-        // sf::Sprite m_parallax;
         SpriteObject m_parallax;
         TextureManager m_texture;
         int client_id = 0;
@@ -80,8 +79,6 @@ class Client {
         char m_buffer[m_buffer_size];
         std::thread m_listenThread;
         bool m_listening = true;
-
-        // int m_server_client_id;
 };
 
 #endif //CLIENT_HPP

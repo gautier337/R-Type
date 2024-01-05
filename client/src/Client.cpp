@@ -154,6 +154,11 @@ void Client::init()
     m_options.m_button3024.setTexture(m_options.m_texture_3024);
     m_options.m_button3024.setPosition(690, 390);
     m_options.m_button3024.setScale(sf::Vector2f(0.85, 0.85));
+
+    // game over screen
+    m_game.m_game_is_over_texture.loadFromFile("assets/game_over.png");
+    m_game.m_game_is_over_sprite.setTexture(m_game.m_game_is_over_texture);
+    m_game.m_game_is_over_sprite.setScale(sf::Vector2f(0.8, 0.8));
 }
 
 void Client::checkButtonHover(sf::Sprite& button, const sf::Vector2i& mousePos)
@@ -181,8 +186,10 @@ void Client::run()
     setScene(ClientScene::MENU);
 
     sf::Clock clock;
+    std::chrono::time_point<std::chrono::steady_clock> start_time;
+    bool timer_started = false;
 
-    const float moveInterval = 0.1f; // Perfect settings faut pas toucher
+    const float moveInterval = 0.1f;
     const int moveOffset = 2;
     float timeSinceLastMove = 0.0f;
 
@@ -223,9 +230,24 @@ void Client::run()
                     m_parallax.moveHorizontally(moveOffset);
                     timeSinceLastMove -= moveInterval;
                 }
-                m_game.run(m_window, m_buffer, deltaTime, m_parallax); // Then draw the game on top
+                m_game.run(m_window, m_buffer, deltaTime, m_parallax);
+                if (m_game.m_game_is_over) {
+                    setScene(ClientScene::GAME_OVER);
+                }
             } else if (m_currentScene == ClientScene::OPTIONS) {
                 display_options();
+            }
+            if (m_currentScene == ClientScene::GAME_OVER) {
+                m_window.draw(m_game.m_game_is_over_sprite);
+                if (!timer_started) {
+                    start_time = std::chrono::steady_clock::now();
+                    timer_started = true;
+                }
+                auto current_time = std::chrono::steady_clock::now();
+                auto elapsed = std::chrono::duration_cast<std::chrono::seconds>(current_time - start_time).count();
+                if (elapsed >= 10) {
+                    exit(0);
+                }
             }
             m_window.display();
         }

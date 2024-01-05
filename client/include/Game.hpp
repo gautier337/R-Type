@@ -41,6 +41,9 @@ class Game {
 
         std::vector<SpriteObject> m_object;
         TextureManager m_textureManager;
+        bool m_game_is_over = false;
+        sf::Texture m_game_is_over_texture;
+        sf::Sprite m_game_is_over_sprite;
     private:
 };
 

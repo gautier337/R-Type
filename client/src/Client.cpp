@@ -112,13 +112,13 @@ void Client::init()
     m_texture.loadTexture("sbire", "assets/sbire.gif");
     // Missile
     m_texture.loadTexture("bullet", "assets/bullet.gif");
-    m_game.m_textureManager = m_texture;
 
-    //parallax
-    m_parallax_texture.loadFromFile("assets/parallax.png");
-    m_parallax_texture.setRepeated(true);
-    m_parallax.setTexture(m_parallax_texture);
-    m_parallax.setScale(sf::Vector2f(5.07042253521, 5.07042253521));
+    m_texture.loadTexture("parallax", "assets/parallax.png");
+    m_texture.setTextureRepeated("parallax", true);
+
+
+    m_game.m_textureManager = m_texture;
+    m_parallax = m_game.createParallax(0, 0);
 
     //scene options
     m_options.m_texture_background_options.loadFromFile("assets/background_options.png");
@@ -156,16 +156,6 @@ void Client::init()
     m_options.m_button3024.setScale(sf::Vector2f(0.85, 0.85));
 }
 
-void move_parallax(sf::Sprite& parallax, sf::Time deltaTime)
-{
-    float speed = 100.0f;
-    sf::Vector2f movement(-speed * deltaTime.asSeconds(), 0);
-    parallax.move(movement);
-
-    if (parallax.getPosition().x <= -6500)
-        parallax.setPosition(0, parallax.getPosition().y);
-}
-
 void Client::checkButtonHover(sf::Sprite& button, const sf::Vector2i& mousePos)
 {
     sf::FloatRect bounds = button.getGlobalBounds();
@@ -189,11 +179,21 @@ void Client::run()
 
     setStatus(ClientStep::RunState);
     setScene(ClientScene::MENU);
+
     sf::Clock clock;
 
+    const float moveInterval = 0.1f; // Perfect settings faut pas toucher
+    const int moveOffset = 2;
+    float timeSinceLastMove = 0.0f;
+
     while (m_window.isOpen()) {
-        sf::Time deltaTime = clock.restart();
+
         sf::Event event;
+
+        sf::Vector2i mousePos = sf::Mouse::getPosition(m_window);
+        sf::Time deltaTime = clock.restart();
+        timeSinceLastMove += deltaTime.asSeconds();
+
         while (m_window.pollEvent(event)) {
             if (event.type == sf::Event::Closed) {
                 m_window.close();
@@ -203,45 +203,11 @@ void Client::run()
                     setScene(ClientScene::GAME);
                 }
             } else if (event.type == sf::Event::MouseButtonPressed) {
-                if (event.mouseButton.button == sf::Mouse::Left) {
-                    sf::Vector2i mousePos = sf::Mouse::getPosition(m_window);
-                    sf::FloatRect exitBounds = m_menu.m_Exit.getGlobalBounds();
-                    sf::FloatRect startGameBounds = m_menu.m_startGame.getGlobalBounds();
-                    sf::FloatRect optionsBounds = m_menu.m_Options.getGlobalBounds();
-                    sf::FloatRect soundOnBounds = m_options.m_on_sound.getGlobalBounds();
-                    sf::FloatRect soundOffBounds = m_options.m_off_sound.getGlobalBounds();
-
-                    if (exitBounds.contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
-                        m_window.close();
-                        std::exit(0);
-                    }
-                    if (startGameBounds.contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
-                        setScene(ClientScene::GAME);
-                        send_message_to_server("START");
-                    }
-                    if (optionsBounds.contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
-                        setScene(ClientScene::OPTIONS);
-                    }
-                    if (soundOffBounds.contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
-                        m_menu.m_music.setVolume(0);
-                    }
-                    if (soundOnBounds.contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
-                        m_menu.m_music.setVolume(100);
-                    }
-                }
+                handleMouse(event.mouseButton.button);
             }
         }
 
-        sf::Vector2i mousePos = sf::Mouse::getPosition(m_window);
-        checkButtonHover(m_menu.m_startGame, mousePos);
-        checkButtonHover(m_menu.m_Exit, mousePos);
-        checkButtonHover(m_menu.m_Options, mousePos);
-        checkButtonHover(m_options.m_button1920, mousePos);
-        checkButtonHover(m_options.m_button3024, mousePos);
-        checkButtonHover(m_options.m_30fps, mousePos);
-        checkButtonHover(m_options.m_60fps, mousePos);
-        checkButtonHover(m_options.m_off_sound, mousePos);
-        checkButtonHover(m_options.m_on_sound, mousePos);
+        handleButtonHover(mousePos);
 
         if (m_window.isOpen()) {
             m_window.clear();
@@ -253,17 +219,13 @@ void Client::run()
                 m_window.draw(m_menu.m_Exit);
                 m_window.draw(m_menu.m_Options);
             } else if (m_currentScene == ClientScene::GAME) {
-                move_parallax(m_parallax, deltaTime); // Update parallax position
-                m_window.draw(m_parallax); // Draw the parallax background first
-                m_game.run(m_window, m_buffer, deltaTime); // Then draw the game on top
+                if (timeSinceLastMove >= moveInterval) {
+                    m_parallax.moveHorizontally(moveOffset);
+                    timeSinceLastMove -= moveInterval;
+                }
+                m_game.run(m_window, m_buffer, deltaTime, m_parallax); // Then draw the game on top
             } else if (m_currentScene == ClientScene::OPTIONS) {
-                m_window.draw(m_options.m_background_options);
-                m_window.draw(m_options.m_30fps);
-                m_window.draw(m_options.m_60fps);
-                m_window.draw(m_options.m_button1920);
-                m_window.draw(m_options.m_button3024);
-                m_window.draw(m_options.m_off_sound);
-                m_window.draw(m_options.m_on_sound);
+                display_options();
             }
             m_window.display();
         }
@@ -273,6 +235,59 @@ void Client::run()
     close(m_sock);
 }
 
+void Client::display_options()
+{
+    m_window.draw(m_options.m_background_options);
+    m_window.draw(m_options.m_30fps);
+    m_window.draw(m_options.m_60fps);
+    m_window.draw(m_options.m_button1920);
+    m_window.draw(m_options.m_button3024);
+    m_window.draw(m_options.m_off_sound);
+    m_window.draw(m_options.m_on_sound);
+
+}
+void Client::handleButtonHover(sf::Vector2i mousePos)
+{
+    checkButtonHover(m_menu.m_startGame, mousePos);
+    checkButtonHover(m_menu.m_Exit, mousePos);
+    checkButtonHover(m_menu.m_Options, mousePos);
+    checkButtonHover(m_options.m_button1920, mousePos);
+    checkButtonHover(m_options.m_button3024, mousePos);
+    checkButtonHover(m_options.m_30fps, mousePos);
+    checkButtonHover(m_options.m_60fps, mousePos);
+    checkButtonHover(m_options.m_off_sound, mousePos);
+    checkButtonHover(m_options.m_on_sound, mousePos);
+}
+
+void Client::handleMouse(sf::Mouse::Button button)
+{
+    if (button == sf::Mouse::Left) {
+        sf::Vector2i mousePos = sf::Mouse::getPosition(m_window);
+        sf::FloatRect exitBounds = m_menu.m_Exit.getGlobalBounds();
+        sf::FloatRect startGameBounds = m_menu.m_startGame.getGlobalBounds();
+        sf::FloatRect optionsBounds = m_menu.m_Options.getGlobalBounds();
+        sf::FloatRect soundOnBounds = m_options.m_on_sound.getGlobalBounds();
+        sf::FloatRect soundOffBounds = m_options.m_off_sound.getGlobalBounds();
+
+        if (exitBounds.contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
+            m_window.close();
+            std::exit(0);
+        }
+        if (startGameBounds.contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
+            setScene(ClientScene::GAME);
+            send_message_to_server("START");
+        }
+        if (optionsBounds.contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
+            setScene(ClientScene::OPTIONS);
+        }
+        if (soundOffBounds.contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
+            m_menu.m_music.setVolume(0);
+        }
+        if (soundOnBounds.contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
+            m_menu.m_music.setVolume(100);
+        }
+    }
+}
 
 void Client::handleInput(sf::Keyboard::Key key)
 {

@@ -28,7 +28,7 @@ class Game {
     public:
         Game();
         ~Game();
-        void run(sf::RenderWindow& window, std::string buffer, sf::Time deltaTime);
+        void run(sf::RenderWindow& window, std::string buffer, sf::Time deltaTime, SpriteObject m_parallax);
         SpriteObject createSpriteObject(const EntityData& data);
         void parseBuffer(const std::string& buffer);
 
@@ -36,6 +36,8 @@ class Game {
         SpriteObject createSbire(int posX, int posY, int id);
         SpriteObject createBasicSbire(int posX, int posY, int id);
         SpriteObject createBullet(int posX, int posY, int id);
+        SpriteObject createParallax(int posX, int posY);
+
 
         std::vector<SpriteObject> m_object;
         TextureManager m_textureManager;

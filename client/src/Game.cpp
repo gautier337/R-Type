@@ -54,6 +54,15 @@ SpriteObject Game::createSbire(int posX, int posY, int id)
     return sbire;
 }
 
+SpriteObject Game::createParallax(int posX, int posY)
+{
+    SpriteObject parallax(m_textureManager.getTexture("parallax"), sf::Vector2i(1920, 1080), 1, 0, 0);
+    parallax.setPosition(posX, posY);
+    parallax.sprite.setScale(sf::Vector2f(1.1, 1.1));
+    parallax.sprite.setTextureRect(sf::IntRect(0, 0, 1920, 1080));
+    return parallax;
+}
+
 SpriteObject Game::createBasicSbire(int posX, int posY, int id)
 {
     SpriteObject basic_sbire(m_textureManager.getTexture("basic_sbire"), sf::Vector2i(65, 50), 3, 8, id);
@@ -113,10 +122,12 @@ void Game::parseBuffer(const std::string& buffer)
     m_object.erase(it, m_object.end());
 }
 
+    float timeSinceLastMove = 0.0f;
 
-void Game::run(sf::RenderWindow& window, std::string buffer, sf::Time deltaTime)
+void Game::run(sf::RenderWindow& window, std::string buffer, sf::Time deltaTime, SpriteObject m_parallax)
 {
     parseBuffer(buffer);
+    m_parallax.draw(window);
 
     for (auto& element: m_object) {
         element.update(deltaTime);

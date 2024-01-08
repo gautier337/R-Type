@@ -178,13 +178,15 @@ namespace Ecs {
             if (entity->getComponent<Ecs::Health>()->getHp() <= 0) {
                 if (entity->getEntityId() >= 5 && entity->getEntityId() < 200)
                     increaseKilledMonstersCount();
+                if (entity->getEntityId() >= 500 && entity->getEntityId() < 600)
+                    increaseKilledMonstersCount();
                 deleteEntity(entity->getEntityId());
             }
         }
         //check kamikaze monster
         for (auto &entity : getEntsByComp<Ecs::Health>()) {
-            if (entity->getComponent<Ecs::Health>()->getHp() <= 0) {
-                if (entity->getEntityId() >= 500 && entity->getEntityId() < 600)
+            if (entity->getEntityId() >= 500 && entity->getEntityId() < 600) {
+                if (entity->getComponent<Ecs::Position>()->getPosition().first > 1930)
                     increaseKilledMonstersCount();
                 deleteEntity(entity->getEntityId());
             }
@@ -201,9 +203,9 @@ namespace Ecs {
     void EntityManager::generateMonsters()
     {
         static int frameCount = 0;
-        const int framesPerMonster = 600; // 60 frames per second * 10 seconds
+        const int framesPerMonster = 300; // 60 frames per second * 5 seconds
 
-        // Generate a monster every 10 seconds
+        // Generate a monster every 5 seconds
         if (frameCount % framesPerMonster == 0) {
             int xPos = random(780, 1080);
             int yPos = random(0, 1920);
@@ -250,12 +252,6 @@ namespace Ecs {
                 } else {
                     position->set_pox_x(pos.first + speed->getSpeed()); // Move right
                 }
-
-                // Check and adjust X position to stay within bounds
-                if (pos.first < 700)
-                    position->set_pox_x(700);
-                if (pos.first > 1080)
-                    position->set_pox_x(1080);
 
                 // Check and adjust Y position to stay within bounds
                 if (pos.second < 0)

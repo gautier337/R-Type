@@ -187,6 +187,10 @@ void Game::parseBuffer(const std::string& buffer)
             m_game_is_over = true;
             std::cout << "Player DEAD" << std::endl;
         }
+        if (line.rfind("Score :", 0) == 0) {
+            std::sscanf(line.c_str(), "Score : %d", &m_data.score);
+            // std::cout << "Score : " << m_data.score << std::endl;
+        }
     }
 
     auto it = std::remove_if(m_object.begin(), m_object.end(), [&currentIds](const SpriteObject& obj) {

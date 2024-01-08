@@ -19,8 +19,8 @@ class Options {
 
         sf::Sprite m_background_options;
         sf::Texture m_texture_background_options;
-        sf::Sprite m_30fps, m_60fps, m_button1920, m_button3024, m_off_sound, m_on_sound;
-        sf::Texture m_texture_30fps, m_texture_60fps, m_texture_1920, m_texture_3024, m_texture_off_sound, m_texture_on_sound;
+        sf::Sprite m_30fps, m_60fps, m_off_sound, m_on_sound;
+        sf::Texture m_texture_30fps, m_texture_60fps, m_texture_off_sound, m_texture_on_sound;
     private:
 };
 

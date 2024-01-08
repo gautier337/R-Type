@@ -103,6 +103,7 @@ void Game::parseBuffer(const std::string& buffer)
             } else {
                 if (data.id >= 1 && data.id <= 4) {
                     SpriteObject newObject = createPlayer(data.position.x, data.position.y, data.id);
+                    
                     m_object.push_back(newObject);
                 } else if (data.id >= 5 && data.id < 200) {
                     SpriteObject newObject = createSbire(data.position.x, data.position.y, data.id);

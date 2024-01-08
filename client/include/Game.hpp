@@ -29,7 +29,7 @@ class Game {
         Game();
         ~Game();
         void run(sf::RenderWindow& window, std::string buffer, sf::Time deltaTime, SpriteObject m_parallax);
-        SpriteObject createSpriteObject(const EntityData& data);
+        // SpriteObject createSpriteObject(const EntityData& data);
         void parseBuffer(const std::string& buffer);
 
         SpriteObject createPlayer(int posX, int posY, int id);

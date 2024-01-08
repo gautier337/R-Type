@@ -176,10 +176,14 @@ namespace Ecs {
         //check basic monster
         for (auto &entity : getEntsByComp<Ecs::Health>()) {
             if (entity->getComponent<Ecs::Health>()->getHp() <= 0) {
-                if (entity->getEntityId() >= 5 && entity->getEntityId() < 200)
+                if (entity->getEntityId() >= 5 && entity->getEntityId() < 200) {
                     increaseKilledMonstersCount();
-                if (entity->getEntityId() >= 500 && entity->getEntityId() < 600)
+                    score += 10;
+                }
+                if (entity->getEntityId() >= 500 && entity->getEntityId() < 600) {
                     increaseKilledMonstersCount();
+                    score += 20;
+                }
                 deleteEntity(entity->getEntityId());
             }
         }
@@ -208,12 +212,12 @@ namespace Ecs {
             int randomNum = random(0, 10);
 
             if (randomNum < 8) {
-                int xPos = random(1500, 1920);
+                int xPos = random(1700, 1920);
                 int yPos = random(0, 1080);
                 // Generate a basic monster (80% chance)
                 createMonster(3, 1, xPos, yPos, 2, 5, 200, 33, 34);
             } else {
-                int xPos = random(1300, 1500);
+                int xPos = random(1500, 1700);
                 int yPos = random(0, 1080);
                 // Generate a kamikaze monster (20% chance)
                 createMonster(1, 10, xPos, yPos, 8, 500, 600, 33, 32);
@@ -325,7 +329,16 @@ namespace Ecs {
         }
     }
 
-
+    void EntityManager::killMonsters()
+    {
+        for (const auto &entity : getEntsByComp<Ecs::Health>())
+        {
+            if (entity->getEntityId() >= 5 && entity->getEntityId() < 200)
+                deleteEntity(entity->getEntityId());
+            if (entity->getEntityId() >= 500 && entity->getEntityId() < 600)
+                deleteEntity(entity->getEntityId());
+        }
+    }
 
     bool EntityManager::isIdTaken(unsigned int id) const noexcept
     {
@@ -381,5 +394,47 @@ namespace Ecs {
     void EntityManager::increaseKilledMonstersCount()
     {
         killedMonstersCount++;
+    }
+
+    void EntityManager::updateWave()
+    {
+        static int tick = 0;
+        const int interWaveDuration = 300;
+
+        if (this->interWave)
+        {
+            if (tick >= interWaveDuration)
+            {
+                this->interWave = false;  // Passer à la prochaine vague
+                tick = 0;  // Réinitialiser le compteur
+            }
+            else
+            {
+                tick++;  // Incrémenter le compteur de temps
+            }
+        }
+        else
+        {
+            // Vérifier si le nombre requis de monstres a été tué pour passer à la vague suivante
+            int monstersToKillForNextWave = 10;
+
+            if (wave == 1)
+                monstersToKillForNextWave = 10;
+            if (wave == 2)
+                monstersToKillForNextWave = 30;
+            if (wave == 3)
+                monstersToKillForNextWave = 60;
+            if (wave == 4)
+                victory = 1;
+
+            if (killedMonstersCount >= monstersToKillForNextWave)
+            {
+                this->wave++;  // Passer à la vague suivante
+                score += 1000;
+                killMonsters();
+                this->interWave = true;  // Activer le temps entre les vagues
+                tick = 0;  // Réinitialiser le compteur
+            }
+        }
     }
 }

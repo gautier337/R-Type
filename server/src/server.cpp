@@ -91,12 +91,21 @@ void Server::handle_receive(const std::string& data, const asio::ip::udp::endpoi
     }
 }
 
+struct Message {
+    char data[1024]; // Adaptez la taille selon vos besoins
+};
+
 void Server::handle_send(const std::string& message, const asio::ip::udp::endpoint& endpoint)
 {
-    auto message_data = std::make_shared<std::string>(message);
+    // Création de l'objet Message
+    Message message_obj;
+    memset(&message_obj, 0, sizeof(message_obj)); // Initialisation à zéro
+    strncpy(message_obj.data, message.c_str(), sizeof(message_obj.data) - 1); // Copie de la chaîne
+
+    auto message_data = std::make_shared<Message>(message_obj);
 
     socket_.async_send_to(
-        asio::buffer(*message_data), endpoint,
+        asio::buffer(static_cast<const char*>(static_cast<const void*>(message_data.get())), sizeof(Message)), endpoint,
         [this, message_data](const asio::error_code& error, std::size_t /*bytes_sent*/) {
             if (error) {
                 std::cerr << "Send error: " << error.message() << std::endl;
@@ -104,6 +113,7 @@ void Server::handle_send(const std::string& message, const asio::ip::udp::endpoi
         }
     );
 }
+
 
 void Server::handle_tick(const asio::error_code& error)
 {

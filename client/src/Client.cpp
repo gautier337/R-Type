@@ -48,18 +48,28 @@ int parse_client_id(const std::string& response) {
     }
 }
 
+struct Message {
+    char data[1024];
+};
+
 void Client::listenToServer()
 {
     while (m_listening) {
         socklen_t addrlen = sizeof(m_server_addr);
         ssize_t recvd = recvfrom(m_sock, m_buffer, m_buffer_size, 0, (struct sockaddr *)&m_server_addr, &addrlen);
+
         if (recvd > 0) {
-            if (client_id == 0) {
-                client_id = parse_client_id(m_buffer);
+            if(recvd >= static_cast<ssize_t>(sizeof(Message))) {
+                Message* message = reinterpret_cast<Message*>(m_buffer);
+
+                if (client_id == 0) {
+                    client_id = parse_client_id(message->data);
+                }
             }
         }
     }
 }
+
 
 void Client::send_message_to_server(const char *message)
 {

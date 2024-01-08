@@ -137,11 +137,15 @@ namespace Ecs {
 
         if (entityID < 5) {
             spawnPos = 25;
-            speedToAdd = 25;
+            speedToAdd = 20;
         }
         if (entityID >= 5 && entityID < 200) {
             spawnPos = -40;
-            speedToAdd = -25;
+            speedToAdd = -15;
+        }
+        if (entityID == 600) {
+            spawnPos = -400;
+            speedToAdd = -30;
         }
 
         auto missile = std::make_shared<Entity>(id);
@@ -184,6 +188,10 @@ namespace Ecs {
                     increaseKilledMonstersCount();
                     score += 20;
                 }
+                if (entity->getEntityId() == 600) {
+                    increaseKilledMonstersCount();
+                    score += 500;
+                }
                 deleteEntity(entity->getEntityId());
             }
         }
@@ -210,17 +218,28 @@ namespace Ecs {
 
             // Generate a random number between 0 and 9
             int randomNum = random(0, 10);
-
-            if (randomNum < 8) {
+            if (wave == 1) {
                 int xPos = random(1700, 1920);
                 int yPos = random(0, 1080);
-                // Generate a basic monster (80% chance)
+                // Generate a basic monster
                 createMonster(3, 1, xPos, yPos, 2, 5, 200, 33, 34);
-            } else {
-                int xPos = random(1500, 1700);
-                int yPos = random(0, 1080);
-                // Generate a kamikaze monster (20% chance)
-                createMonster(1, 10, xPos, yPos, 8, 500, 600, 33, 32);
+            } else if (wave == 2) {
+                if (randomNum < 8) {
+                    int xPos = random(1700, 1920);
+                    int yPos = random(0, 1080);
+                    // Generate a basic monster (80% chance) more damage
+                    createMonster(3, 2, xPos, yPos, 2, 5, 200, 33, 34);
+                } else {
+                    int xPos = random(1500, 1700);
+                    int yPos = random(0, 1080);
+                    // Generate a kamikaze monster (20% chance)
+                    createMonster(1, 10, xPos, yPos, 8, 500, 600, 33, 32);
+                }
+            } else if (wave == 3) {
+                // Generate a boss
+                int xPos = 1600;
+                int yPos = 540;
+                createMonster(50, 5, xPos, yPos, 2, 600, 601, 330, 340);
             }
         }
 
@@ -272,7 +291,7 @@ namespace Ecs {
                         if (shootCooldown->getCd() <= 0 && random(1, 5) == 1)
                         {
                             createMissile(entity->getEntityId());
-                            shootCooldown->setCd(random(180, 480)); // 60 frames per second, so 3 to 8 seconds
+                            shootCooldown->setCd(random(300, 480)); // 60 frames per second, so 5 to 8 seconds
                         }
 
                         shootCooldown->decreaseCd();
@@ -326,6 +345,62 @@ namespace Ecs {
                 if (pos.second > 1920)
                     position->set_pox_y(1920);
             }
+            // Boss (ID 600)
+            if (entity->getEntityId() == 600)
+            {
+                auto position = entity->getComponent<Ecs::Position>();
+                auto speed = entity->getComponent<Ecs::Speed>();
+                auto shootCooldown = entity->getComponent<ShootCD>();
+
+                // Update boss's position based on its speed
+                std::pair<int, int> pos = position->getPosition();
+
+                // Find the player's position (if any player entity is present)
+                std::shared_ptr<Entity> player = nullptr;
+                for (int playerId = 1; playerId <= 4; ++playerId)
+                {
+                    player = getEntityById(playerId);
+                    if (player != nullptr)
+                        break;
+                }
+
+                // If no player entity is found, move boss straight ahead
+                if (player == nullptr)
+                {
+                    position->set_pox_x(pos.first - speed->getSpeed());
+                    position->set_pox_y(pos.second);
+                }
+                else
+                {
+                    // Calculate direction towards the player
+                    int deltaY = player->getComponent<Ecs::Position>()->getPosition().second - pos.second;
+                    int m = 0;
+
+                    if (deltaY > 0)
+                        m = 1;
+                    else
+                        m = -1;
+
+                    // Move the boss towards the player
+                    if (deltaY != 0)
+                        position->set_pox_y(pos.second + (speed->getSpeed() * m));
+                }
+
+                // Check and adjust Y position to stay within bounds
+                if (pos.second < 0)
+                    position->set_pox_y(0);
+                if (pos.second > 1920)
+                    position->set_pox_y(1920);
+
+                // Shoot more frequently compared to regular monsters
+                if (shootCooldown->getCd() <= 0 && random(1, 3) == 1)
+                {
+                    createMissile(entity->getEntityId());
+                    shootCooldown->setCd(random(180, 300)); // 60 frames per second, so 3 to 5 seconds
+                }
+
+                shootCooldown->decreaseCd();
+            }
         }
     }
 
@@ -335,7 +410,7 @@ namespace Ecs {
         {
             if (entity->getEntityId() >= 5 && entity->getEntityId() < 200)
                 deleteEntity(entity->getEntityId());
-            if (entity->getEntityId() >= 500 && entity->getEntityId() < 600)
+            if (entity->getEntityId() >= 500 && entity->getEntityId() <= 600)
                 deleteEntity(entity->getEntityId());
         }
     }
@@ -419,11 +494,11 @@ namespace Ecs {
             int monstersToKillForNextWave = 10;
 
             if (wave == 1)
-                monstersToKillForNextWave = 10;
+                monstersToKillForNextWave = 5;
             if (wave == 2)
-                monstersToKillForNextWave = 30;
+                monstersToKillForNextWave = 10;
             if (wave == 3)
-                monstersToKillForNextWave = 60;
+                monstersToKillForNextWave = 11;
             if (wave == 4)
                 victory = 1;
 

@@ -219,10 +219,26 @@ namespace Ecs {
             // Generate a random number between 0 and 9
             int randomNum = random(0, 10);
             if (wave == 1) {
-                int xPos = random(1300, 1500);
-                int yPos = random(100, 980);
-                // Generate a basic monster
-                createMonster(3, 1, xPos, yPos, 2, 5, 200, 33, 34);
+                if (randomNum < 8) {
+                    int xPos = random(1300, 1500);
+                    int yPos = random(100, 980);
+                    // Generate a basic monster
+                    createMonster(3, 1, xPos, yPos, 2, 5, 200, 33, 34);
+                }
+                if (randomNum < 3) {
+                    // Generate Asteroid
+                    int xPos = 1950;
+                    int yPos = random(0, 1080);
+                    int randomSpeed = random(10, 13);
+                    if (randomSpeed == 11) {
+                        int xPos = random(0, 1920);
+                        int yPos = random(1080, 1200);
+                    } else if (randomSpeed == 12) {
+                        int xPos = random(0, 1920);
+                        int yPos = random(0, -120);
+                    }
+                    createMonster(9, 1, xPos, yPos, 10, 601, 650, 33, 34);
+                }
             } else if (wave == 2) {
                 if (randomNum < 8) {
                     int xPos = random(1300, 1500);
@@ -234,6 +250,20 @@ namespace Ecs {
                     int yPos = random(100, 980);
                     // Generate a kamikaze monster (20% chance)
                     createMonster(1, 10, xPos, yPos, 8, 500, 600, 33, 32);
+                }
+                if (randomNum < 3) {
+                    // Generate Asteroid
+                    int xPos = 1950;
+                    int yPos = random(0, 1080);
+                    int randomSpeed = random(10, 13);
+                    if (randomSpeed == 11) {
+                        int xPos = random(0, 1920);
+                        int yPos = random(1080, 1200);
+                    } else if (randomSpeed == 12) {
+                        int xPos = random(0, 1920);
+                        int yPos = random(0, -120);
+                    }
+                    createMonster(9, 1, xPos, yPos, 10, 601, 650, 33, 34);
                 }
             } else if (wave == 3) {
                 // Generate a boss
@@ -401,6 +431,24 @@ namespace Ecs {
 
                 shootCooldown->decreaseCd();
             }
+            //Asteroid (ID 601 to 650)
+            if (entity->getEntityId() >= 601 && entity->getEntityId() < 650)
+            {
+                auto position = entity->getComponent<Ecs::Position>();
+                int speed = entity->getComponent<Ecs::Speed>()->getSpeed();
+
+                // Update monster's position based on its speed
+                std::pair<int, int> pos = position->getPosition();
+
+                if (speed == 11) {
+                    position->set_pox_y(pos.second - speed);
+                } else if (speed == 12) {
+                    position->set_pox_y(pos.second + speed);
+                } else {
+                    // Move the monster accordingly
+                    position->set_pox_x(pos.first - speed);
+                }
+            }
         }
     }
 
@@ -410,7 +458,7 @@ namespace Ecs {
         {
             if (entity->getEntityId() >= 5 && entity->getEntityId() < 200)
                 deleteEntity(entity->getEntityId());
-            if (entity->getEntityId() >= 500 && entity->getEntityId() <= 600)
+            if (entity->getEntityId() >= 500 && entity->getEntityId() < 650)
                 deleteEntity(entity->getEntityId());
         }
     }

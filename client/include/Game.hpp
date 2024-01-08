@@ -39,6 +39,7 @@ class Game {
         SpriteObject createBasicSbire(int posX, int posY, int id);
         SpriteObject createBullet(int posX, int posY, int id);
         SpriteObject createBoss(int posX, int posY, int id);
+        SpriteObject createAsteroid(int posX, int posY, int id);
         SpriteObject createParallax(int posX, int posY);
 
         std::vector<SpriteObject> m_object;

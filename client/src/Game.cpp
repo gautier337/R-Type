@@ -171,10 +171,12 @@ void Game::parseBuffer(const std::string& buffer)
                 } else if (data.id >= 200 && data.id < 500) {
                     m_object.push_back(createBullet(data.position.x, data.position.y, data.id));
                 }
-                else if (data.id >= 500 && data.id < 1000) {
+                else if (data.id >= 500 && data.id < 600) {
                     m_object.push_back(createKamikaze(data.position.x, data.position.y, data.id));
                 } else if (data.id == 600) {
                     m_object.push_back(createBoss(data.position.x, data.position.y, data.id));
+                } else if (data.id >= 601 && data.id < 650) {
+                    m_object.push_back(createBasicSbire(data.position.x, data.position.y, data.id));
                 }
             }
         }

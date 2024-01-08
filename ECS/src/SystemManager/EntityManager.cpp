@@ -280,7 +280,6 @@ namespace Ecs {
 
                 // Update monster's position based on its speed
                 std::pair<int, int> pos = position->getPosition();
-                std::cout << "pos x " << pos.first << "pos y " << pos.second << std::endl;
 
                 // Find the player's position (if any player entity is present)
                 std::shared_ptr<Entity> player = nullptr;

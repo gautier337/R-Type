@@ -127,6 +127,8 @@ void Client::init()
 
     m_texture.loadTexture("boss", "assets/boss.gif");
 
+    m_texture.loadTexture("asteroid", "assets/asteroid.png");
+
     m_texture.loadTexture("parallax", "assets/parallax.png");
     m_texture.setTextureRepeated("parallax", true);
 

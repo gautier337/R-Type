@@ -219,18 +219,18 @@ namespace Ecs {
             // Generate a random number between 0 and 9
             int randomNum = random(0, 10);
             if (wave == 1) {
-                int xPos = random(1400, 1600);
+                int xPos = random(1300, 1500);
                 int yPos = random(100, 980);
                 // Generate a basic monster
                 createMonster(3, 1, xPos, yPos, 2, 5, 200, 33, 34);
             } else if (wave == 2) {
                 if (randomNum < 8) {
-                    int xPos = random(1400, 1600);
+                    int xPos = random(1300, 1500);
                     int yPos = random(100, 980);
                     // Generate a basic monster (80% chance) more damage
                     createMonster(3, 2, xPos, yPos, 2, 5, 200, 33, 34);
                 } else {
-                    int xPos = random(1300, 1400);
+                    int xPos = random(1100, 1300);
                     int yPos = random(100, 980);
                     // Generate a kamikaze monster (20% chance)
                     createMonster(1, 10, xPos, yPos, 8, 500, 600, 33, 32);

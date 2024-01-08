@@ -86,7 +86,7 @@ R-TYPE represents a seamless blend of engaging gameplay and advanced technical d
 
 A communication can be found in pdf format in the root of the project "Communication Protocol R Type.pdf"
 
-### Contributeurs
+## Contributeurs
 
 Le développement de R-TYPE a été rendu possible grâce aux efforts et à la dévotion de plusieurs développeurs.
 

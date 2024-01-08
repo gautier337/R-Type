@@ -115,6 +115,8 @@ void Client::init()
     // Kamikaze
     m_texture.loadTexture("kamikaze", "assets/kamikaze.gif");
 
+    m_texture.loadTexture("boss", "assets/boss.gif");
+
     m_texture.loadTexture("parallax", "assets/parallax.png");
     m_texture.setTextureRepeated("parallax", true);
 

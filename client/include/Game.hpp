@@ -37,6 +37,7 @@ class Game {
         SpriteObject createKamikaze(int posX, int posY, int id);
         SpriteObject createBasicSbire(int posX, int posY, int id);
         SpriteObject createBullet(int posX, int posY, int id);
+        SpriteObject createBoss(int posX, int posY, int id);
         SpriteObject createParallax(int posX, int posY);
 
         std::vector<SpriteObject> m_object;
@@ -44,7 +45,7 @@ class Game {
         bool m_game_is_over = false;
         sf::Texture m_game_is_over_texture, m_texture_hp;
         sf::Sprite m_game_is_over_sprite, m_hp_sprite;
-        
+
         EntityData m_data;
     private:
 };

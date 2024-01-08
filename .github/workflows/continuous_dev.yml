@@ -22,7 +22,7 @@ jobs:
         with:
           target_repo_url: ${{ env.MIRROR_URL }}
           ssh_private_key: ${{ secrets.GIT_SSH_PRIVATE_KEY }}
-  build:
+  build-and-test:
     runs-on: ubuntu-latest
 
     steps:
@@ -32,9 +32,19 @@ jobs:
         sudo apt-get update
         sudo apt-get install -y libasio-dev
         sudo apt-get install -y libsfml-dev
+    - name: Install Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.x'
     - name: Run build script
       run: ./build.sh
     - name: Check binaries
       run: |
         test -f r-type_client && echo "r-type_client binary exists."
         test -f r-type_server && echo "r-type_server binary exists."
+    - name: Run server
+      run: ./r-type_server &
+    - name: Run integration test
+      run: python3 server/server_test_one_client.py
+    - name: Kill server
+      run: kill %1

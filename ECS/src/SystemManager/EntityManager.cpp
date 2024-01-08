@@ -183,18 +183,14 @@ namespace Ecs {
                 deleteEntity(entity->getEntityId());
             }
         }
-        //check kamikaze monster
-        for (auto &entity : getEntsByComp<Ecs::Health>()) {
-            if (entity->getEntityId() >= 500 && entity->getEntityId() < 600) {
-                if (entity->getComponent<Ecs::Position>()->getPosition().first > 1930)
-                    increaseKilledMonstersCount();
-                deleteEntity(entity->getEntityId());
-            }
-        }
-        //check if missile is out of bounds
+        //check if missile or kamikaze is out of bounds
         for (auto &entity : getEntsByComp<Ecs::Position>()) {
             if (entity->getEntityId() >= 200 && entity->getEntityId() < 500) {
                 if (entity->getComponent<Ecs::Position>()->getPosition().first > 1930 || entity->getComponent<Ecs::Position>()->getPosition().first < -10)
+                    deleteEntity(entity->getEntityId());
+            }
+            if (entity->getEntityId() >= 500 && entity->getEntityId() < 600) {
+                if (entity->getComponent<Ecs::Position>()->getPosition().first < -40)
                     deleteEntity(entity->getEntityId());
             }
         }

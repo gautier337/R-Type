@@ -113,7 +113,7 @@ void Client::init()
     // Missile
     m_texture.loadTexture("bullet", "assets/bullet.gif");
     // Kamikaze
-    m_texture.loadTexture("kamikaze", "assets/kamikaze.png");
+    m_texture.loadTexture("kamikaze", "assets/kamikaze.gif");
 
     m_texture.loadTexture("parallax", "assets/parallax.png");
     m_texture.setTextureRepeated("parallax", true);

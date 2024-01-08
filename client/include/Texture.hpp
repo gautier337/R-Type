@@ -25,6 +25,13 @@ class TextureManager {
             return this->textures.at(name);
         }
 
+        void setTextureRepeated(const std::string& name, bool repeated) {
+            auto it = textures.find(name);
+            if (it != textures.end()) {
+                it->second.setRepeated(repeated);
+            }
+        }
+
     private:
         std::map<std::string, sf::Texture> textures;
         sf::Texture textureBackground, textureStartGame, textureExit, textureOptions;

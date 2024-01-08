@@ -13,6 +13,7 @@
 #include "Game.hpp"
 #include "Menu.hpp"
 #include "Options.hpp"
+#include "SpriteObject.hpp"
 #include <SFML/Graphics.hpp>
 #include <vector>
 #include <sys/socket.h>
@@ -23,6 +24,7 @@
 #include <thread>
 #include <string>
 #include <stdexcept>
+
 
 enum class ClientStep {
     InitiationState,
@@ -35,6 +37,7 @@ enum class ClientScene {
     MENU,
     GAME,
     OPTIONS,
+    GAME_OVER,
 };
 
 class Client {
@@ -50,8 +53,11 @@ class Client {
         void init();
         //connection
         void listenToServer();
+        void display_options();
         void send_message_to_server(const char *message);
         void checkButtonHover(sf::Sprite& button, const sf::Vector2i& mousePos);
+        void handleMouse(sf::Mouse::Button button);
+        void handleButtonHover(sf::Vector2i mousePos);
         std::string send_message_to_server_with_reponse(const char *message);
 
     private:
@@ -62,8 +68,7 @@ class Client {
         Game m_game;
         Menu m_menu;
         Options m_options;
-        sf::Texture m_parallax_texture;
-        sf::Sprite m_parallax;
+        SpriteObject m_parallax;
         TextureManager m_texture;
         int client_id = 0;
 
@@ -74,8 +79,6 @@ class Client {
         char m_buffer[m_buffer_size];
         std::thread m_listenThread;
         bool m_listening = true;
-
-        // int m_server_client_id;
 };
 
 #endif //CLIENT_HPP

@@ -56,6 +56,10 @@ jobs:
       uses: actions/download-artifact@v2
       with:
         name: binaries
+    - name: Set execute permission on binaries
+      run: |
+        chmod +x r-type_server
+        chmod +x r-type_client
     - name: Install Python
       uses: actions/setup-python@v2
       with:

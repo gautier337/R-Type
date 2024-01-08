@@ -107,6 +107,9 @@ SpriteObject Game::createBasicSbire(int posX, int posY, int id)
     basic_sbire.setPosition(posX, posY);
     basic_sbire.sprite.setScale(sf::Vector2f(2, 2));
     basic_sbire.sprite.setTextureRect(sf::IntRect(0, 0, 65, 50));
+
+    sf::FloatRect bounds = basic_sbire.sprite.getLocalBounds();
+    basic_sbire.sprite.setOrigin(bounds.width / 2.0f, bounds.height / 2.0f);
     return basic_sbire;
 }
 
@@ -124,6 +127,8 @@ SpriteObject Game::createKamikaze(int posX, int posY, int id)
     kamikaze.setPosition(posX, posY);
     kamikaze.sprite.setScale(sf::Vector2f(2, 2));
     kamikaze.sprite.setTextureRect(sf::IntRect(0, 0, 35, 25));
+    sf::FloatRect bounds = kamikaze.sprite.getLocalBounds();
+    kamikaze.sprite.setOrigin(bounds.width / 2.0f, bounds.height / 2.0f);
     return kamikaze;
 }
 
@@ -145,6 +150,26 @@ SpriteObject Game::createBoss(int posX, int posY, int id)
     sf::FloatRect bounds = boss.sprite.getLocalBounds();
     boss.sprite.setOrigin(bounds.width / 2.0f, bounds.height / 2.0f);
     return boss;
+}
+
+////////////////////////////////////////////////////////////
+//
+// Create an instance of SpriteObject for Asteroid
+//
+// @param posX pos X of the sprite
+// @param posY pos Y of the sprite
+// @param id Id of the sprite to track it
+////////////////////////////////////////////////////////////
+SpriteObject Game::createAsteroid(int posX, int posY, int id)
+{
+    SpriteObject asteroid(m_textureManager.getTexture("asteroid"), sf::Vector2i(60, 63), 8, 3, id);
+    asteroid.setPosition(posX, posY);
+    asteroid.sprite.setScale(sf::Vector2f(2, 2));
+    asteroid.sprite.setTextureRect(sf::IntRect(0, 0, 60, 63));
+    //make the center of the sprite the origin
+    sf::FloatRect bounds =asteroid.sprite.getLocalBounds();
+    asteroid.sprite.setOrigin(bounds.width / 2.0f, bounds.height / 2.0f);
+    return asteroid;
 }
 
 void Game::parseBuffer(const std::string& buffer)
@@ -179,13 +204,17 @@ void Game::parseBuffer(const std::string& buffer)
                 } else if (data.id == 600) {
                     m_object.push_back(createBoss(data.position.x, data.position.y, data.id));
                 } else if (data.id >= 601 && data.id < 650) {
-                    m_object.push_back(createBasicSbire(data.position.x, data.position.y, data.id));
+                    m_object.push_back(createAsteroid(data.position.x, data.position.y, data.id));
                 }
             }
         }
         if (line.rfind("DEAD", 0) == 0) {
             m_game_is_over = true;
             std::cout << "Player DEAD" << std::endl;
+        }
+        if (line.rfind("Score :", 0) == 0) {
+            std::sscanf(line.c_str(), "Score : %d", &m_data.score);
+            // std::cout << "Score : " << m_data.score << std::endl;
         }
     }
 

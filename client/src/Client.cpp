@@ -70,7 +70,6 @@ void Client::listenToServer()
     }
 }
 
-
 void Client::send_message_to_server(const char *message)
 {
     sendto(m_sock, message, strlen(message), 0, (const struct sockaddr *)&m_server_addr, sizeof(m_server_addr));
@@ -89,6 +88,16 @@ void Client::init()
     m_options = Options();
     m_texture = TextureManager();
 
+    //Score font
+    if (!m_game.m_font_score.loadFromFile("assets/Buenard.ttf")) {
+        std::cerr << "Failed to load font" << std::endl;
+        std::exit(1);
+    } else
+        std::cout << "Font loaded successfully" << std::endl;
+    m_game.m_text_score.setFont(m_game.m_font_score);
+    m_game.m_text_score.setCharacterSize(50);
+    m_game.m_text_score.setFillColor(sf::Color::White);
+    m_game.m_text_score.setPosition(50, 50);
     //menu
     m_texture.loadTexture("menu", "assets/background.png");
     m_texture.loadTexture("startgame", "assets/start_game.png");
@@ -126,6 +135,8 @@ void Client::init()
     m_texture.loadTexture("kamikaze", "assets/kamikaze.gif");
 
     m_texture.loadTexture("boss", "assets/boss.gif");
+
+    m_texture.loadTexture("asteroid", "assets/asteroid.png");
 
     m_texture.loadTexture("parallax", "assets/parallax.png");
     m_texture.setTextureRepeated("parallax", true);
@@ -167,8 +178,6 @@ void Client::init()
     m_game.m_texture_hp.loadFromFile("assets/hp.png");
     m_game.m_hp_sprite.setTexture(m_game.m_texture_hp);
     m_game.m_hp_sprite.setScale(sf::Vector2f(1.2, 1.2));
-    int hp = m_game.m_data.hp;
-    std::cout << "HP: " << hp << std::endl;
 }
 
 void Client::checkButtonHover(sf::Sprite& button, const sf::Vector2i& mousePos)
@@ -244,6 +253,8 @@ void Client::run()
                 if (m_game.m_game_is_over) {
                     setScene(ClientScene::GAME_OVER);
                 }
+                m_game.m_text_score.setString("Score : " + std::to_string(m_game.m_data.score));
+                m_window.draw(m_game.m_text_score);
             } else if (m_currentScene == ClientScene::OPTIONS) {
                 display_options();
             }

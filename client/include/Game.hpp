@@ -22,6 +22,7 @@ struct EntityData {
     sf::Vector2f position;
     int hp;
     int dead;
+    int score;
 };
 
 class Game {
@@ -38,6 +39,7 @@ class Game {
         SpriteObject createBasicSbire(int posX, int posY, int id);
         SpriteObject createBullet(int posX, int posY, int id);
         SpriteObject createBoss(int posX, int posY, int id);
+        SpriteObject createAsteroid(int posX, int posY, int id);
         SpriteObject createParallax(int posX, int posY);
 
         std::vector<SpriteObject> m_object;
@@ -45,6 +47,8 @@ class Game {
         bool m_game_is_over = false;
         sf::Texture m_game_is_over_texture, m_texture_hp;
         sf::Sprite m_game_is_over_sprite, m_hp_sprite;
+        sf::Font m_font_score;
+        sf::Text m_text_score;
 
         EntityData m_data;
     private:

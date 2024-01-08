@@ -16,6 +16,14 @@ Game::~Game()
 {
 }
 
+////////////////////////////////////////////////////////////
+//
+// Create an instance of SpriteObject for Player
+//
+// @param posX pos X of the sprite
+// @param posY pos Y of the sprite
+// @param id Id of the sprite to track it
+////////////////////////////////////////////////////////////
 SpriteObject Game::createPlayer(int posX, int posY, int id)
 {
     SpriteObject ship(m_textureManager.getTexture("player"), sf::Vector2i(33, 17), 5, 10, id);
@@ -31,7 +39,14 @@ SpriteObject Game::createPlayer(int posX, int posY, int id)
     return ship;
 }
 
-
+////////////////////////////////////////////////////////////
+//
+// Create an instance of SpriteObject for Bullet
+//
+// @param posX pos X of the sprite
+// @param posY pos Y of the sprite
+// @param id Id of the sprite to track it
+////////////////////////////////////////////////////////////
 SpriteObject Game::createBullet(int posX, int posY, int id)
 {
     SpriteObject bullet(m_textureManager.getTexture("bullet"), sf::Vector2i(17, 18), 12, 4, id);
@@ -43,6 +58,14 @@ SpriteObject Game::createBullet(int posX, int posY, int id)
     return bullet;
 }
 
+////////////////////////////////////////////////////////////
+//
+// Create an instance of SpriteObject for Sbire
+//
+// @param posX pos X of the sprite
+// @param posY pos Y of the sprite
+// @param id Id of the sprite to track it
+////////////////////////////////////////////////////////////
 SpriteObject Game::createSbire(int posX, int posY, int id)
 {
     SpriteObject sbire(m_textureManager.getTexture("sbire"), sf::Vector2i(33, 34), 3, 15, id);
@@ -54,6 +77,13 @@ SpriteObject Game::createSbire(int posX, int posY, int id)
     return sbire;
 }
 
+////////////////////////////////////////////////////////////
+//
+// Create an instance of SpriteObject for the Parallax
+//
+// @param posX pos X of the sprite
+// @param posY pos Y of the sprite
+////////////////////////////////////////////////////////////
 SpriteObject Game::createParallax(int posX, int posY)
 {
     SpriteObject parallax(m_textureManager.getTexture("parallax"), sf::Vector2i(1920, 1080), 1, 0, 0);
@@ -63,6 +93,14 @@ SpriteObject Game::createParallax(int posX, int posY)
     return parallax;
 }
 
+////////////////////////////////////////////////////////////
+//
+// Create an instance of SpriteObject for BasicSbire
+//
+// @param posX pos X of the sprite
+// @param posY pos Y of the sprite
+// @param id Id of the sprite to track it
+////////////////////////////////////////////////////////////
 SpriteObject Game::createBasicSbire(int posX, int posY, int id)
 {
     SpriteObject basic_sbire(m_textureManager.getTexture("basic_sbire"), sf::Vector2i(65, 50), 3, 8, id);
@@ -72,13 +110,38 @@ SpriteObject Game::createBasicSbire(int posX, int posY, int id)
     return basic_sbire;
 }
 
+////////////////////////////////////////////////////////////
+//
+// Create an instance of SpriteObject for Kamikaze
+//
+// @param posX pos X of the sprite
+// @param posY pos Y of the sprite
+// @param id Id of the sprite to track it
+////////////////////////////////////////////////////////////
 SpriteObject Game::createKamikaze(int posX, int posY, int id)
 {
-    SpriteObject kamikaze(m_textureManager.getTexture("kamikaze"), sf::Vector2i(35, 25), 4, 8, id);
+    SpriteObject kamikaze(m_textureManager.getTexture("kamikaze"), sf::Vector2i(35, 25), 4, 15, id);
     kamikaze.setPosition(posX, posY);
     kamikaze.sprite.setScale(sf::Vector2f(2, 2));
-    kamikaze.sprite.setTextureRect(sf::IntRect(0, 0, 33, 32));
+    kamikaze.sprite.setTextureRect(sf::IntRect(0, 0, 35, 25));
     return kamikaze;
+}
+
+////////////////////////////////////////////////////////////
+//
+// Create an instance of SpriteObject for Boss
+//
+// @param posX pos X of the sprite
+// @param posY pos Y of the sprite
+// @param id Id of the sprite to track it
+////////////////////////////////////////////////////////////
+SpriteObject Game::createBoss(int posX, int posY, int id)
+{
+    SpriteObject boss(m_textureManager.getTexture("boss"), sf::Vector2i(160, 210), 4, 15, id);
+    boss.setPosition(posX, posY);
+    boss.sprite.setScale(sf::Vector2f(2, 2));
+    boss.sprite.setTextureRect(sf::IntRect(0, 0, 160, 210));
+    return boss;
 }
 
 void Game::parseBuffer(const std::string& buffer)
@@ -102,18 +165,16 @@ void Game::parseBuffer(const std::string& buffer)
                 it->setPosition(data.position.x, data.position.y);
             } else {
                 if (data.id >= 1 && data.id <= 4) {
-                    SpriteObject newObject = createPlayer(data.position.x, data.position.y, data.id);
-                    m_object.push_back(newObject);
+                    m_object.push_back(createPlayer(data.position.x, data.position.y, data.id));
                 } else if (data.id >= 5 && data.id < 200) {
-                    SpriteObject newObject = createSbire(data.position.x, data.position.y, data.id);
-                    m_object.push_back(newObject);
+                    m_object.push_back(createSbire(data.position.x, data.position.y, data.id));
                 } else if (data.id >= 200 && data.id < 500) {
-                    SpriteObject newObject = createBullet(data.position.x, data.position.y, data.id);
-                    m_object.push_back(newObject);
+                    m_object.push_back(createBullet(data.position.x, data.position.y, data.id));
                 }
                 else if (data.id >= 500 && data.id < 1000) {
-                    SpriteObject newObject = createKamikaze(data.position.x, data.position.y, data.id);
-                    m_object.push_back(newObject);
+                    m_object.push_back(createKamikaze(data.position.x, data.position.y, data.id));
+                } else if (data.id == 600) {
+                    m_object.push_back(createBoss(data.position.x, data.position.y, data.id));
                 }
             }
         }
@@ -134,6 +195,7 @@ void Game::run(sf::RenderWindow &window, std::string buffer, sf::Time deltaTime,
 {
     parseBuffer(buffer);
     m_parallax.draw(window);
+    // m_parallax.setPosition(0, 0);
 
     for (auto& element: m_object) {
         element.update(deltaTime);

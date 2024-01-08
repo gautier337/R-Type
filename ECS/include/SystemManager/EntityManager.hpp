@@ -24,6 +24,10 @@ namespace Ecs {
 		~EntityManager();
 		bool isGameOver() const;
 		int killedMonstersCount;
+		int wave = 1;
+		bool interWave = true;
+		int victory = 0;
+		int score = 0;
 		void increaseKilledMonstersCount();
 		unsigned int createPlayer() noexcept;
 		std::shared_ptr<Entity> createMonster(int hp, int dmg, int pos_x, int pos_y, int speedM, int id_min, int id_max, int hitboxX, int hitboxY) noexcept;
@@ -32,6 +36,7 @@ namespace Ecs {
 		void checkEntitiesState();
 		void generateMonsters();
 		void updateMonsters();
+		void killMonsters();
 		void handlePlayerInput(int id, int input) noexcept;
 		bool isIdTaken(unsigned int id) const noexcept;
 		unsigned int addEntity(Entity &entity) noexcept;
@@ -60,6 +65,7 @@ namespace Ecs {
 			}
 			return entities;  // Return a copy, not a reference
 		};
+		void updateWave();
 	};
 }
 

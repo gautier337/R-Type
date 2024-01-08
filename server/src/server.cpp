@@ -112,11 +112,17 @@ void Server::handle_tick(const asio::error_code& error)
             tick++;
             manager.updateMissiles();
             manager.checkEntitiesState();
-            manager.generateMonsters();
             manager.updateMonsters();
+            manager.updateWave();
             hitbox.launch(manager.getEntsByComps<Ecs::Hitbox, Ecs::Position, Ecs::Damages, Ecs::Health>());
+            if (manager.interWave == false) {
+                manager.generateMonsters();
+            }
 
             std::stringstream ss;
+            if (manager.interWave) {
+                ss << "Wave " << manager.wave << "\n";
+            }
             for (auto& entity : manager.getEntsByComp<Ecs::Position>()) {
                 ss << "Entity " << entity->getEntityId() << " position: ("
                 << entity->getComponent<Ecs::Position>()->getPosition().first << ", "
@@ -127,6 +133,8 @@ void Server::handle_tick(const asio::error_code& error)
                 }
                 ss << "\n";
             }
+
+            ss << "Score : " << manager.score << "\n";
 
             std::string message = ss.str();
             std::lock_guard<std::mutex> lock(clients_mutex_);

@@ -13,6 +13,7 @@
 #include "../../include/components/Speed.hpp"
 #include "../../include/components/HitBox.hpp"
 #include "../../include/components/Constants.hpp"
+#include <cmath>
 
 
 namespace Ecs {
@@ -91,10 +92,10 @@ namespace Ecs {
         }
     }
 
-    std::shared_ptr<Entity> EntityManager::createMonster(int entitySize, int hp, int dmg, int pos_x, int pos_y, int speedM) noexcept
+    std::shared_ptr<Entity> EntityManager::createMonster(int hp, int dmg, int pos_x, int pos_y, int speedM, int id_min, int id_max, int hitboxX, int hitboxY) noexcept
     {
         int id = 0;
-        for (unsigned int i = 5; i < 201; i++)
+        for (unsigned int i = id_min; i < id_max; i++)
         {
             if (!isIdTaken(i))
             {
@@ -106,7 +107,7 @@ namespace Ecs {
         auto health = std::make_shared<Health>(hp);
         auto damages = std::make_shared<Damages>(dmg);
         auto position = std::make_shared<Position>(pos_x, pos_y);
-        auto hitbox = std::make_shared<Hitbox>(33, 34);
+        auto hitbox = std::make_shared<Hitbox>(hitboxX, hitboxY);
         auto speed = std::make_shared<Speed>(speedM);
         auto shootCooldown = std::make_shared<ShootCD>();
         monster->addComponent(health);
@@ -122,7 +123,7 @@ namespace Ecs {
     std::shared_ptr<Entity> EntityManager::createMissile(int entityID) noexcept
     {
         int id = 0;
-        for (unsigned int i = 201; i < 501; i++)
+        for (unsigned int i = 200; i < 500; i++)
         {
             if (!isIdTaken(i))
             {
@@ -138,7 +139,7 @@ namespace Ecs {
             spawnPos = 25;
             speedToAdd = 15;
         }
-        if (entityID >= 5 && entityID < 101) {
+        if (entityID >= 5 && entityID < 200) {
             spawnPos = -40;
             speedToAdd = -15;
         }
@@ -163,7 +164,7 @@ namespace Ecs {
         //all entity with id between 100 and 200 move with their speed
         for (const auto &entity : _entityList)
         {
-            if (entity->getEntityId() >= 201 && entity->getEntityId() <= 500) {
+            if (entity->getEntityId() >= 200 && entity->getEntityId() < 500) {
                 std::pair<int, int> pos = entity->getComponent<Ecs::Position>()->getPosition();
                 entity->getComponent<Ecs::Position>()->set_pox_x(pos.first + entity->getComponent<Ecs::Speed>()->getSpeed());
             }
@@ -197,22 +198,29 @@ namespace Ecs {
         if (frameCount % framesPerMonster == 0) {
             int xPos = random(780, 1080);
             int yPos = random(0, 1920);
-            int entitySize = random(1, 3); // Assuming entitySize is the size of the monster
-            int hp = random(1, 5);
-            int dmg = random(1, 3);
-            int speed = random(1, 3);
 
-            createMonster(entitySize, hp, dmg, xPos, yPos, speed);
+            // Generate a random number between 0 and 9
+            int randomNum = random(0, 10);
+
+            if (randomNum < 8) {
+                // Generate a basic monster (80% chance)
+                createMonster(3, 1, xPos, yPos, 2, 5, 200, 33, 34);
+            } else {
+                // Generate a kamikaze monster (20% chance)
+                createMonster(1, 5, xPos, yPos, 5, 500, 600, 33, 32);
+            }
         }
 
         frameCount++;
     }
 
+
     void EntityManager::updateMonsters()
     {
         for (const auto& entity : _entityList)
         {
-            if (entity->getEntityId() >= 5 && entity->getEntityId() <= 100)
+            //Basic
+            if (entity->getEntityId() >= 5 && entity->getEntityId() < 200)
             {
                 auto position = entity->getComponent<Ecs::Position>();
                 auto speed = entity->getComponent<Ecs::Speed>();
@@ -263,6 +271,60 @@ namespace Ecs {
                         shootCooldown->decreaseCd();
                     }
                 }
+            }
+            // Kamikaze
+            if (entity->getEntityId() >= 500 && entity->getEntityId() < 600)
+            {
+                auto position = entity->getComponent<Ecs::Position>();
+                auto speed = entity->getComponent<Ecs::Speed>();
+
+                // Update monster's position based on its speed
+                std::pair<int, int> pos = position->getPosition();
+                std::cout << "pos x " << pos.first << "pos y " << pos.second << std::endl;
+
+                // Find the player's position (if any player entity is present)
+                std::shared_ptr<Entity> player = nullptr;
+                for (int playerId = 1; playerId <= 4; ++playerId)
+                {
+                    player = getEntityById(playerId);
+                    if (player != nullptr)
+                        break;
+                }
+
+                // If no player entity is found, move kamikaze monster straight ahead
+                if (player == nullptr)
+                {
+                    position->set_pox_x(pos.first + speed->getSpeed());
+                    position->set_pox_y(pos.second);
+                }
+                else
+                {
+                    // Calculate direction towards the player
+                    int deltaY = player->getComponent<Ecs::Position>()->getPosition().second - pos.second;
+                    int m = 0;
+
+                    if (deltaY > 0)
+                        m = 1;
+                    else
+                        m = -1;
+
+                    // Move the kamikaze monster towards the player
+                    position->set_pox_x(pos.first - speed->getSpeed());
+                    if (deltaY != 0)
+                        position->set_pox_y(pos.second + (speed->getSpeed() * m));
+                }
+
+                // Check and adjust X position to stay within bounds
+                if (pos.first < 0)
+                    position->set_pox_x(0);
+                if (pos.first > 1080)
+                    position->set_pox_x(1080);
+
+                // Check and adjust Y position to stay within bounds
+                if (pos.second < 0)
+                    position->set_pox_y(0);
+                if (pos.second > 1920)
+                    position->set_pox_y(1920);
             }
         }
     }

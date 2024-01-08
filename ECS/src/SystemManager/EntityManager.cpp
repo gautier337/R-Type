@@ -137,11 +137,11 @@ namespace Ecs {
 
         if (entityID < 5) {
             spawnPos = 25;
-            speedToAdd = 15;
+            speedToAdd = 25;
         }
         if (entityID >= 5 && entityID < 200) {
             spawnPos = -40;
-            speedToAdd = -15;
+            speedToAdd = -25;
         }
 
         auto missile = std::make_shared<Entity>(id);
@@ -199,22 +199,24 @@ namespace Ecs {
     void EntityManager::generateMonsters()
     {
         static int frameCount = 0;
-        const int framesPerMonster = 300; // 60 frames per second * 5 seconds
+        const int framesPerMonster = 180; // 60 frames per second * 3 seconds
 
-        // Generate a monster every 5 seconds
+        // Generate a monster every 3 seconds
         if (frameCount % framesPerMonster == 0) {
-            int xPos = random(780, 1080);
-            int yPos = random(0, 1920);
 
             // Generate a random number between 0 and 9
             int randomNum = random(0, 10);
 
             if (randomNum < 8) {
+                int xPos = random(1500, 1920);
+                int yPos = random(0, 1080);
                 // Generate a basic monster (80% chance)
                 createMonster(3, 1, xPos, yPos, 2, 5, 200, 33, 34);
             } else {
+                int xPos = random(1300, 1500);
+                int yPos = random(0, 1080);
                 // Generate a kamikaze monster (20% chance)
-                createMonster(1, 5, xPos, yPos, 5, 500, 600, 33, 32);
+                createMonster(1, 10, xPos, yPos, 8, 500, 600, 33, 32);
             }
         }
 
@@ -258,7 +260,7 @@ namespace Ecs {
                 // Shoot if the cooldown has expired
                 for (const auto& entity : _entityList)
                 {
-                    if (entity->getEntityId() >= 5 && entity->getEntityId() <= 100)
+                    if (entity->getEntityId() >= 5 && entity->getEntityId() < 200)
                     {
                         auto shootCooldown = entity->getComponent<ShootCD>();
 
@@ -266,7 +268,7 @@ namespace Ecs {
                         if (shootCooldown->getCd() <= 0 && random(1, 5) == 1)
                         {
                             createMissile(entity->getEntityId());
-                            shootCooldown->setCd(random(120, 300)); // 60 frames per second, so 2 to 5 seconds
+                            shootCooldown->setCd(random(180, 480)); // 60 frames per second, so 3 to 8 seconds
                         }
 
                         shootCooldown->decreaseCd();
@@ -313,12 +315,6 @@ namespace Ecs {
                     if (deltaY != 0)
                         position->set_pox_y(pos.second + (speed->getSpeed() * m));
                 }
-
-                // Check and adjust X position to stay within bounds
-                if (pos.first < 0)
-                    position->set_pox_x(0);
-                if (pos.first > 1080)
-                    position->set_pox_x(1080);
 
                 // Check and adjust Y position to stay within bounds
                 if (pos.second < 0)

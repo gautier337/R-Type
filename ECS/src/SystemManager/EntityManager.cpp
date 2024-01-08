@@ -103,6 +103,8 @@ namespace Ecs {
                 break;
             }
         }
+        if (id == 0)
+            return nullptr;
         auto monster = std::make_shared<Entity>(id);
         auto health = std::make_shared<Health>(hp);
         auto damages = std::make_shared<Damages>(dmg);
@@ -133,25 +135,26 @@ namespace Ecs {
         }
 
         int speedToAdd = 0;
-        int spawnPos = 0;
+        int spawnPosX = 0;
+        int spawnPosY = 0;
 
         if (entityID < 5) {
-            spawnPos = 25;
+            spawnPosX = 25;
             speedToAdd = 20;
         }
         if (entityID >= 5 && entityID < 200) {
-            spawnPos = -40;
+            spawnPosX = -40;
             speedToAdd = -15;
         }
         if (entityID == 600) {
-            spawnPos = -400;
+            spawnPosX = -90;
             speedToAdd = -30;
         }
 
         auto missile = std::make_shared<Entity>(id);
         auto health = std::make_shared<Health>(1);
         auto damages = std::make_shared<Damages>(getEntityById(entityID)->getComponent<Ecs::Damages>()->getDamage());
-        auto position = std::make_shared<Position>(getEntityById(entityID)->getComponent<Ecs::Position>()->getPosition().first + spawnPos, getEntityById(entityID)->getComponent<Ecs::Position>()->getPosition().second);
+        auto position = std::make_shared<Position>(getEntityById(entityID)->getComponent<Ecs::Position>()->getPosition().first + spawnPosX, getEntityById(entityID)->getComponent<Ecs::Position>()->getPosition().second + spawnPosY);
         auto hitbox = std::make_shared<Hitbox>(17, 18);
         auto speed = std::make_shared<Speed>(speedToAdd);
         missile->addComponent(health);

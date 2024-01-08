@@ -141,6 +141,9 @@ SpriteObject Game::createBoss(int posX, int posY, int id)
     boss.setPosition(posX, posY);
     boss.sprite.setScale(sf::Vector2f(2, 2));
     boss.sprite.setTextureRect(sf::IntRect(0, 0, 160, 210));
+    //make the center of the sprite the origin
+    sf::FloatRect bounds = boss.sprite.getLocalBounds();
+    boss.sprite.setOrigin(bounds.width / 2.0f, bounds.height / 2.0f);
     return boss;
 }
 

@@ -123,7 +123,6 @@ void Server::handle_tick(const asio::error_code& error)
             if (manager.interWave) {
                 ss << "Wave " << manager.wave << "\n";
             }
-            std::cout << "wave " << manager.wave << std::endl;
             for (auto& entity : manager.getEntsByComp<Ecs::Position>()) {
                 ss << "Entity " << entity->getEntityId() << " position: ("
                 << entity->getComponent<Ecs::Position>()->getPosition().first << ", "

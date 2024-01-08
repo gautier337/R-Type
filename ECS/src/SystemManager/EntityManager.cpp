@@ -239,7 +239,7 @@ namespace Ecs {
                 // Generate a boss
                 int xPos = 1200;
                 int yPos = 540;
-                createMonster(50, 5, xPos, yPos, 2, 600, 601, 330, 340);
+                createMonster(50, 5, xPos, yPos, 2, 600, 601, 160, 210);
             }
         }
 

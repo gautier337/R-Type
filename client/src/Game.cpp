@@ -19,7 +19,7 @@ Game::~Game()
 SpriteObject Game::createPlayer(int posX, int posY, int id)
 {
     SpriteObject ship(m_textureManager.getTexture("player"), sf::Vector2i(33, 17), 5, 10, id);
-    int top = (id - 1) * 17; // Calculate the top coordinate based on the ID
+    int top = (id - 1) * 17;
     int left = 0;
 
     ship.setPosition(posX, posY);
@@ -72,6 +72,15 @@ SpriteObject Game::createBasicSbire(int posX, int posY, int id)
     return basic_sbire;
 }
 
+SpriteObject Game::createKamikaze(int posX, int posY, int id)
+{
+    SpriteObject kamikaze(m_textureManager.getTexture("kamikaze"), sf::Vector2i(33, 32), 3, 8, id);
+    kamikaze.setPosition(posX, posY);
+    kamikaze.sprite.setScale(sf::Vector2f(2, 2));
+    kamikaze.sprite.setTextureRect(sf::IntRect(0, 0, 33, 32));
+    return kamikaze;
+}
+
 void Game::parseBuffer(const std::string& buffer)
 {
     std::istringstream stream(buffer);
@@ -85,7 +94,7 @@ void Game::parseBuffer(const std::string& buffer)
 
             currentIds.insert(data.id);
 
-            auto it = std::find_if(m_object.begin(), m_object.end(), [&data](const SpriteObject& obj) {
+            auto it = std::find_if(m_object.begin(), m_object.end(), [&data](const SpriteObject &obj) {
                 return obj.getId() == data.id;
             });
 
@@ -95,11 +104,15 @@ void Game::parseBuffer(const std::string& buffer)
                 if (data.id >= 1 && data.id <= 4) {
                     SpriteObject newObject = createPlayer(data.position.x, data.position.y, data.id);
                     m_object.push_back(newObject);
-                } else if (data.id >= 5 && data.id <= 200) {
+                } else if (data.id >= 5 && data.id < 200) {
                     SpriteObject newObject = createSbire(data.position.x, data.position.y, data.id);
                     m_object.push_back(newObject);
-                } else if (data.id >= 201 && data.id <= 500) {
+                } else if (data.id >= 200 && data.id < 500) {
                     SpriteObject newObject = createBullet(data.position.x, data.position.y, data.id);
+                    m_object.push_back(newObject);
+                }
+                else if (data.id >= 500 && data.id < 1000) {
+                    SpriteObject newObject = createKamikaze(data.position.x, data.position.y, data.id);
                     m_object.push_back(newObject);
                 }
             }
@@ -117,9 +130,7 @@ void Game::parseBuffer(const std::string& buffer)
     m_object.erase(it, m_object.end());
 }
 
-    float timeSinceLastMove = 0.0f;
-
-void Game::run(sf::RenderWindow& window, std::string buffer, sf::Time deltaTime, SpriteObject m_parallax)
+void Game::run(sf::RenderWindow &window, std::string buffer, sf::Time deltaTime, SpriteObject m_parallax)
 {
     parseBuffer(buffer);
     m_parallax.draw(window);

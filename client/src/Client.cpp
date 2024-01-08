@@ -61,16 +61,16 @@ void Client::listenToServer()
     }
 }
 
-void Client::send_message_to_server(const char* message)
+void Client::send_message_to_server(const char *message)
 {
     sendto(m_sock, message, strlen(message), 0, (const struct sockaddr *)&m_server_addr, sizeof(m_server_addr));
 }
 
-////////////////////////////////////////////////////////////
-//
-// Create Menu / Game Class / Init texture vector and sprite vector
-//
-////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+//                                                                  //
+// Create Menu / Game Class / Init texture vector and sprite vector //
+//                                                                  //
+//////////////////////////////////////////////////////////////////////
 void Client::init()
 {
     setStatus(ClientStep::InitiationState);
@@ -112,10 +112,11 @@ void Client::init()
     m_texture.loadTexture("sbire", "assets/sbire.gif");
     // Missile
     m_texture.loadTexture("bullet", "assets/bullet.gif");
+    // Kamikaze
+    m_texture.loadTexture("kamikaze", "assets/kamikaze.png");
 
     m_texture.loadTexture("parallax", "assets/parallax.png");
     m_texture.setTextureRepeated("parallax", true);
-
 
     m_game.m_textureManager = m_texture;
     m_parallax = m_game.createParallax(0, 0);
@@ -159,6 +160,13 @@ void Client::init()
     m_game.m_game_is_over_texture.loadFromFile("assets/game_over.png");
     m_game.m_game_is_over_sprite.setTexture(m_game.m_game_is_over_texture);
     m_game.m_game_is_over_sprite.setScale(sf::Vector2f(0.8, 0.8));
+
+    //hp
+    m_game.m_texture_hp.loadFromFile("assets/hp.png");
+    m_game.m_hp_sprite.setTexture(m_game.m_texture_hp);
+    m_game.m_hp_sprite.setScale(sf::Vector2f(1.2, 1.2));
+    int hp = m_game.m_data.hp;
+    std::cout << "HP: " << hp << std::endl;
 }
 
 void Client::checkButtonHover(sf::Sprite& button, const sf::Vector2i& mousePos)

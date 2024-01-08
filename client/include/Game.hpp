@@ -18,11 +18,11 @@
 #include <cstdio>
 
 struct EntityData {
-        int id;
-        sf::Vector2f position;
-        int hp;
-        int dead;
-    };
+    int id;
+    sf::Vector2f position;
+    int hp;
+    int dead;
+};
 
 class Game {
     public:
@@ -34,16 +34,18 @@ class Game {
 
         SpriteObject createPlayer(int posX, int posY, int id);
         SpriteObject createSbire(int posX, int posY, int id);
+        SpriteObject createKamikaze(int posX, int posY, int id);
         SpriteObject createBasicSbire(int posX, int posY, int id);
         SpriteObject createBullet(int posX, int posY, int id);
         SpriteObject createParallax(int posX, int posY);
 
-
         std::vector<SpriteObject> m_object;
         TextureManager m_textureManager;
         bool m_game_is_over = false;
-        sf::Texture m_game_is_over_texture;
-        sf::Sprite m_game_is_over_sprite;
+        sf::Texture m_game_is_over_texture, m_texture_hp;
+        sf::Sprite m_game_is_over_sprite, m_hp_sprite;
+        
+        EntityData m_data;
     private:
 };
 

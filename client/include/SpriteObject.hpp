@@ -19,7 +19,7 @@ class SpriteObject {
             updateFrame(m_id);
         }
 
-        ~SpriteObject() {}  // Destructeur virtuel
+        ~SpriteObject() {}
 
         void update(sf::Time deltaTime) {
             elapsedTime += deltaTime.asMilliseconds();
@@ -31,12 +31,9 @@ class SpriteObject {
             }
         }
 
-        void moveHorizontally(int offset) { // Fonction pour déplacer le parallax
+        void moveHorizontally(int offset) {
             sf::IntRect textureRect = sprite.getTextureRect();
-            // Déplacer le rectangle de texture horizontalement
             textureRect.left += offset;
-
-            // Appliquer le nouveau rectangle de texture
             sprite.setTextureRect(textureRect);
             // sf::Vector2f position = sprite.getPosition();
             // position.x += offset;
@@ -81,4 +78,3 @@ class SpriteObject {
 };
 
 #endif // SPRITEOBJECT_HPP_
-

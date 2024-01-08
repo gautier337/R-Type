@@ -22,3 +22,18 @@ jobs:
         with:
           target_repo_url: ${{ env.MIRROR_URL }}
           ssh_private_key: ${{ secrets.GIT_SSH_PRIVATE_KEY }}
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y libasio-dev
+    - name: Run build script
+      run: ./build.sh
+    - name: Check binaries
+      run: |
+        test -f r-type_client && echo "r-type_client binary exists."
+        test -f r-type_server && echo "r-type_server binary exists."

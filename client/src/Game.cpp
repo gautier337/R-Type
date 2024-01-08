@@ -74,7 +74,7 @@ SpriteObject Game::createBasicSbire(int posX, int posY, int id)
 
 SpriteObject Game::createKamikaze(int posX, int posY, int id)
 {
-    SpriteObject kamikaze(m_textureManager.getTexture("kamikaze"), sf::Vector2i(33, 32), 3, 8, id);
+    SpriteObject kamikaze(m_textureManager.getTexture("kamikaze"), sf::Vector2i(35, 25), 4, 8, id);
     kamikaze.setPosition(posX, posY);
     kamikaze.sprite.setScale(sf::Vector2f(2, 2));
     kamikaze.sprite.setTextureRect(sf::IntRect(0, 0, 33, 32));
@@ -103,7 +103,6 @@ void Game::parseBuffer(const std::string& buffer)
             } else {
                 if (data.id >= 1 && data.id <= 4) {
                     SpriteObject newObject = createPlayer(data.position.x, data.position.y, data.id);
-                    
                     m_object.push_back(newObject);
                 } else if (data.id >= 5 && data.id < 200) {
                     SpriteObject newObject = createSbire(data.position.x, data.position.y, data.id);

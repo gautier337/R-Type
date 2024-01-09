@@ -234,13 +234,13 @@ namespace Ecs {
                     int yPos = random(0, 1080);
                     int randomSpeed = random(10, 13);
                     if (randomSpeed == 11) {
-                        int xPos = random(0, 1920);
-                        int yPos = random(1080, 1200);
+                        xPos = random(0, 1920);
+                        yPos = 1120;
                     } else if (randomSpeed == 12) {
-                        int xPos = random(0, 1920);
-                        int yPos = random(0, -120);
+                        xPos = random(0, 1920);
+                        yPos = -40;
                     }
-                    createMonster(9, 1, xPos, yPos, 10, 601, 650, 33, 34);
+                    createMonster(9, 1, xPos, yPos, randomSpeed, 601, 650, 60, 63);
                 }
             } else if (wave == 2) {
                 if (randomNum < 8) {
@@ -260,13 +260,13 @@ namespace Ecs {
                     int yPos = random(0, 1080);
                     int randomSpeed = random(10, 13);
                     if (randomSpeed == 11) {
-                        int xPos = random(0, 1920);
-                        int yPos = random(1080, 1200);
+                        xPos = random(0, 1920);
+                        yPos = 1120;
                     } else if (randomSpeed == 12) {
-                        int xPos = random(0, 1920);
-                        int yPos = random(0, -120);
+                        xPos = random(0, 1920);
+                        yPos = -40;
                     }
-                    createMonster(9, 1, xPos, yPos, 10, 601, 650, 33, 34);
+                    createMonster(9, 1, xPos, yPos, randomSpeed, 601, 650, 60, 63);
                 }
             } else if (wave == 3) {
                 // Generate a boss

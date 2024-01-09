@@ -59,6 +59,7 @@ namespace Ecs {
         player->addComponent(hitbox);
         player->addComponent(speed);
         player->addComponent(shootCooldown);
+        player->getComponent<ShootCD>()->setMultiShoot(false);
         _entityList.push_back(player);
         return player->getEntityId();
     }
@@ -68,18 +69,30 @@ namespace Ecs {
         static int frameCount = 0;
         const int framesForShootCD = 30; // 0.5 seconds
         const int framesForRegen = 600; // 10 second
+        static int frameCountMultiShoot = 0;
 
         for (const auto &entity : _entityList)
         {
             if (entity->getEntityId() >= 1 && entity->getEntityId() < 5)
             {
                 if (frameCount % framesForShootCD == 0) {
-                    if (entity->getComponent<ShootCD>()->getCd() > 0)
+                    if (entity->getComponent<ShootCD>()->getCd() > 0) {
                         entity->getComponent<ShootCD>()->setCd(entity->getComponent<ShootCD>()->getCd() - 0.1);
+                        if (entity->getComponent<ShootCD>()->getMultiShoot() == true) {
+                            entity->getComponent<ShootCD>()->setCd(entity->getComponent<ShootCD>()->getCd() - 0.1);
+                        }
+                    }
                 }
                 if (frameCount % framesForRegen == 0) {
                     if (entity->getComponent<Health>()->getHp() < 5)
                         entity->getComponent<Health>()->setHp(entity->getComponent<Health>()->getHp() + 1);
+                }
+                if (entity->getComponent<ShootCD>()->getMultiShoot() == true) {
+                    if (frameCountMultiShoot >= 300) {
+                        entity->getComponent<ShootCD>()->setMultiShoot(false);
+                        frameCountMultiShoot = 0;
+                    }
+                    frameCountMultiShoot++;
                 }
             }
         }
@@ -114,7 +127,13 @@ namespace Ecs {
         //Shoot
         if (input == 5) {
             if (getEntityById(id)->getComponent<ShootCD>()->getCd() <= 0) {
-                createMissile(id);
+                if (getEntityById(id)->getComponent<ShootCD>()->getMultiShoot() == true) {
+                    createMissile(id);
+                    createMissile(id, 40);
+                    createMissile(id, -40);
+                } else {
+                    createMissile(id);
+                }
                 getEntityById(id)->getComponent<ShootCD>()->setCd(1);
             }
         }
@@ -150,7 +169,7 @@ namespace Ecs {
         return monster;
     }
 
-    std::shared_ptr<Entity> EntityManager::createMissile(int entityID) noexcept
+    std::shared_ptr<Entity> EntityManager::createMissile(int entityID, int posY) noexcept
     {
         int id = 0;
         for (unsigned int i = 200; i < 500; i++)
@@ -182,7 +201,7 @@ namespace Ecs {
         auto missile = std::make_shared<Entity>(id, entityID);
         auto health = std::make_shared<Health>(1);
         auto damages = std::make_shared<Damages>(getEntityById(entityID)->getComponent<Ecs::Damages>()->getDamage());
-        auto position = std::make_shared<Position>(getEntityById(entityID)->getComponent<Ecs::Position>()->getPosition().first + spawnPosX, getEntityById(entityID)->getComponent<Ecs::Position>()->getPosition().second + spawnPosY);
+        auto position = std::make_shared<Position>(getEntityById(entityID)->getComponent<Ecs::Position>()->getPosition().first + spawnPosX, getEntityById(entityID)->getComponent<Ecs::Position>()->getPosition().second + spawnPosY + posY);
         auto hitbox = std::make_shared<Hitbox>(17, 18);
         auto speed = std::make_shared<Speed>(speedToAdd);
         missile->addComponent(health);
@@ -191,6 +210,7 @@ namespace Ecs {
         missile->addComponent(hitbox);
         missile->addComponent(speed);
         _entityList.push_back(missile);
+
         return missile;
     }
 

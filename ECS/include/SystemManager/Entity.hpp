@@ -22,6 +22,7 @@ namespace Ecs {
 		~Entity();
 		unsigned int getEntityId() noexcept;
 		unsigned int getCreatorId() noexcept;
+		void setId(unsigned int id) noexcept { _id = id; };
 
 		template <class T>
         bool hasComponent() noexcept {

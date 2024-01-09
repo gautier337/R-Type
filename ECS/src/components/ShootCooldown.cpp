@@ -3,7 +3,7 @@
 namespace Ecs {
 
     ShootCD::ShootCD(float cd)
-        : _cd(cd)
+        : _cd(cd), _multiShoot(false)
     { _type = Constants::SHOOTCD; }
     ShootCD::~ShootCD() {}
 

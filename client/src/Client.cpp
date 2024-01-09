@@ -98,6 +98,8 @@ void Client::init()
     m_game.m_text_score.setCharacterSize(50);
     m_game.m_text_score.setFillColor(sf::Color::White);
     m_game.m_text_score.setPosition(50, 50);
+
+    m_bullet_sound.openFromFile("assets/fire_sound.wav");
     //Wave font
     m_game.m_text_wave.setFont(m_game.m_font_score);
     m_game.m_text_wave.setCharacterSize(100);
@@ -142,6 +144,10 @@ void Client::init()
     m_texture.loadTexture("boss", "assets/boss.gif");
 
     m_texture.loadTexture("asteroid", "assets/asteroid.png");
+
+    m_texture.loadTexture("boostPack", "assets/speedBoost.png");
+
+    m_texture.loadTexture("healthPack", "assets/healthBoost.png");
 
     m_texture.loadTexture("parallax", "assets/parallax.png");
     m_texture.setTextureRepeated("parallax", true);
@@ -356,7 +362,10 @@ void Client::handleInput(sf::Keyboard::Key key)
             }
             break;
         case sf::Keyboard::Space:
-            send_message_to_server("SHOOT");
+            if (m_currentScene == ClientScene::GAME) {
+                m_bullet_sound.play();
+                send_message_to_server("SHOOT");
+            }
             break;
         case sf::Keyboard::Left:
             send_message_to_server("LEFT");

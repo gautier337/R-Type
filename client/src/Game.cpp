@@ -164,12 +164,36 @@ SpriteObject Game::createAsteroid(int posX, int posY, int id)
 {
     SpriteObject asteroid(m_textureManager.getTexture("asteroid"), sf::Vector2i(60, 63), 8, 3, id);
     asteroid.setPosition(posX, posY);
-    asteroid.sprite.setScale(sf::Vector2f(2, 2));
+    asteroid.sprite.setScale(sf::Vector2f(1, 1));
     asteroid.sprite.setTextureRect(sf::IntRect(0, 0, 60, 63));
     //make the center of the sprite the origin
     sf::FloatRect bounds =asteroid.sprite.getLocalBounds();
     asteroid.sprite.setOrigin(bounds.width / 2.0f, bounds.height / 2.0f);
     return asteroid;
+}
+
+SpriteObject Game::createBoostPack(int posX, int posY, int id)
+{
+    SpriteObject boostPack(m_textureManager.getTexture("boostPack"), sf::Vector2i(412, 406), 1, 0, id);
+    boostPack.setPosition(posX, posY);
+    boostPack.sprite.setScale(sf::Vector2f(0.1, 0.1));
+    boostPack.sprite.setTextureRect(sf::IntRect(0, 0, 412, 406));
+    //make the center of the sprite the origin
+    sf::FloatRect bounds = boostPack.sprite.getLocalBounds();
+    boostPack.sprite.setOrigin(bounds.width / 2.0f, bounds.height / 2.0f);
+    return boostPack;
+}
+
+SpriteObject Game::createHealthPack(int posX, int posY, int id)
+{
+    SpriteObject HealthPack(m_textureManager.getTexture("healthPack"), sf::Vector2i(436, 429), 1, 0, id);
+    HealthPack.setPosition(posX, posY);
+    HealthPack.sprite.setScale(sf::Vector2f(0.1, 0.1));
+    HealthPack.sprite.setTextureRect(sf::IntRect(0, 0, 436, 429));
+    //make the center of the sprite the origin
+    sf::FloatRect bounds = HealthPack.sprite.getLocalBounds();
+    HealthPack.sprite.setOrigin(bounds.width / 2.0f, bounds.height / 2.0f);
+    return HealthPack;
 }
 
 void Game::parseBuffer(const std::string& buffer)
@@ -205,6 +229,10 @@ void Game::parseBuffer(const std::string& buffer)
                     m_object.push_back(createBoss(data.position.x, data.position.y, data.id));
                 } else if (data.id >= 601 && data.id < 650) {
                     m_object.push_back(createAsteroid(data.position.x, data.position.y, data.id));
+                } else if (data.id >= 700 && data.id < 710) {
+                    m_object.push_back(createHealthPack(data.position.x, data.position.y, data.id));
+                } else if (data.id >= 710 && data.id < 720) {
+                    m_object.push_back(createBoostPack(data.position.x, data.position.y, data.id));
                 }
             }
             // update hp of the player

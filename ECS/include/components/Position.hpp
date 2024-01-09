@@ -17,8 +17,8 @@ namespace Ecs {
 		public:
 			Position(int X = 0, int Y = 0);
 			~Position();
-			inline void set_pox_x(int X) noexcept { _x = X; };
-			inline void set_pox_y(int Y) noexcept { _y = Y; };
+			inline void set_pos_x(int X) noexcept { _x = X; };
+			inline void set_pos_y(int Y) noexcept { _y = Y; };
 			std::pair<int, int> getPosition() noexcept { return (std::make_pair(_x, _y)); };
 
 		private:

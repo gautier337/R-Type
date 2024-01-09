@@ -23,6 +23,7 @@ struct EntityData {
     int hp;
     int dead;
     int score;
+    int wave;
 };
 
 class Game {
@@ -48,7 +49,7 @@ class Game {
         sf::Texture m_game_is_over_texture, m_texture_hp;
         sf::Sprite m_game_is_over_sprite, m_hp_sprite;
         sf::Font m_font_score;
-        sf::Text m_text_score;
+        sf::Text m_text_score, m_text_wave;
 
         EntityData m_data;
     private:

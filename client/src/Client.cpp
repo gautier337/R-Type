@@ -98,6 +98,11 @@ void Client::init()
     m_game.m_text_score.setCharacterSize(50);
     m_game.m_text_score.setFillColor(sf::Color::White);
     m_game.m_text_score.setPosition(50, 50);
+    //Wave font
+    m_game.m_text_wave.setFont(m_game.m_font_score);
+    m_game.m_text_wave.setCharacterSize(100);
+    m_game.m_text_wave.setFillColor(sf::Color::White);
+    m_game.m_text_wave.setPosition(600, 20);
     //menu
     m_texture.loadTexture("menu", "assets/background.png");
     m_texture.loadTexture("startgame", "assets/start_game.png");
@@ -238,8 +243,10 @@ void Client::run()
         if (m_window.isOpen()) {
             m_window.clear();
             if (m_currentScene == ClientScene::MENU) {
-                if (m_menu.m_music.getStatus() != sf::SoundSource::Status::Playing)
+                if (m_menu.m_music.getStatus() != sf::SoundSource::Status::Playing) {
                     m_menu.m_music.play();
+                    m_menu.m_music.setLoop(true);
+                }
                 m_window.draw(m_menu.m_background);
                 m_window.draw(m_menu.m_startGame);
                 m_window.draw(m_menu.m_Exit);

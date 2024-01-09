@@ -210,11 +210,12 @@ void Game::parseBuffer(const std::string& buffer)
         }
         if (line.rfind("DEAD", 0) == 0) {
             m_game_is_over = true;
-            std::cout << "Player DEAD" << std::endl;
         }
         if (line.rfind("Score :", 0) == 0) {
             std::sscanf(line.c_str(), "Score : %d", &m_data.score);
-            // std::cout << "Score : " << m_data.score << std::endl;
+        }
+        if (line.rfind("Wave :", 0) == 0) {
+            std::sscanf(line.c_str(), "Wave : %d", &m_data.wave);
         }
     }
 

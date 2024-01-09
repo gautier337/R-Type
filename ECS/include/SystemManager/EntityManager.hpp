@@ -67,6 +67,12 @@ namespace Ecs {
 			return entities;  // Return a copy, not a reference
 		};
 		void updateWave();
+		void generateBoss1();
+		void generateBasicMonster();
+		void generateAsteroid();
+		void generateKamikaze();
+		void generateHealthBoost();
+		void generateShootBoost();
 	};
 }
 

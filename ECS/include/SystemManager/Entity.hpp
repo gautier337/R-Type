@@ -18,9 +18,10 @@ namespace Ecs {
 	class Entity {
 
 	public:
-		Entity(unsigned int id);
+		Entity(unsigned int id, unsigned int creatorId = 0);
 		~Entity();
 		unsigned int getEntityId() noexcept;
+		unsigned int getCreatorId() noexcept;
 
 		template <class T>
         bool hasComponent() noexcept {
@@ -80,6 +81,7 @@ namespace Ecs {
     private:
 		std::list<std::shared_ptr<AComponent>> _Comps;
 		unsigned int _id;
+		unsigned int _creatorId;
 		template <class T1>
 		bool hasComponents()
 		{

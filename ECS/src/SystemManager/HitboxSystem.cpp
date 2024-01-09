@@ -45,6 +45,11 @@ void Ecs::HitboxSystem::checkForDamages(std::shared_ptr<Entity> entity,
 
     if (pos.first + size.first >= otherPos.first && pos.first <= otherPos.first + otherSize.first &&
         pos.second + size.second >= otherPos.second && pos.second <= otherPos.second + otherSize.second) {
+        // call take damages if the two entities are not player
+        if ((entity->getEntityId() >= 1 && entity->getEntityId() <= 4) &&
+            (otherEntity->getEntityId() >= 1 && otherEntity->getEntityId() <= 4)) {
+            return;
+        }
         takeDamages(entity, otherEntity);
     }
 }

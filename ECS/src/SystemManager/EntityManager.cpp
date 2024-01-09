@@ -52,13 +52,33 @@ namespace Ecs {
         auto position = std::make_shared<Position>(pos.first, pos.second);
         auto hitbox = std::make_shared<Hitbox>(17, 18);
         auto speed = std::make_shared<Speed>(10);
+        auto shootCooldown = std::make_shared<ShootCD>(1);
         player->addComponent(health);
         player->addComponent(damages);
         player->addComponent(position);
         player->addComponent(hitbox);
         player->addComponent(speed);
+        player->addComponent(shootCooldown);
         _entityList.push_back(player);
         return player->getEntityId();
+    }
+
+    void EntityManager::updatePlayers()
+    {
+        static int frameCount = 0;
+        const int framesPerDecrease = 30; // 60 frames per second / 10
+
+        for (const auto &entity : _entityList)
+        {
+            if (entity->getEntityId() >= 1 && entity->getEntityId() < 5)
+            {
+                if (frameCount % framesPerDecrease == 0) {
+                    if (entity->getComponent<ShootCD>()->getCd() > 0)
+                        entity->getComponent<ShootCD>()->setCd(entity->getComponent<ShootCD>()->getCd() - 0.1);
+                }
+            }
+        }
+        frameCount++;
     }
 
     void EntityManager::handlePlayerInput(int id, int input) noexcept
@@ -88,7 +108,10 @@ namespace Ecs {
         }
         //Shoot
         if (input == 5) {
-            createMissile(id);
+            if (getEntityById(id)->getComponent<ShootCD>()->getCd() <= 0) {
+                createMissile(id);
+                getEntityById(id)->getComponent<ShootCD>()->setCd(1);
+            }
         }
     }
 

@@ -36,6 +36,7 @@ namespace Ecs {
 		void checkEntitiesState();
 		void generateMonsters();
 		void updateMonsters();
+		void updatePlayers();
 		void killMonsters();
 		void handlePlayerInput(int id, int input) noexcept;
 		bool isIdTaken(unsigned int id) const noexcept;

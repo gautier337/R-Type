@@ -2,7 +2,7 @@
 
 namespace Ecs {
 
-    ShootCD::ShootCD(int cd)
+    ShootCD::ShootCD(float cd)
         : _cd(cd)
     { _type = Constants::SHOOTCD; }
     ShootCD::~ShootCD() {}

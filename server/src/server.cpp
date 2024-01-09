@@ -122,6 +122,7 @@ void Server::handle_tick(const asio::error_code& error)
             tick++;
             manager.updateMissiles();
             manager.checkEntitiesState();
+            manager.updatePlayers();
             manager.updateMonsters();
             manager.updateWave();
             hitbox.launch(manager.getEntsByComps<Ecs::Hitbox, Ecs::Position, Ecs::Damages, Ecs::Health>());

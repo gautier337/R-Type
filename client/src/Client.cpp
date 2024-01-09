@@ -262,6 +262,10 @@ void Client::run()
                 }
                 m_game.m_text_score.setString("Score : " + std::to_string(m_game.m_data.score));
                 m_window.draw(m_game.m_text_score);
+                for (int i = 0; i < m_game.player_hp; i++) {
+                    m_game.m_hp_sprite.setPosition(50 + i * 50, 110);
+                    m_window.draw(m_game.m_hp_sprite);
+                }
             } else if (m_currentScene == ClientScene::OPTIONS) {
                 display_options();
             }

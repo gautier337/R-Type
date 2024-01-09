@@ -207,6 +207,10 @@ void Game::parseBuffer(const std::string& buffer)
                     m_object.push_back(createAsteroid(data.position.x, data.position.y, data.id));
                 }
             }
+            // update hp of the player
+            if (data.id >= 1 && data.id <= 4) {
+                player_hp = data.hp;
+            }
         }
         if (line.rfind("DEAD", 0) == 0) {
             m_game_is_over = true;
@@ -214,8 +218,11 @@ void Game::parseBuffer(const std::string& buffer)
         if (line.rfind("Score :", 0) == 0) {
             std::sscanf(line.c_str(), "Score : %d", &m_data.score);
         }
-        if (line.rfind("Wave :", 0) == 0) {
-            std::sscanf(line.c_str(), "Wave : %d", &m_data.wave);
+        for (int waveNum = 1; waveNum <= 9; ++waveNum) {
+            if (line.rfind("Wave : " + std::to_string(waveNum), 0) == 0) {
+                m_data.wave = waveNum;
+                break;
+            }
         }
     }
 

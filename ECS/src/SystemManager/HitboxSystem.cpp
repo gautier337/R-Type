@@ -12,6 +12,7 @@
 #include "../../include/components/Damages.hpp"
 #include "../../include/components/Health.hpp"
 #include "../../include/components/Position.hpp"
+#include "../../include/components/ShootCD.hpp"
 #include <iostream>
 
 Ecs::HitboxSystem::HitboxSystem() {}
@@ -63,7 +64,7 @@ void Ecs::HitboxSystem::takeDamages(std::shared_ptr<Entity> entity,
     int health = entity->getComponent<Health>()->getHp();
 
     entity->getComponent<Health>()->setHp(health - damages);
-    //check if one is a player and the other a health pack
+    //check if creator is a player and the other a health pack
     if ((entity->getCreatorId() >= 1 && entity->getCreatorId() <= 4) &&
         (otherEntity->getEntityId() >= 700 && otherEntity->getEntityId() < 710)) {
             //find the player with 4 iterations max
@@ -74,5 +75,24 @@ void Ecs::HitboxSystem::takeDamages(std::shared_ptr<Entity> entity,
                     (*it)->getComponent<Health>()->setHp(playerHealth + 5);
                 }
             }
+    }
+    //check if one is a player and the other a health pack
+    if ((entity->getEntityId() >= 1 && entity->getEntityId() <= 4) &&
+        (otherEntity->getEntityId() >= 700 && otherEntity->getEntityId() < 710)) {
+            entity->getComponent<Health>()->setHp(health + 5);
+    }
+    //check if creator is a player and the other a shoot power up
+    if ((entity->getCreatorId() >= 1 && entity->getCreatorId() <= 4) &&
+        (otherEntity->getEntityId() >= 710 && otherEntity->getEntityId() < 720)) {
+            //find the player with 4 iterations max
+            for (auto it = entities.begin(); it != entities.end(); ++it) {
+                if ((*it)->getEntityId() == entity->getCreatorId()) {
+                    (*it)->getComponent<ShootCD>()->setMultiShoot(true);
+                }
+            }
+    //check if one is a player and the other a shoot power up
+    } else if ((entity->getEntityId() >= 1 && entity->getEntityId() <= 4) &&
+        (otherEntity->getEntityId() >= 710 && otherEntity->getEntityId() < 720)) {
+            entity->getComponent<ShootCD>()->setMultiShoot(true);
     }
 }

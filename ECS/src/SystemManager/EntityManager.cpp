@@ -66,15 +66,20 @@ namespace Ecs {
     void EntityManager::updatePlayers()
     {
         static int frameCount = 0;
-        const int framesPerDecrease = 30; // 60 frames per second / 10
+        const int framesForShootCD = 30; // 0.5 seconds
+        const int framesForRegen = 600; // 10 second
 
         for (const auto &entity : _entityList)
         {
             if (entity->getEntityId() >= 1 && entity->getEntityId() < 5)
             {
-                if (frameCount % framesPerDecrease == 0) {
+                if (frameCount % framesForShootCD == 0) {
                     if (entity->getComponent<ShootCD>()->getCd() > 0)
                         entity->getComponent<ShootCD>()->setCd(entity->getComponent<ShootCD>()->getCd() - 0.1);
+                }
+                if (frameCount % framesForRegen == 0) {
+                    if (entity->getComponent<Health>()->getHp() < 5)
+                        entity->getComponent<Health>()->setHp(entity->getComponent<Health>()->getHp() + 1);
                 }
             }
         }

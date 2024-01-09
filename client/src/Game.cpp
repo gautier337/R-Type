@@ -164,7 +164,7 @@ SpriteObject Game::createAsteroid(int posX, int posY, int id)
 {
     SpriteObject asteroid(m_textureManager.getTexture("asteroid"), sf::Vector2i(60, 63), 8, 3, id);
     asteroid.setPosition(posX, posY);
-    asteroid.sprite.setScale(sf::Vector2f(2, 2));
+    asteroid.sprite.setScale(sf::Vector2f(1, 1));
     asteroid.sprite.setTextureRect(sf::IntRect(0, 0, 60, 63));
     //make the center of the sprite the origin
     sf::FloatRect bounds =asteroid.sprite.getLocalBounds();

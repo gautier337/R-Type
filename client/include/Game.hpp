@@ -44,6 +44,8 @@ class Game {
         SpriteObject createBoostPack(int posX, int posY, int id);
         SpriteObject createHealthPack(int posX, int posY, int id);
         SpriteObject createParallax(int posX, int posY);
+        SpriteObject createShieldPack(int posX, int posY, int id);
+
 
         std::vector<SpriteObject> m_object;
         TextureManager m_textureManager;

@@ -149,7 +149,9 @@ void Client::init()
 
     m_texture.loadTexture("healthPack", "assets/healthBoost.png");
 
-    m_texture.loadTexture("parallax", "assets/parallax.png");
+    m_texture.loadTexture("shieldPack", "assets/shieldBoost.png");
+
+    m_texture.loadTexture("parallax", "assets/parallax2.png");
     m_texture.setTextureRepeated("parallax", true);
 
     m_game.m_textureManager = m_texture;

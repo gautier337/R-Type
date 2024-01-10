@@ -172,6 +172,14 @@ SpriteObject Game::createAsteroid(int posX, int posY, int id)
     return asteroid;
 }
 
+////////////////////////////////////////////////////////////
+//
+// Create an instance of SpriteObject for BoostBonus
+//
+// @param posX pos X of the sprite
+// @param posY pos Y of the sprite
+// @param id Id of the sprite to track it
+////////////////////////////////////////////////////////////
 SpriteObject Game::createBoostPack(int posX, int posY, int id)
 {
     SpriteObject boostPack(m_textureManager.getTexture("boostPack"), sf::Vector2i(412, 406), 1, 0, id);
@@ -184,6 +192,14 @@ SpriteObject Game::createBoostPack(int posX, int posY, int id)
     return boostPack;
 }
 
+////////////////////////////////////////////////////////////
+//
+// Create an instance of SpriteObject for HealthBonus
+//
+// @param posX pos X of the sprite
+// @param posY pos Y of the sprite
+// @param id Id of the sprite to track it
+////////////////////////////////////////////////////////////
 SpriteObject Game::createHealthPack(int posX, int posY, int id)
 {
     SpriteObject HealthPack(m_textureManager.getTexture("healthPack"), sf::Vector2i(436, 429), 1, 0, id);
@@ -194,6 +210,26 @@ SpriteObject Game::createHealthPack(int posX, int posY, int id)
     sf::FloatRect bounds = HealthPack.sprite.getLocalBounds();
     HealthPack.sprite.setOrigin(bounds.width / 2.0f, bounds.height / 2.0f);
     return HealthPack;
+}
+
+////////////////////////////////////////////////////////////
+//
+// Create an instance of SpriteObject for ShieldBonus
+//
+// @param posX pos X of the sprite
+// @param posY pos Y of the sprite
+// @param id Id of the sprite to track it
+////////////////////////////////////////////////////////////
+SpriteObject Game::createShieldPack(int posX, int posY, int id)
+{
+    SpriteObject shieldPack(m_textureManager.getTexture("shieldPack"), sf::Vector2i(681, 681), 1, 0, id);
+    shieldPack.setPosition(posX, posY);
+    shieldPack.sprite.setScale(sf::Vector2f(0.06, 0.06));
+    shieldPack.sprite.setTextureRect(sf::IntRect(0, 0, 681, 681));
+    //make the center of the sprite the origin
+    sf::FloatRect bounds = shieldPack.sprite.getLocalBounds();
+    shieldPack.sprite.setOrigin(bounds.width / 2.0f, bounds.height / 2.0f);
+    return shieldPack;
 }
 
 void Game::parseBuffer(const std::string& buffer)
@@ -233,6 +269,8 @@ void Game::parseBuffer(const std::string& buffer)
                     m_object.push_back(createHealthPack(data.position.x, data.position.y, data.id));
                 } else if (data.id >= 710 && data.id < 720) {
                     m_object.push_back(createBoostPack(data.position.x, data.position.y, data.id));
+                } else if (data.id >= 801 && data.id < 805) {
+                    m_object.push_back(createShieldPack(data.position.x, data.position.y, data.id));
                 }
             }
             // update hp of the player

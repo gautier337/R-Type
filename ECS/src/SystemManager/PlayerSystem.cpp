@@ -243,7 +243,7 @@ namespace Ecs {
             speedToAdd = -30;
         }
 
-        auto missile = std::make_shared<Entity>(id);
+        auto missile = std::make_shared<Entity>(id, entityID);
         auto health = std::make_shared<Health>(1);
         auto damages = std::make_shared<Damages>(getEntityById(entityID)->getComponent<Ecs::Damages>()->getDamage());
         auto position = std::make_shared<Position>(getEntityById(entityID)->getComponent<Ecs::Position>()->getPosition().first + spawnPosX, getEntityById(entityID)->getComponent<Ecs::Position>()->getPosition().second + spawnPosY + posY);

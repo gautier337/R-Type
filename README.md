@@ -13,7 +13,7 @@ We have developed a Notion documentation covering four key aspects:
 - How The Client work
 - The communication protocol between The Server and The Client
 
-You can access to the documentation following this link: https://opalescent-crab-ddf.notion.site/R-Type-Documentations-f91eb3655a224788a63274d78887f703?pvs=4
+You can access to the documentation following this link: https://opalescent-crab-ddf.notion.site/R-Type-f91eb3655a224788a63274d78887f703?pvs=4
 
 ## Getting Started
 

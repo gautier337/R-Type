@@ -8,6 +8,11 @@
 #include "../../ECS/include/SystemManager/Entity.hpp"
 #include "../../ECS/include/SystemManager/EntityManager.hpp"
 #include "../../ECS/include/SystemManager/HitboxSystem.hpp"
+#include "../../ECS/include/SystemManager/EntitySystem.hpp"
+#include "../../ECS/include/SystemManager/MissileSystem.hpp"
+#include "../../ECS/include/SystemManager/MonsterSystem.hpp"
+#include "../../ECS/include/SystemManager/PlayerSystem.hpp"
+#include "../../ECS/include/SystemManager/ASystem.hpp"
 #include "../../ECS/include/components/Health.hpp"
 #include "../../ECS/include/components/Position.hpp"
 #include "../../ECS/include/components/Damages.hpp"
@@ -26,8 +31,12 @@ namespace std
 class Server {
     public:
         Server(asio::io_context& io_context, int port);
-        Ecs::EntityManager manager;
         Ecs::HitboxSystem hitbox;
+
+        Ecs::EntitySystem entitySystem;
+        Ecs::MissileSystem missileSystem;
+        Ecs::MonsterSystem monsterSystem;
+        Ecs::PlayerSystem playerSystem;
 
     private:
         void start_receive();
@@ -43,4 +52,5 @@ class Server {
         int number_of_player_connected_ = 0;
         int tick = 0;
         int client_id_counter_ = 0;
+        std::list<std::shared_ptr<Ecs::Entity>> entities_;
 };

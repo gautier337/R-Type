@@ -14,9 +14,21 @@
 #include <chrono>
 #include <fstream>
 
+// Server::Server(asio::io_context& io_context, int port)
+//     : socket_(io_context, asio::ip::udp::endpoint(asio::ip::udp::v4(), port)),
+//         tick_timer_(io_context, std::chrono::milliseconds(16)) {
+//     start_receive();
+//     handle_tick({});
+// }
+
 Server::Server(asio::io_context& io_context, int port)
     : socket_(io_context, asio::ip::udp::endpoint(asio::ip::udp::v4(), port)),
-        tick_timer_(io_context, std::chrono::milliseconds(16)) {
+      tick_timer_(io_context, std::chrono::milliseconds(16)),
+      entitySystem(entities_), // Utilisation de entities_ sans std::move
+      missileSystem(entities_),
+      monsterSystem(entities_, entitySystem),
+      playerSystem(entities_)
+{
     start_receive();
     handle_tick({});
 }
@@ -50,7 +62,7 @@ void Server::handle_receive(const std::string& data, const asio::ip::udp::endpoi
         std::lock_guard<std::mutex> lock(clients_mutex_);
         if (client_ids_.find(endpoint) == client_ids_.end() || data == "START") {
             number_of_player_connected_++;
-            clientId = manager.createPlayer();
+            clientId = playerSystem.createPlayer();
             if (clientId == 0) {
                 std::string welcomeMessage = "The room is full !";
                 handle_send(welcomeMessage, endpoint);
@@ -77,15 +89,15 @@ void Server::handle_receive(const std::string& data, const asio::ip::udp::endpoi
         number_of_player_connected_--;
         std::cout << "Client " << clientId << " disconnected, clients left: " << number_of_player_connected_ << std::endl;
     } else if (data == "LEFT") {
-        manager.handlePlayerInput(clientId, 3);
+        playerSystem.handlePlayerInput(clientId, 3);
     } else if (data == "RIGHT") {
-        manager.handlePlayerInput(clientId, 4);
+        playerSystem.handlePlayerInput(clientId, 4);
     } else if (data == "UP") {
-        manager.handlePlayerInput(clientId, 1);
+        playerSystem.handlePlayerInput(clientId, 1);
     } else if (data == "DOWN") {
-        manager.handlePlayerInput(clientId, 2);
+        playerSystem.handlePlayerInput(clientId, 2);
     } else if (data == "SHOOT") {
-        manager.handlePlayerInput(clientId, 5);
+        playerSystem.handlePlayerInput(clientId, 5);
     } else {
         handle_send("Unknow Command received: " + data, endpoint);   
     }
@@ -120,37 +132,33 @@ void Server::handle_tick(const asio::error_code& error)
     try {
         if (!error) {
             tick++;
-            manager.updateMissiles();
-            manager.checkEntitiesState();
-            manager.updatePlayers();
-            manager.updateMonsters();
-            manager.updateWave();
-            hitbox.launch(manager.getEntsByComps<Ecs::Hitbox, Ecs::Position, Ecs::Damages, Ecs::Health>());
-            if (manager.interWave == false) {
-                manager.generateMonsters();
-            }
+            missileSystem.launch();
+            entitySystem.launch();
+            playerSystem.launch();
+            monsterSystem.launch();
+            hitbox.launch(entitySystem.getEntsByComps<Ecs::Hitbox, Ecs::Position, Ecs::Damages, Ecs::Health>());
 
             std::stringstream ss;
-            if (manager.interWave) {
-                ss << "Wave " << manager.wave << "\n";
+            if (entitySystem.interWave) {
+                ss << "Wave " << entitySystem.wave << "\n";
             }
-            for (auto& entity : manager.getEntsByComp<Ecs::Position>()) {
+            for (auto& entity : entitySystem.getEntsByComp<Ecs::Position>()) {
                 ss << "Entity " << entity->getEntityId() << " position: ("
                 << entity->getComponent<Ecs::Position>()->getPosition().first << ", "
                 << entity->getComponent<Ecs::Position>()->getPosition().second << ")";
-                
+
                 if (entity->hasComponent<Ecs::Health>()) {
                     ss << " HP: " << entity->getComponent<Ecs::Health>()->getHp();
                 }
                 ss << "\n";
             }
 
-            ss << "Score : " << manager.score << "\n";
+            ss << "Score : " << entitySystem.score << "\n";
 
             std::string message = ss.str();
             std::lock_guard<std::mutex> lock(clients_mutex_);
             for (auto& client : client_ids_) {
-                if (!manager.isIdTaken(client.second)) {
+                if (!monsterSystem.isIdTaken(client.second)) {
                     std::string dead_message = "DEAD";
                     handle_send(dead_message, client.first);
                 }

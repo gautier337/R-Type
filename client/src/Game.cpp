@@ -7,7 +7,6 @@
 
 #include "Game.hpp"
 #include <chrono>
-#include <thread>
 
 Game::Game()
 {
@@ -306,29 +305,21 @@ void Game::parseBuffer(const std::string& buffer)
         if (line.rfind("Score :", 0) == 0) {
             std::sscanf(line.c_str(), "Score : %d", &m_data.score);
         }
-        auto start = std::chrono::high_resolution_clock::now();
-        bool timerStarted = false;
-
+        auto lastWaveTime = std::chrono::high_resolution_clock::now();
         for (int waveNum = 1; waveNum <= 9; ++waveNum) {
             if (line.rfind("Wave " + std::to_string(waveNum), 0) == 0) {
                 m_data.wave = waveNum;
                 waveBool = true;
-                start = std::chrono::high_resolution_clock::now();
-                timerStarted = true;
+                lastWaveTime = std::chrono::high_resolution_clock::now();
                 break;
             }
-            else {
-                if (timerStarted) {
-                    auto end = std::chrono::high_resolution_clock::now();
-                    std::chrono::duration<double> elapsed = end - start;
-                    if (elapsed.count() >= 5.0) {
-                        waveBool = false;
-                        timerStarted = false;
-                    }
-                }
+        }
+        if (waveBool) {
+            auto currentTime = std::chrono::high_resolution_clock::now();
+            if (std::chrono::duration_cast<std::chrono::seconds>(currentTime - lastWaveTime).count() >= 5) {
+                waveBool = false;
             }
         }
-
     }
 
     auto it = std::remove_if(m_object.begin(), m_object.end(), [&currentIds](const SpriteObject& obj) {

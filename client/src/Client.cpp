@@ -282,7 +282,7 @@ void Client::run()
                     std::cout << "Wave bool is true" << std::endl;
                 }
                 if (m_game.waveBool == false) {
-                    m_game.m_text_wave.setString("Zobe Humide");
+                    m_game.m_text_wave.setString("");
                     m_window.draw(m_game.m_text_wave);
                     std::cout << "Wave bool is false" << std::endl;
                 }

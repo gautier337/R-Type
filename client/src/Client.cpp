@@ -276,6 +276,16 @@ void Client::run()
                     m_game.m_hp_sprite.setPosition(50 + i * 50, 110);
                     m_window.draw(m_game.m_hp_sprite);
                 }
+                if (m_game.waveBool == true) {
+                    m_game.m_text_wave.setString("Wave : " + std::to_string(m_game.m_data.wave - 1));
+                    m_window.draw(m_game.m_text_wave);
+                    std::cout << "Wave bool is true" << std::endl;
+                }
+                if (m_game.waveBool == false) {
+                    m_game.m_text_wave.setString("Zobe Humide");
+                    m_window.draw(m_game.m_text_wave);
+                    std::cout << "Wave bool is false" << std::endl;
+                }
             } else if (m_currentScene == ClientScene::OPTIONS) {
                 display_options();
             }

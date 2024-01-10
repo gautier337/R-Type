@@ -15,6 +15,8 @@
 #include <string>
 #include <sstream>
 #include <cstdio>
+#include <set>
+#include <chrono>
 
 struct EntityData {
     int id;
@@ -44,12 +46,16 @@ class Game {
         SpriteObject createHealthPack(int posX, int posY, int id);
         SpriteObject createParallax(int posX, int posY);
         SpriteObject createShieldPack(int posX, int posY, int id);
+<<<<<<< HEAD
+=======
         SpriteObject createShieldField(int posX, int posY, int id);
+>>>>>>> 203f07102614bbf8900efc4c8ac26fc7f0c517fc
 
         std::vector<SpriteObject> m_object;
         TextureManager m_textureManager;
         bool m_game_is_over = false;
         int player_hp = 0;
+        bool waveBool = false;
         sf::Texture m_game_is_over_texture, m_texture_hp;
         sf::Sprite m_game_is_over_sprite, m_hp_sprite;
         sf::Font m_font_score;

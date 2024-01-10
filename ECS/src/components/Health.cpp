@@ -2,8 +2,8 @@
 
 namespace Ecs {
 
-    Health::Health(int hp)
-        : _hp(hp)
+    Health::Health(int hp, int shield)
+        : _hp(hp), _shield(shield)
     { _type = Constants::HEALTH; }
     Health::~Health() {}
 

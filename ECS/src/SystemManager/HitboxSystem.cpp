@@ -91,8 +91,24 @@ void Ecs::HitboxSystem::takeDamages(std::shared_ptr<Entity> entity,
                 }
             }
     //check if one is a player and the other a shoot power up
-    } else if ((entity->getEntityId() >= 1 && entity->getEntityId() <= 4) &&
+    }
+    if ((entity->getEntityId() >= 1 && entity->getEntityId() <= 4) &&
         (otherEntity->getEntityId() >= 710 && otherEntity->getEntityId() < 720)) {
             entity->getComponent<ShootCD>()->setMultiShoot(true);
+    }
+    //check if creator is a player and the other a shield power up
+    if ((entity->getCreatorId() >= 1 && entity->getCreatorId() <= 4) &&
+        (otherEntity->getEntityId() >= 720 && otherEntity->getEntityId() < 730)) {
+            //find the player with 4 iterations max
+            for (auto it = entities.begin(); it != entities.end(); ++it) {
+                if ((*it)->getEntityId() == entity->getCreatorId()) {
+                    (*it)->getComponent<Health>()->setShield(30);
+                }
+            }
+    }
+    //check if one is a player and the other a shield power up
+    if ((entity->getEntityId() >= 1 && entity->getEntityId() <= 4) &&
+        (otherEntity->getEntityId() >= 720 && otherEntity->getEntityId() < 730)) {
+            entity->getComponent<Health>()->setShield(30);
     }
 }

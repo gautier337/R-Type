@@ -94,9 +94,86 @@ namespace Ecs {
                     }
                     frameCountMultiShoot++;
                 }
+                // if player shield is not 0, decrease it by 1 every 0.5 seconds
+                if (entity->getComponent<Health>()->getShield() > 0) {
+                    if (frameCount % framesForShootCD == 0) {
+                        entity->getComponent<Health>()->setShield(entity->getComponent<Health>()->getShield() - 1);
+                    }
+                    updateShields(entity);
+                }
             }
         }
         frameCount++;
+    }
+
+    void EntityManager::updateShields(std::shared_ptr<Entity> entity)
+    {
+
+        // if no shield entity, create one
+        if (entity->getEntityId() == 1 && getEntityById(801) == nullptr) {
+            auto shield = std::make_shared<Entity>(801);
+            auto health = std::make_shared<Health>(entity->getComponent<Ecs::Health>()->getShield());
+            auto position = std::make_shared<Position>(entity->getComponent<Ecs::Position>()->getPosition().first + 30, entity->getComponent<Ecs::Position>()->getPosition().second);
+            auto hitbox = std::make_shared<Hitbox>(17, 18);
+            auto damages = std::make_shared<Damages>(1);
+            shield->addComponent(health);
+            shield->addComponent(position);
+            shield->addComponent(hitbox);
+            shield->addComponent(damages);
+            _entityList.push_back(shield);
+        } else if (entity->getEntityId() == 1 && getEntityById(801) != nullptr) {
+            getEntityById(801)->getComponent<Ecs::Health>()->setHp(entity->getComponent<Ecs::Health>()->getShield());
+            getEntityById(801)->getComponent<Ecs::Position>()->set_pos_x(entity->getComponent<Ecs::Position>()->getPosition().first + 30);
+            getEntityById(801)->getComponent<Ecs::Position>()->set_pos_y(entity->getComponent<Ecs::Position>()->getPosition().second);
+        }
+        if (entity->getEntityId() == 2 && getEntityById(802) == nullptr) {
+            auto shield = std::make_shared<Entity>(802);
+            auto health = std::make_shared<Health>(entity->getComponent<Ecs::Health>()->getShield());
+            auto position = std::make_shared<Position>(entity->getComponent<Ecs::Position>()->getPosition().first + 30, entity->getComponent<Ecs::Position>()->getPosition().second);
+            auto hitbox = std::make_shared<Hitbox>(17, 18);
+            auto damages = std::make_shared<Damages>(1);
+            shield->addComponent(health);
+            shield->addComponent(position);
+            shield->addComponent(hitbox);
+            shield->addComponent(damages);
+            _entityList.push_back(shield);
+        } else if (entity->getEntityId() == 2 && getEntityById(802) != nullptr) {
+            getEntityById(802)->getComponent<Ecs::Health>()->setHp(entity->getComponent<Ecs::Health>()->getShield());
+            getEntityById(802)->getComponent<Ecs::Position>()->set_pos_x(entity->getComponent<Ecs::Position>()->getPosition().first + 30);
+            getEntityById(802)->getComponent<Ecs::Position>()->set_pos_y(entity->getComponent<Ecs::Position>()->getPosition().second);
+        }
+        if (entity->getEntityId() == 3 && getEntityById(803) == nullptr) {
+            auto shield = std::make_shared<Entity>(803);
+            auto health = std::make_shared<Health>(entity->getComponent<Ecs::Health>()->getShield());
+            auto position = std::make_shared<Position>(entity->getComponent<Ecs::Position>()->getPosition().first + 30, entity->getComponent<Ecs::Position>()->getPosition().second);
+            auto hitbox = std::make_shared<Hitbox>(17, 18);
+            auto damages = std::make_shared<Damages>(1);
+            shield->addComponent(health);
+            shield->addComponent(position);
+            shield->addComponent(hitbox);
+            shield->addComponent(damages);
+            _entityList.push_back(shield);
+        } else if (entity->getEntityId() == 3 && getEntityById(803) != nullptr) {
+            getEntityById(803)->getComponent<Ecs::Health>()->setHp(entity->getComponent<Ecs::Health>()->getShield());
+            getEntityById(803)->getComponent<Ecs::Position>()->set_pos_x(entity->getComponent<Ecs::Position>()->getPosition().first + 30);
+            getEntityById(803)->getComponent<Ecs::Position>()->set_pos_y(entity->getComponent<Ecs::Position>()->getPosition().second);
+        }
+        if (entity->getEntityId() == 4 && getEntityById(804) == nullptr) {
+            auto shield = std::make_shared<Entity>(804);
+            auto health = std::make_shared<Health>(entity->getComponent<Ecs::Health>()->getShield());
+            auto position = std::make_shared<Position>(entity->getComponent<Ecs::Position>()->getPosition().first + 30, entity->getComponent<Ecs::Position>()->getPosition().second);
+            auto hitbox = std::make_shared<Hitbox>(17, 18);
+            auto damages = std::make_shared<Damages>(1);
+            shield->addComponent(health);
+            shield->addComponent(position);
+            shield->addComponent(hitbox);
+            shield->addComponent(damages);
+            _entityList.push_back(shield);
+        } else if (entity->getEntityId() == 4 && getEntityById(804) != nullptr) {
+            getEntityById(804)->getComponent<Ecs::Health>()->setHp(entity->getComponent<Ecs::Health>()->getShield());
+            getEntityById(804)->getComponent<Ecs::Position>()->set_pos_x(entity->getComponent<Ecs::Position>()->getPosition().first + 30);
+            getEntityById(804)->getComponent<Ecs::Position>()->set_pos_y(entity->getComponent<Ecs::Position>()->getPosition().second);
+        }
     }
 
     void EntityManager::handlePlayerInput(int id, int input) noexcept
@@ -186,7 +263,7 @@ namespace Ecs {
         int spawnPosY = 0;
 
         if (entityID < 5) {
-            spawnPosX = 25;
+            spawnPosX = 35;
             speedToAdd = 20;
         }
         if (entityID >= 5 && entityID < 200) {
@@ -256,7 +333,7 @@ namespace Ecs {
                 if (entity->getComponent<Ecs::Position>()->getPosition().first < -40)
                     deleteEntity(entity->getEntityId());
             }
-            if (entity->getEntityId() >= 700 && entity->getEntityId() < 720) {
+            if (entity->getEntityId() >= 700 && entity->getEntityId() < 730) {
                 if (entity->getComponent<Ecs::Position>()->getPosition().second > 1120)
                     deleteEntity(entity->getEntityId());
             }
@@ -312,6 +389,13 @@ namespace Ecs {
         createMonster(1, 1, xPos, yPos, 2, 710, 720, 15, 15);
     }
 
+    void EntityManager::generateShieldBoost()
+    {
+        int xPos = random(100, 1000);
+        int yPos = -100;
+        createMonster(1, 1, xPos, yPos, 2, 720, 730, 15, 15);
+    }
+
     void EntityManager::generateMonsters()
     {
         static int frameCount = 0;
@@ -359,9 +443,27 @@ namespace Ecs {
                 if (randomNum > 8) {
                     generateShootBoost();
                 }
+            } else {
+                if (randomNum < 6) {
+                    generateBasicMonster();
+                }
+                if (randomNum > 8) {
+                    generateKamikaze();
+                }
+                if (randomNum < 4) {
+                    generateAsteroid();
+                }
+                if (randomNum < 2) {
+                    generateHealthBoost();
+                }
+                if (randomNum > 8) {
+                    generateShootBoost();
+                }
+                if (randomNum == 5) {
+                    generateShieldBoost();
+                }
             }
         }
-
         frameCount++;
     }
 
@@ -538,8 +640,8 @@ namespace Ecs {
                     position->set_pos_x(pos.first - speed);
                 }
             }
-            //Boosts (ID 700 to 720)
-            if (entity->getEntityId() >= 700 && entity->getEntityId() < 720)
+            //Boosts (ID 700 to 730)
+            if (entity->getEntityId() >= 700 && entity->getEntityId() < 730)
             {
                 auto position = entity->getComponent<Ecs::Position>();
                 int speed = entity->getComponent<Ecs::Speed>()->getSpeed();

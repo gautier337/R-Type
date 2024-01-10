@@ -73,6 +73,8 @@ namespace Ecs {
 		void generateKamikaze();
 		void generateHealthBoost();
 		void generateShootBoost();
+		void generateShieldBoost();
+		void updateShields(std::shared_ptr<Entity> entity);
 	};
 }
 

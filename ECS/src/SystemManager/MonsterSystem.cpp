@@ -72,7 +72,7 @@ namespace Ecs {
     {
         int xPos = random(1100, 1300);
         int yPos = random(100, 980);
-        createMonster(1, 10, xPos, yPos, 8, 500, 600, 33, 32);
+        createMonster(5, 10, xPos, yPos, 8, 500, 600, 33, 32);
     }
 
     void MonsterSystem::generateHealthBoost()

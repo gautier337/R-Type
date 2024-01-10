@@ -45,7 +45,7 @@ namespace Ecs {
         if (id == 4)
             pos = std::make_pair(200, 740);
         auto player = std::make_shared<Entity>(id);
-        auto health = std::make_shared<Health>(5);
+        auto health = std::make_shared<Health>(5, 0, 5);
         auto damages = std::make_shared<Damages>(3);
         auto position = std::make_shared<Position>(pos.first, pos.second);
         auto hitbox = std::make_shared<Hitbox>(17, 18);
@@ -122,7 +122,7 @@ namespace Ecs {
                     }
                 }
                 if (frameCount % framesForRegen == 0) {
-                    if (entity->getComponent<Health>()->getHp() < 5)
+                    if (entity->getComponent<Health>()->getHp() < entity->getComponent<Health>()->getMaxHp())
                         entity->getComponent<Health>()->setHp(entity->getComponent<Health>()->getHp() + 1);
                 }
                 if (entity->getComponent<ShootCD>()->getMultiShoot() == true) {

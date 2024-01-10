@@ -71,15 +71,14 @@ void Ecs::HitboxSystem::takeDamages(std::shared_ptr<Entity> entity,
             for (auto it = entities.begin(); it != entities.end(); ++it) {
                 if ((*it)->getEntityId() == entity->getCreatorId()) {
                     //add health to the player
-                    int playerHealth = (*it)->getComponent<Health>()->getHp();
-                    (*it)->getComponent<Health>()->setHp(playerHealth + 5);
+                    (*it)->getComponent<Health>()->setHp((*it)->getComponent<Health>()->getMaxHp());
                 }
             }
     }
     //check if one is a player and the other a health pack
     if ((entity->getEntityId() >= 1 && entity->getEntityId() <= 4) &&
         (otherEntity->getEntityId() >= 700 && otherEntity->getEntityId() < 710)) {
-            entity->getComponent<Health>()->setHp(health + 5);
+            entity->getComponent<Health>()->setHp(entity->getComponent<Health>()->getMaxHp());
     }
     //check if creator is a player and the other a shoot power up
     if ((entity->getCreatorId() >= 1 && entity->getCreatorId() <= 4) &&

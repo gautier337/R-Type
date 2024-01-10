@@ -14,14 +14,17 @@ namespace Ecs {
 
 	class ShootCD : public AComponent {
 		public:
-			ShootCD(int cd = 1);
+			ShootCD(float cd = 1);
 			~ShootCD();
-			inline int getCd() noexcept { return _cd; };
+			inline float getCd() noexcept { return _cd; };
 			inline void setCd(int newCd) noexcept { _cd = newCd; };
             inline void decreaseCd() noexcept { _cd--; };
+			inline bool getMultiShoot() noexcept { return _multiShoot; };
+			inline void setMultiShoot(bool multiShoot) noexcept { _multiShoot = multiShoot; };
 
 		private:
-			unsigned int _cd;
+			float _cd;
+			bool _multiShoot;
 	};
 
 }

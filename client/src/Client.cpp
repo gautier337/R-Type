@@ -98,6 +98,13 @@ void Client::init()
     m_game.m_text_score.setCharacterSize(50);
     m_game.m_text_score.setFillColor(sf::Color::White);
     m_game.m_text_score.setPosition(50, 50);
+
+    m_bullet_sound.openFromFile("assets/fire_sound.wav");
+    //Wave font
+    m_game.m_text_wave.setFont(m_game.m_font_score);
+    m_game.m_text_wave.setCharacterSize(100);
+    m_game.m_text_wave.setFillColor(sf::Color::White);
+    m_game.m_text_wave.setPosition(600, 20);
     //menu
     m_texture.loadTexture("menu", "assets/background.png");
     m_texture.loadTexture("startgame", "assets/start_game.png");
@@ -137,6 +144,10 @@ void Client::init()
     m_texture.loadTexture("boss", "assets/boss.gif");
 
     m_texture.loadTexture("asteroid", "assets/asteroid.png");
+
+    m_texture.loadTexture("boostPack", "assets/speedBoost.png");
+
+    m_texture.loadTexture("healthPack", "assets/healthBoost.png");
 
     m_texture.loadTexture("parallax", "assets/parallax.png");
     m_texture.setTextureRepeated("parallax", true);
@@ -238,8 +249,10 @@ void Client::run()
         if (m_window.isOpen()) {
             m_window.clear();
             if (m_currentScene == ClientScene::MENU) {
-                if (m_menu.m_music.getStatus() != sf::SoundSource::Status::Playing)
+                if (m_menu.m_music.getStatus() != sf::SoundSource::Status::Playing) {
                     m_menu.m_music.play();
+                    m_menu.m_music.setLoop(true);
+                }
                 m_window.draw(m_menu.m_background);
                 m_window.draw(m_menu.m_startGame);
                 m_window.draw(m_menu.m_Exit);
@@ -255,6 +268,10 @@ void Client::run()
                 }
                 m_game.m_text_score.setString("Score : " + std::to_string(m_game.m_data.score));
                 m_window.draw(m_game.m_text_score);
+                for (int i = 0; i < m_game.player_hp; i++) {
+                    m_game.m_hp_sprite.setPosition(50 + i * 50, 110);
+                    m_window.draw(m_game.m_hp_sprite);
+                }
             } else if (m_currentScene == ClientScene::OPTIONS) {
                 display_options();
             }
@@ -345,7 +362,10 @@ void Client::handleInput(sf::Keyboard::Key key)
             }
             break;
         case sf::Keyboard::Space:
-            send_message_to_server("SHOOT");
+            if (m_currentScene == ClientScene::GAME) {
+                m_bullet_sound.play();
+                send_message_to_server("SHOOT");
+            }
             break;
         case sf::Keyboard::Left:
             send_message_to_server("LEFT");

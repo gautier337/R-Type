@@ -23,6 +23,7 @@ struct EntityData {
     int hp;
     int dead;
     int score;
+    int wave;
 };
 
 class Game {
@@ -40,15 +41,18 @@ class Game {
         SpriteObject createBullet(int posX, int posY, int id);
         SpriteObject createBoss(int posX, int posY, int id);
         SpriteObject createAsteroid(int posX, int posY, int id);
+        SpriteObject createBoostPack(int posX, int posY, int id);
+        SpriteObject createHealthPack(int posX, int posY, int id);
         SpriteObject createParallax(int posX, int posY);
 
         std::vector<SpriteObject> m_object;
         TextureManager m_textureManager;
         bool m_game_is_over = false;
+        int player_hp = 0;
         sf::Texture m_game_is_over_texture, m_texture_hp;
         sf::Sprite m_game_is_over_sprite, m_hp_sprite;
         sf::Font m_font_score;
-        sf::Text m_text_score;
+        sf::Text m_text_score, m_text_wave;
 
         EntityData m_data;
     private:

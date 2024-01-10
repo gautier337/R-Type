@@ -25,6 +25,7 @@
 #include <string>
 #include <stdexcept>
 #include <chrono>
+#include <SFML/Audio.hpp>
 
 enum class ClientStep {
     InitiationState,
@@ -60,6 +61,7 @@ class Client {
         void handleButtonHover(sf::Vector2i mousePos);
         std::string send_message_to_server_with_reponse(const char *message);
 
+        sf::Music m_bullet_sound;
     private:
         sf::RenderWindow m_window;
         ClientStep m_status;

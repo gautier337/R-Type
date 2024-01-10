@@ -31,11 +31,12 @@ namespace Ecs {
 		void increaseKilledMonstersCount();
 		unsigned int createPlayer() noexcept;
 		std::shared_ptr<Entity> createMonster(int hp, int dmg, int pos_x, int pos_y, int speedM, int id_min, int id_max, int hitboxX, int hitboxY) noexcept;
-		std::shared_ptr<Entity> createMissile(int entityID) noexcept;
+		std::shared_ptr<Entity> createMissile(int entityID, int posY = 0) noexcept;
 		void updateMissiles();
 		void checkEntitiesState();
 		void generateMonsters();
 		void updateMonsters();
+		void updatePlayers();
 		void killMonsters();
 		void handlePlayerInput(int id, int input) noexcept;
 		bool isIdTaken(unsigned int id) const noexcept;
@@ -66,6 +67,14 @@ namespace Ecs {
 			return entities;  // Return a copy, not a reference
 		};
 		void updateWave();
+		void generateBoss1();
+		void generateBasicMonster();
+		void generateAsteroid();
+		void generateKamikaze();
+		void generateHealthBoost();
+		void generateShootBoost();
+		void generateShieldBoost();
+		void updateShields(std::shared_ptr<Entity> entity);
 	};
 }
 

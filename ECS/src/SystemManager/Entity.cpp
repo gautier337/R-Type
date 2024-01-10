@@ -9,12 +9,16 @@
 
 namespace Ecs {
 
-    Entity::Entity(unsigned int id) : _id(id) {}
+    Entity::Entity(unsigned int id, unsigned int creatorId) : _id(id), _creatorId(creatorId) {}
 
     Entity::~Entity() {}
 
     unsigned int Entity::getEntityId() noexcept {
         return _id;
+    }
+
+    unsigned int Entity::getCreatorId() noexcept {
+        return _creatorId;
     }
 
     // Explicit instantiation of templates to be used in Entity.cpp

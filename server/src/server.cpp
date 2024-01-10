@@ -14,17 +14,10 @@
 #include <chrono>
 #include <fstream>
 
-// Server::Server(asio::io_context& io_context, int port)
-//     : socket_(io_context, asio::ip::udp::endpoint(asio::ip::udp::v4(), port)),
-//         tick_timer_(io_context, std::chrono::milliseconds(16)) {
-//     start_receive();
-//     handle_tick({});
-// }
-
 Server::Server(asio::io_context& io_context, int port)
     : socket_(io_context, asio::ip::udp::endpoint(asio::ip::udp::v4(), port)),
       tick_timer_(io_context, std::chrono::milliseconds(16)),
-      entitySystem(entities_), // Utilisation de entities_ sans std::move
+      entitySystem(entities_),
       missileSystem(entities_),
       monsterSystem(entities_, entitySystem),
       playerSystem(entities_)

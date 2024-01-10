@@ -49,7 +49,7 @@ namespace Ecs {
         auto damages = std::make_shared<Damages>(3);
         auto position = std::make_shared<Position>(pos.first, pos.second);
         auto hitbox = std::make_shared<Hitbox>(17, 18);
-        auto speed = std::make_shared<Speed>(10);
+        auto speed = std::make_shared<Speed>(15);
         auto shootCooldown = std::make_shared<ShootCD>(1);
         player->addComponent(health);
         player->addComponent(damages);

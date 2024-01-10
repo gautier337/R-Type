@@ -269,8 +269,10 @@ void Game::parseBuffer(const std::string& buffer)
                     m_object.push_back(createHealthPack(data.position.x, data.position.y, data.id));
                 } else if (data.id >= 710 && data.id < 720) {
                     m_object.push_back(createBoostPack(data.position.x, data.position.y, data.id));
-                } else if (data.id >= 801 && data.id < 805) {
+                } else if (data.id >= 720 && data.id < 730) {
                     m_object.push_back(createShieldPack(data.position.x, data.position.y, data.id));
+                } else if (data.id >= 801 && data.id <= 804) {
+                    m_object.push_back(createShieldPack(data.position.x, data.position.y, data.id)); // ICI METTRE UN VRAI SPRITE DE SHIELD
                 }
             }
             // update hp of the player

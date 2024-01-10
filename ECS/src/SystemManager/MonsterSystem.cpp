@@ -79,21 +79,21 @@ namespace Ecs {
     {
         int xPos = random(100, 1000);
         int yPos = -100;
-        createMonster(1, 1, xPos, yPos, 2, 700, 710, 15, 15);
+        createMonster(1, 1, xPos, yPos, 2, 700, 710, 30, 30);
     }
 
     void MonsterSystem::generateShootBoost()
     {
         int xPos = random(100, 1000);
         int yPos = -100;
-        createMonster(1, 1, xPos, yPos, 2, 710, 720, 15, 15);
+        createMonster(1, 1, xPos, yPos, 2, 710, 720, 30, 30);
     }
 
     void MonsterSystem::generateShieldBoost()
     {
         int xPos = random(100, 1000);
         int yPos = -100;
-        createMonster(1, 1, xPos, yPos, 2, 720, 730, 15, 15);
+        createMonster(1, 1, xPos, yPos, 2, 720, 730, 30, 30);
     }
 
     void MonsterSystem::generateMonsters()
@@ -120,6 +120,9 @@ namespace Ecs {
                 if (randomNum > 8) {
                     generateShootBoost();
                 }
+                if (randomNum == 5) {
+                    generateShieldBoost();
+                }
             } else if (_entitySystem.wave == 2) {
                 if (randomNum < 8) {
                     generateBasicMonster();
@@ -135,6 +138,9 @@ namespace Ecs {
                 if (randomNum > 8) {
                     generateShootBoost();
                 }
+                if (randomNum == 5) {
+                    generateShieldBoost();
+                }
             } else if (_entitySystem.wave == 3) {
                 generateBoss1();
                 if (randomNum < 2) {
@@ -142,6 +148,9 @@ namespace Ecs {
                 }
                 if (randomNum > 8) {
                     generateShootBoost();
+                }
+                if (randomNum == 5) {
+                    generateShieldBoost();
                 }
             } else {
                 if (randomNum < 6) {

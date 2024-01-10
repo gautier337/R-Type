@@ -151,6 +151,8 @@ void Client::init()
 
     m_texture.loadTexture("shieldPack", "assets/shieldBoost.png");
 
+    m_texture.loadTexture("shieldField", "assets/shieldField.gif");
+
     m_texture.loadTexture("parallax", "assets/parallax2.png");
     m_texture.setTextureRepeated("parallax", true);
 

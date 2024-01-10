@@ -8,7 +8,6 @@
 #ifndef GAME_HPP_
     #define GAME_HPP_
 
-#include "Player.hpp"
 #include "Texture.hpp"
 #include "SpriteObject.hpp"
 #include <iostream>
@@ -47,6 +46,10 @@ class Game {
         SpriteObject createHealthPack(int posX, int posY, int id);
         SpriteObject createParallax(int posX, int posY);
         SpriteObject createShieldPack(int posX, int posY, int id);
+<<<<<<< HEAD
+=======
+        SpriteObject createShieldField(int posX, int posY, int id);
+>>>>>>> 203f07102614bbf8900efc4c8ac26fc7f0c517fc
 
         std::vector<SpriteObject> m_object;
         TextureManager m_textureManager;

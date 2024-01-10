@@ -233,6 +233,26 @@ SpriteObject Game::createShieldPack(int posX, int posY, int id)
     return shieldPack;
 }
 
+////////////////////////////////////////////////////////////
+//
+// Create an instance of SpriteObject for ShieldBonus
+//
+// @param posX pos X of the sprite
+// @param posY pos Y of the sprite
+// @param id Id of the sprite to track it
+////////////////////////////////////////////////////////////
+SpriteObject Game::createShieldField(int posX, int posY, int id)
+{
+    SpriteObject shieldPack(m_textureManager.getTexture("shieldField"), sf::Vector2i(24, 47), 1, 0, id);
+    shieldPack.setPosition(posX, posY);
+    shieldPack.sprite.setScale(sf::Vector2f(1, 1));
+    shieldPack.sprite.setTextureRect(sf::IntRect(0, 0, 24, 47));
+    //make the center of the sprite the origin
+    sf::FloatRect bounds = shieldPack.sprite.getLocalBounds();
+    shieldPack.sprite.setOrigin(bounds.width / 2.0f, bounds.height / 2.0f);
+    return shieldPack;
+}
+
 void Game::parseBuffer(const std::string& buffer)
 {
     std::istringstream stream(buffer);
@@ -273,7 +293,7 @@ void Game::parseBuffer(const std::string& buffer)
                 } else if (data.id >= 720 && data.id < 730) {
                     m_object.push_back(createShieldPack(data.position.x, data.position.y, data.id));
                 } else if (data.id >= 801 && data.id <= 804) {
-                    m_object.push_back(createShieldPack(data.position.x, data.position.y, data.id)); // ICI METTRE UN VRAI SPRITE DE SHIELD
+                    m_object.push_back(createShieldField(data.position.x, data.position.y, data.id)); // ICI METTRE UN VRAI SPRITE DE SHIELD
                 }
             }
             if (data.id >= 1 && data.id <= 4) {

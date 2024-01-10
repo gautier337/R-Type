@@ -6,7 +6,8 @@
 */
 
 #include "Game.hpp"
-#include <set>
+#include <chrono>
+#include <thread>
 
 Game::Game()
 {
@@ -275,7 +276,6 @@ void Game::parseBuffer(const std::string& buffer)
                     m_object.push_back(createShieldPack(data.position.x, data.position.y, data.id)); // ICI METTRE UN VRAI SPRITE DE SHIELD
                 }
             }
-            // update hp of the player
             if (data.id >= 1 && data.id <= 4) {
                 player_hp = data.hp;
             }
@@ -286,12 +286,29 @@ void Game::parseBuffer(const std::string& buffer)
         if (line.rfind("Score :", 0) == 0) {
             std::sscanf(line.c_str(), "Score : %d", &m_data.score);
         }
+        auto start = std::chrono::high_resolution_clock::now();
+        bool timerStarted = false;
+
         for (int waveNum = 1; waveNum <= 9; ++waveNum) {
-            if (line.rfind("Wave : " + std::to_string(waveNum), 0) == 0) {
+            if (line.rfind("Wave " + std::to_string(waveNum), 0) == 0) {
                 m_data.wave = waveNum;
+                waveBool = true;
+                start = std::chrono::high_resolution_clock::now();
+                timerStarted = true;
                 break;
             }
+            else {
+                if (timerStarted) {
+                    auto end = std::chrono::high_resolution_clock::now();
+                    std::chrono::duration<double> elapsed = end - start;
+                    if (elapsed.count() >= 5.0) {
+                        waveBool = false;
+                        timerStarted = false;
+                    }
+                }
+            }
         }
+
     }
 
     auto it = std::remove_if(m_object.begin(), m_object.end(), [&currentIds](const SpriteObject& obj) {

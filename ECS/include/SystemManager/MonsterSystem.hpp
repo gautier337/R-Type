@@ -49,6 +49,14 @@ namespace Ecs {
 			return entities;
 		};
 		void launch() final;
+		void generateBoss1();
+		void generateBasicMonster();
+		void generateAsteroid();
+		void generateKamikaze();
+		void generateHealthBoost();
+		void generateShootBoost();
+		void generateShieldBoost();
+		void updateShields(std::shared_ptr<Entity> entity);
 	private:
 		EntitySystem& _entitySystem;
     };

@@ -24,7 +24,8 @@
 
 namespace Ecs {
 
-    class PlayerSystem : public ASystem{
+    class PlayerSystem : public ASystem
+	{
         public:
             PlayerSystem(std::list<std::shared_ptr<Entity>> &entities);
             ~PlayerSystem();
@@ -33,7 +34,9 @@ namespace Ecs {
             void handlePlayerInput(int id, int input) noexcept;
 			bool isIdTaken(unsigned int id) const noexcept;
 			std::shared_ptr<Entity> getEntityById(unsigned int id);
-			std::shared_ptr<Entity> createMissile(int entityID) noexcept;
+			std::shared_ptr<Entity> createMissile(int entityID, int posY = 0) noexcept;
+			void updatePlayers();
+			void updateShields(std::shared_ptr<Entity> entity);
     };
 }
 

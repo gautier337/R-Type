@@ -69,7 +69,7 @@ namespace Ecs {
         {
             if (entity->getEntityId() >= 200 && entity->getEntityId() < 500) {
                 std::pair<int, int> pos = entity->getComponent<Ecs::Position>()->getPosition();
-                entity->getComponent<Ecs::Position>()->set_pox_x(pos.first + entity->getComponent<Ecs::Speed>()->getSpeed());
+                entity->getComponent<Ecs::Position>()->set_pos_x(pos.first + entity->getComponent<Ecs::Speed>()->getSpeed());
             }
         }
 	}

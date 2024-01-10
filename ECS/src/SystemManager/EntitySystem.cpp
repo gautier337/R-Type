@@ -44,6 +44,10 @@ namespace Ecs {
                 if (entity->getComponent<Ecs::Position>()->getPosition().first < -40)
                     deleteEntity(entity->getEntityId());
             }
+            if (entity->getEntityId() >= 700 && entity->getEntityId() < 730) {
+                if (entity->getComponent<Ecs::Position>()->getPosition().second > 1120)
+                    deleteEntity(entity->getEntityId());
+            }
         }
     }
 

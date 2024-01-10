@@ -35,9 +35,6 @@ class SpriteObject {
             sf::IntRect textureRect = sprite.getTextureRect();
             textureRect.left += offset;
             sprite.setTextureRect(textureRect);
-            // sf::Vector2f position = sprite.getPosition();
-            // position.x += offset;
-            // sprite.setPosition(position);
         }
 
         void draw(sf::RenderWindow& window) {

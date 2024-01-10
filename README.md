@@ -4,6 +4,17 @@
 
 Welcome to R-TYPE, a thrilling multiplayer network game that takes you into the heart of fast-paced, cooperative space battles. Our project is designed to offer an immersive gaming experience, emphasizing teamwork and strategy within a dynamic environment. This README provides essential information on setting up and starting the game, as well as insight into the technical backbone that makes our game unique.
 
+### Documentation
+
+We have build a notion who document, three things:
+
+- The game engine
+- The Server
+- How the client work
+- The communication protocol between the server and the client
+
+You can access to the documentation following this link: https://opalescent-crab-ddf.notion.site/Communication-Protocol-Server-Client-079c983999ab4a37ada450f9c4f3a508?pvs=4
+
 ## Game Engine: The ECS Method
 
 R-TYPE is powered by a robust game engine utilizing the Entity-Component-System (ECS) methodology. This approach separates logic and data, allowing for highly flexible and efficient game design. Entities represent objects in the game world, components hold data, and systems provide the logic to interpret and manipulate this data. This decoupling allows for a modular design, where adding new features and maintaining existing ones becomes streamlined and more manageable.

@@ -6,7 +6,6 @@
 */
 
 #include "../include/Client.hpp"
-#include <iostream>
 
 Client::Client(const char *server_address, int server_port): m_window(sf::VideoMode(1920, 1080), "RTYPE CLIENT")
 {
@@ -86,6 +85,7 @@ void Client::init()
     m_game = Game();
     m_menu = Menu();
     m_options = Options();
+    m_mode = Mode();
     m_texture = TextureManager();
 
     //Score font
@@ -130,6 +130,7 @@ void Client::init()
         std::exit(1);
     } else
         std::cout << "Menu music loaded successfully" << std::endl;
+    m_menu.m_music.setVolume(0);
     // Le player
     m_texture.loadTexture("player", "assets/player.gif");
     // Sbire chelou
@@ -140,19 +141,12 @@ void Client::init()
     m_texture.loadTexture("bullet", "assets/bullet.gif");
     // Kamikaze
     m_texture.loadTexture("kamikaze", "assets/kamikaze.gif");
-
     m_texture.loadTexture("boss", "assets/boss.gif");
-
     m_texture.loadTexture("asteroid", "assets/asteroid.png");
-
     m_texture.loadTexture("boostPack", "assets/speedBoost.png");
-
     m_texture.loadTexture("healthPack", "assets/healthBoost.png");
-
     m_texture.loadTexture("shieldPack", "assets/shieldBoost.png");
-
     m_texture.loadTexture("shieldField", "assets/shieldField.gif");
-
     m_texture.loadTexture("parallax", "assets/parallax2.png");
     m_texture.setTextureRepeated("parallax", true);
 
@@ -183,6 +177,19 @@ void Client::init()
     m_options.m_60fps.setTexture(m_options.m_texture_60fps);
     m_options.m_60fps.setPosition(1240, 320);
     m_options.m_60fps.setScale(sf::Vector2f(0.85, 0.85));
+
+    //scene solo and online
+    m_mode.m_texture_background_mode.loadFromFile("assets/background_mode.png");
+    m_mode.m_background_mode.setTexture(m_mode.m_texture_background_mode);
+    m_mode.m_background_mode.setScale(sf::Vector2f(0.8, 0.8));
+    m_mode.m_texture_solo.loadFromFile("assets/solo_button.png");
+    m_mode.m_solo.setTexture(m_mode.m_texture_solo);
+    m_mode.m_solo.setPosition(500, 250);
+    m_mode.m_solo.setScale(sf::Vector2f(0.85, 0.85));
+    m_mode.m_texture_multi.loadFromFile("assets/online_button.png");
+    m_mode.m_multi.setTexture(m_mode.m_texture_multi);
+    m_mode.m_multi.setPosition(800, 250);
+    m_mode.m_multi.setScale(sf::Vector2f(0.85, 0.85));
 
     // game over screen
     m_game.m_game_is_over_texture.loadFromFile("assets/game_over.png");
@@ -241,7 +248,7 @@ void Client::run()
             } else if (event.type == sf::Event::KeyPressed) {
                 handleInput(event.key.code);
                 if (event.key.code == sf::Keyboard::Enter) {
-                    setScene(ClientScene::GAME);
+                    setScene(ClientScene::MODE);
                 }
             } else if (event.type == sf::Event::MouseButtonPressed) {
                 handleMouse(event.mouseButton.button);
@@ -261,6 +268,10 @@ void Client::run()
                 m_window.draw(m_menu.m_startGame);
                 m_window.draw(m_menu.m_Exit);
                 m_window.draw(m_menu.m_Options);
+            } else if (m_currentScene == ClientScene::MODE) {
+                m_window.draw(m_mode.m_background_mode);
+                m_window.draw(m_mode.m_solo);
+                m_window.draw(m_mode.m_multi);
             } else if (m_currentScene == ClientScene::GAME) {
                 if (timeSinceLastMove >= moveInterval) {
                     m_parallax.moveHorizontally(moveOffset);
@@ -327,6 +338,8 @@ void Client::handleButtonHover(sf::Vector2i mousePos)
     checkButtonHover(m_options.m_60fps, mousePos);
     checkButtonHover(m_options.m_off_sound, mousePos);
     checkButtonHover(m_options.m_on_sound, mousePos);
+    checkButtonHover(m_mode.m_solo, mousePos);
+    checkButtonHover(m_mode.m_multi, mousePos);
 }
 
 void Client::handleMouse(sf::Mouse::Button button)
@@ -337,6 +350,8 @@ void Client::handleMouse(sf::Mouse::Button button)
     if (button == sf::Mouse::Left) {
         sf::Vector2i mousePos = sf::Mouse::getPosition(m_window);
         sf::FloatRect exitBounds = m_menu.m_Exit.getGlobalBounds();
+        // sf::FloatRect soloGameBounds = m_mode.m_solo.getGlobalBounds();
+        sf::FloatRect multiGameBounds = m_mode.m_multi.getGlobalBounds();
         sf::FloatRect startGameBounds = m_menu.m_startGame.getGlobalBounds();
         sf::FloatRect optionsBounds = m_menu.m_Options.getGlobalBounds();
         sf::FloatRect soundOnBounds = m_options.m_on_sound.getGlobalBounds();
@@ -347,6 +362,9 @@ void Client::handleMouse(sf::Mouse::Button button)
             std::exit(0);
         }
         if (startGameBounds.contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
+            setScene(ClientScene::MODE);
+        }
+        if (multiGameBounds.contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
             setScene(ClientScene::GAME);
             send_message_to_server("START");
         }

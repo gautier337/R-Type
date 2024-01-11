@@ -13,8 +13,10 @@
 #include "Game.hpp"
 #include "Menu.hpp"
 #include "Options.hpp"
+#include "Mode.hpp"
 #include "SpriteObject.hpp"
 #include <SFML/Graphics.hpp>
+#include <iostream>
 #include <vector>
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -37,6 +39,8 @@ enum class ClientStep {
 enum class ClientScene {
     MENU,
     GAME,
+    MODE,
+    SOLO,
     OPTIONS,
     GAME_OVER,
 };
@@ -70,6 +74,7 @@ class Client {
         Game m_game;
         Menu m_menu;
         Options m_options;
+        Mode m_mode;
         SpriteObject m_parallax;
         TextureManager m_texture;
         int client_id = 0;

@@ -56,7 +56,6 @@ void Server::start_receive() {
 
 void Server::handle_receive(const std::string& data, const asio::ip::udp::endpoint& endpoint) {
     std::cout << "Received message: " << data << " from " << endpoint << std::endl;
-    // std::cout << "handle_receive called from thread: " << std::this_thread::get_id() << std::endl;
 
     bool isNewClient = false;
     int clientId;
@@ -74,6 +73,12 @@ void Server::handle_receive(const std::string& data, const asio::ip::udp::endpoi
             isNewClient = true;
             std::cout << "New client added with ID: " << clientId << std::endl;
         }
+    }
+
+    if (client_ids_.find(endpoint) == client_ids_.end()) {
+        handle_send("You are not in our list, please say START", endpoint);
+        std::cout << "A client tried to send a message but he is not in our list and he didn't say START" << std::endl;
+        return;
     }
 
     if (isNewClient) {

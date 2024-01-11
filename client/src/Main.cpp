@@ -9,10 +9,6 @@
 #include <iostream>
 #include <string>
 
-#include "../include/Client.hpp"
-#include <iostream>
-#include <string>
-
 void showHelp() {
     std::cout << "Usage: r-type_client [server_address] [-p port] [--wave=number]\n"
               << "Options:\n"

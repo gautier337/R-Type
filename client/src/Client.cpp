@@ -106,9 +106,9 @@ void Client::init()
     m_bullet_sound.openFromFile("assets/fire_sound.wav");
     //Wave font
     m_game.m_text_wave.setFont(m_game.m_font_score);
-    m_game.m_text_wave.setCharacterSize(100);
+    m_game.m_text_wave.setCharacterSize(30);
     m_game.m_text_wave.setFillColor(sf::Color::White);
-    m_game.m_text_wave.setPosition(600, 20);
+    m_game.m_text_wave.setPosition(1350, 20);
     //menu
     m_texture.loadTexture("menu", "assets/background.png");
     m_texture.loadTexture("startgame", "assets/start_game.png");

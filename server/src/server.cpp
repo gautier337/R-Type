@@ -86,7 +86,8 @@ void Server::handle_receive(const std::string& data, const asio::ip::udp::endpoi
         handle_send(welcomeMessage, endpoint);
         return;
     }
-
+    
+    std::cout << "handling the message: " << data << " from " << endpoint << std::endl;
     if (data == "QUIT") {
         std::lock_guard<std::mutex> lock(clients_mutex_);
         client_ids_.erase(endpoint);

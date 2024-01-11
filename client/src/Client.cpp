@@ -243,18 +243,25 @@ void Client::run()
         timeSinceLastMove += deltaTime.asSeconds();
 
         while (m_window.pollEvent(event)) {
-            if (event.type == sf::Event::Closed) {
-                m_window.close();
-            } else if (event.type == sf::Event::KeyPressed) {
-                handleInput(event.key.code);
-                if (event.key.code == sf::Keyboard::Enter) {
-                    setScene(ClientScene::MODE);
-                }
-            } else if (event.type == sf::Event::MouseButtonPressed) {
-                handleMouse(event.mouseButton.button);
+            switch (event.type) {
+                case sf::Event::Closed:
+                    m_window.close();
+                    break;
+                case sf::Event::KeyPressed:
+                    keyStatus[event.key.code] = true;
+                    break;
+                case sf::Event::KeyReleased:
+                    keyStatus[event.key.code] = false;
+                    break;
+                case sf::Event::MouseButtonPressed:
+                    handleMouse(event.mouseButton.button);
+                    break;
+                default:
+                    break;
             }
         }
 
+        handleInput();
         handleButtonHover(mousePos);
 
         if (m_window.isOpen()) {
@@ -380,38 +387,41 @@ void Client::handleMouse(sf::Mouse::Button button)
     }
 }
 
-void Client::handleInput(sf::Keyboard::Key key)
-{
-    switch (key) {
-        case sf::Keyboard::Escape:
-            setScene(ClientScene::MENU);
-            break;
-        case sf::Keyboard::Q: exit(0);
-        case sf::Keyboard::Enter:
-            if (client_id == 0) {
-                setScene(ClientScene::GAME);
-                send_message_to_server("START");
-            }
-            break;
-        case sf::Keyboard::Space:
-            if (m_currentScene == ClientScene::GAME) {
-                m_bullet_sound.play();
-                send_message_to_server("SHOOT");
-            }
-            break;
-        case sf::Keyboard::Left:
-            send_message_to_server("LEFT");
-            break;
-        case sf::Keyboard::Right:
-            send_message_to_server("RIGHT");
-            break;
-        case sf::Keyboard::Up:
-            send_message_to_server("UP");
-            break;
-        case sf::Keyboard::Down:
-            send_message_to_server("DOWN");
-            break;
-        default:
-            break;
+void Client::handleInput() {
+    auto now = std::chrono::steady_clock::now();
+
+    if (keyStatus[sf::Keyboard::Escape] && now - lastKeyPressTime[sf::Keyboard::Escape] > keyPressInterval) {
+        setScene(ClientScene::MENU);
+        lastKeyPressTime[sf::Keyboard::Escape] = now;
+    }
+    if (keyStatus[sf::Keyboard::Enter] && now - lastKeyPressTime[sf::Keyboard::Enter] > keyPressInterval) {
+        if (client_id == 0) {
+            setScene(ClientScene::GAME);
+            send_message_to_server("START");
+        }
+        lastKeyPressTime[sf::Keyboard::Enter] = now;
+    }
+    if (keyStatus[sf::Keyboard::Space] && now - lastKeyPressTime[sf::Keyboard::Space] > keyPressInterval) {
+        if (m_currentScene == ClientScene::GAME) {
+            m_bullet_sound.play();
+            send_message_to_server("SHOOT");
+        }
+        lastKeyPressTime[sf::Keyboard::Space] = now;
+    }
+    if (keyStatus[sf::Keyboard::Left] && now - lastKeyPressTime[sf::Keyboard::Left] > keyPressInterval) {
+        send_message_to_server("LEFT");
+        lastKeyPressTime[sf::Keyboard::Left] = now;
+    }
+    if (keyStatus[sf::Keyboard::Right] && now - lastKeyPressTime[sf::Keyboard::Right] > keyPressInterval) {
+        send_message_to_server("RIGHT");
+        lastKeyPressTime[sf::Keyboard::Right] = now;
+    }
+    if (keyStatus[sf::Keyboard::Up] && now - lastKeyPressTime[sf::Keyboard::Up] > keyPressInterval) {
+        send_message_to_server("UP");
+        lastKeyPressTime[sf::Keyboard::Up] = now;
+    }
+    if (keyStatus[sf::Keyboard::Down] && now - lastKeyPressTime[sf::Keyboard::Down] > keyPressInterval) {
+        send_message_to_server("DOWN");
+        lastKeyPressTime[sf::Keyboard::Down] = now;
     }
 }

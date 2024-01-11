@@ -52,7 +52,7 @@ class Client {
         ClientStep getStatus() const { return m_status;};
         void setStatus(ClientStep newStatus) { m_status = newStatus; }
 
-        void handleInput(sf::Keyboard::Key key);
+        void handleInput();
         void setScene(ClientScene newScene) {m_currentScene = newScene; }
         void run();
         void init();
@@ -67,6 +67,9 @@ class Client {
 
         sf::Music m_bullet_sound;
     private:
+        std::array<bool, sf::Keyboard::KeyCount> keyStatus;
+        std::array<std::chrono::steady_clock::time_point, sf::Keyboard::KeyCount> lastKeyPressTime;
+        const std::chrono::milliseconds keyPressInterval{70};
         sf::RenderWindow m_window;
         ClientStep m_status;
         ClientScene m_currentScene;

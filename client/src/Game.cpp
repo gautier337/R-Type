@@ -10,6 +10,7 @@
 
 Game::Game()
 {
+    m_data.wave = 1;
 }
 
 Game::~Game()

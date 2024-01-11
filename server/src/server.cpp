@@ -62,7 +62,7 @@ void Server::handle_receive(const std::string& data, const asio::ip::udp::endpoi
     int clientId;
     {
         std::lock_guard<std::mutex> lock(clients_mutex_);
-        if (client_ids_.find(endpoint) == client_ids_.end() || data == "START") {
+        if (client_ids_.find(endpoint) == client_ids_.end() && data == "START") {
             number_of_player_connected_++;
             clientId = playerSystem.createPlayer();
             if (clientId == 0) {
@@ -73,8 +73,6 @@ void Server::handle_receive(const std::string& data, const asio::ip::udp::endpoi
             client_ids_[endpoint] = clientId;
             isNewClient = true;
             std::cout << "New client added with ID: " << clientId << std::endl;
-        } else {
-            clientId = client_ids_[endpoint];
         }
     }
 

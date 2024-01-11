@@ -10,6 +10,10 @@
 Client::Client(const char *server_address, int server_port): m_window(sf::VideoMode(1920, 1080), "RTYPE CLIENT")
 {
     std::cout << "Client created" << std::endl;
+    keyStatus.fill(false);
+    for (auto& time : lastKeyPressTime) {
+        time = std::chrono::steady_clock::now();
+    }
     m_sock = socket(AF_INET, SOCK_DGRAM, 0);
     if (m_sock < 0) {
         throw std::runtime_error("Erreur lors de la création du socket");
@@ -294,16 +298,8 @@ void Client::run()
                     m_game.m_hp_sprite.setPosition(50 + i * 50, 110);
                     m_window.draw(m_game.m_hp_sprite);
                 }
-                if (m_game.waveBool == true) {
-                    m_game.m_text_wave.setString("Wave : " + std::to_string(m_game.m_data.wave - 1));
-                    m_window.draw(m_game.m_text_wave);
-                    std::cout << "Wave bool is true" << std::endl;
-                }
-                if (m_game.waveBool == false) {
-                    m_game.m_text_wave.setString("");
-                    m_window.draw(m_game.m_text_wave);
-                    std::cout << "Wave bool is false" << std::endl;
-                }
+                m_game.m_text_wave.setString("Wave : " + std::to_string(m_game.m_data.wave));
+                m_window.draw(m_game.m_text_wave);
             } else if (m_currentScene == ClientScene::OPTIONS) {
                 display_options();
             }
@@ -371,9 +367,15 @@ void Client::handleMouse(sf::Mouse::Button button)
         if (startGameBounds.contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
             setScene(ClientScene::MODE);
         }
-        if (multiGameBounds.contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
+        if (multiGameBounds.contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y)) && game_started == false) {
             setScene(ClientScene::GAME);
             send_message_to_server("START");
+            std::string message = "wave=" + std::to_string(wave);
+            send_message_to_server(message.c_str());
+            game_started = true;
+        }
+        if (multiGameBounds.contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y)) && game_started == true) {
+            setScene(ClientScene::GAME);
         }
         if (optionsBounds.contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
             setScene(ClientScene::OPTIONS);
@@ -393,13 +395,6 @@ void Client::handleInput() {
     if (keyStatus[sf::Keyboard::Escape] && now - lastKeyPressTime[sf::Keyboard::Escape] > keyPressInterval) {
         setScene(ClientScene::MENU);
         lastKeyPressTime[sf::Keyboard::Escape] = now;
-    }
-    if (keyStatus[sf::Keyboard::Enter] && now - lastKeyPressTime[sf::Keyboard::Enter] > keyPressInterval) {
-        if (client_id == 0) {
-            setScene(ClientScene::GAME);
-            send_message_to_server("START");
-        }
-        lastKeyPressTime[sf::Keyboard::Enter] = now;
     }
     if (keyStatus[sf::Keyboard::Space] && now - lastKeyPressTime[sf::Keyboard::Space] > keyPressInterval) {
         if (m_currentScene == ClientScene::GAME) {

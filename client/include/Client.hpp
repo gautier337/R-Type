@@ -64,12 +64,13 @@ class Client {
         void handleMouse(sf::Mouse::Button button);
         void handleButtonHover(sf::Vector2i mousePos);
         std::string send_message_to_server_with_reponse(const char *message);
+        int wave = 1;
 
         sf::Music m_bullet_sound;
     private:
         std::array<bool, sf::Keyboard::KeyCount> keyStatus;
         std::array<std::chrono::steady_clock::time_point, sf::Keyboard::KeyCount> lastKeyPressTime;
-        const std::chrono::milliseconds keyPressInterval{70};
+        const std::chrono::milliseconds keyPressInterval{90};
         sf::RenderWindow m_window;
         ClientStep m_status;
         ClientScene m_currentScene;
@@ -81,7 +82,7 @@ class Client {
         SpriteObject m_parallax;
         TextureManager m_texture;
         int client_id = 0;
-
+        bool game_started = false;
         int m_sock;
         sockaddr_in m_server_addr;
 

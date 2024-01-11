@@ -74,6 +74,20 @@ void Server::handle_receive(const std::string& data, const asio::ip::udp::endpoi
         handle_send(welcomeMessage, endpoint);
         return;
     }
+    
+    if (data.substr(0, 5) == "wave=" && number_of_player_connected_ <= 1) {
+        try {
+            int waveValue = std::stoi(data.substr(5));
+            entitySystem.wave = waveValue;
+            std::string message = "Wave " + std::to_string(entitySystem.wave);
+            for (auto& client : client_ids_) {
+                handle_send(message, client.first);
+            }
+        } catch (const std::exception& e) {
+            std::cerr << "Invalid wave value: " << data << std::endl;
+        }
+        return;
+    }
 
     if (data == "QUIT") {
         std::lock_guard<std::mutex> lock(clients_mutex_);

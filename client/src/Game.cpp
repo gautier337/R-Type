@@ -305,19 +305,16 @@ void Game::parseBuffer(const std::string& buffer)
         if (line.rfind("Score :", 0) == 0) {
             std::sscanf(line.c_str(), "Score : %d", &m_data.score);
         }
-        auto lastWaveTime = std::chrono::high_resolution_clock::now();
-        for (int waveNum = 1; waveNum <= 9; ++waveNum) {
-            if (line.rfind("Wave " + std::to_string(waveNum), 0) == 0) {
-                m_data.wave = waveNum;
-                waveBool = true;
-                lastWaveTime = std::chrono::high_resolution_clock::now();
-                break;
-            }
-        }
-        if (waveBool) {
-            auto currentTime = std::chrono::high_resolution_clock::now();
-            if (std::chrono::duration_cast<std::chrono::seconds>(currentTime - lastWaveTime).count() >= 5) {
-                waveBool = false;
+        std::string prefix = "Wave ";
+        size_t prefixLength = prefix.length();
+        if (line.rfind(prefix, 0) == 0) {
+            std::string numberStr = line.substr(prefixLength);
+            std::stringstream ss(numberStr);
+            int waveNumber;
+            if (ss >> waveNumber) {
+                m_data.wave = waveNumber;
+            } else {
+                std::cerr << "Invalid wave number format" << std::endl;
             }
         }
     }

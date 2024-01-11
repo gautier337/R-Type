@@ -6,11 +6,14 @@
 */
 
 #include "../include/Client.hpp"
-#include <iostream>
 
 Client::Client(const char *server_address, int server_port): m_window(sf::VideoMode(1920, 1080), "RTYPE CLIENT")
 {
     std::cout << "Client created" << std::endl;
+    keyStatus.fill(false);
+    for (auto& time : lastKeyPressTime) {
+        time = std::chrono::steady_clock::now();
+    }
     m_sock = socket(AF_INET, SOCK_DGRAM, 0);
     if (m_sock < 0) {
         throw std::runtime_error("Erreur lors de la création du socket");
@@ -86,6 +89,7 @@ void Client::init()
     m_game = Game();
     m_menu = Menu();
     m_options = Options();
+    m_mode = Mode();
     m_texture = TextureManager();
 
     //Score font
@@ -102,9 +106,9 @@ void Client::init()
     m_bullet_sound.openFromFile("assets/fire_sound.wav");
     //Wave font
     m_game.m_text_wave.setFont(m_game.m_font_score);
-    m_game.m_text_wave.setCharacterSize(100);
+    m_game.m_text_wave.setCharacterSize(30);
     m_game.m_text_wave.setFillColor(sf::Color::White);
-    m_game.m_text_wave.setPosition(600, 20);
+    m_game.m_text_wave.setPosition(1350, 20);
     //menu
     m_texture.loadTexture("menu", "assets/background.png");
     m_texture.loadTexture("startgame", "assets/start_game.png");
@@ -130,6 +134,7 @@ void Client::init()
         std::exit(1);
     } else
         std::cout << "Menu music loaded successfully" << std::endl;
+    m_menu.m_music.setVolume(0);
     // Le player
     m_texture.loadTexture("player", "assets/player.gif");
     // Sbire chelou
@@ -140,19 +145,12 @@ void Client::init()
     m_texture.loadTexture("bullet", "assets/bullet.gif");
     // Kamikaze
     m_texture.loadTexture("kamikaze", "assets/kamikaze.gif");
-
     m_texture.loadTexture("boss", "assets/boss.gif");
-
     m_texture.loadTexture("asteroid", "assets/asteroid.png");
-
     m_texture.loadTexture("boostPack", "assets/speedBoost.png");
-
     m_texture.loadTexture("healthPack", "assets/healthBoost.png");
-
     m_texture.loadTexture("shieldPack", "assets/shieldBoost.png");
-
     m_texture.loadTexture("shieldField", "assets/shieldField.gif");
-
     m_texture.loadTexture("parallax", "assets/parallax2.png");
     m_texture.setTextureRepeated("parallax", true);
 
@@ -183,6 +181,19 @@ void Client::init()
     m_options.m_60fps.setTexture(m_options.m_texture_60fps);
     m_options.m_60fps.setPosition(1240, 320);
     m_options.m_60fps.setScale(sf::Vector2f(0.85, 0.85));
+
+    //scene solo and online
+    m_mode.m_texture_background_mode.loadFromFile("assets/background_mode.png");
+    m_mode.m_background_mode.setTexture(m_mode.m_texture_background_mode);
+    m_mode.m_background_mode.setScale(sf::Vector2f(0.8, 0.8));
+    m_mode.m_texture_solo.loadFromFile("assets/solo_button.png");
+    m_mode.m_solo.setTexture(m_mode.m_texture_solo);
+    m_mode.m_solo.setPosition(500, 250);
+    m_mode.m_solo.setScale(sf::Vector2f(0.85, 0.85));
+    m_mode.m_texture_multi.loadFromFile("assets/online_button.png");
+    m_mode.m_multi.setTexture(m_mode.m_texture_multi);
+    m_mode.m_multi.setPosition(800, 250);
+    m_mode.m_multi.setScale(sf::Vector2f(0.85, 0.85));
 
     // game over screen
     m_game.m_game_is_over_texture.loadFromFile("assets/game_over.png");
@@ -236,18 +247,25 @@ void Client::run()
         timeSinceLastMove += deltaTime.asSeconds();
 
         while (m_window.pollEvent(event)) {
-            if (event.type == sf::Event::Closed) {
-                m_window.close();
-            } else if (event.type == sf::Event::KeyPressed) {
-                handleInput(event.key.code);
-                if (event.key.code == sf::Keyboard::Enter) {
-                    setScene(ClientScene::GAME);
-                }
-            } else if (event.type == sf::Event::MouseButtonPressed) {
-                handleMouse(event.mouseButton.button);
+            switch (event.type) {
+                case sf::Event::Closed:
+                    m_window.close();
+                    break;
+                case sf::Event::KeyPressed:
+                    keyStatus[event.key.code] = true;
+                    break;
+                case sf::Event::KeyReleased:
+                    keyStatus[event.key.code] = false;
+                    break;
+                case sf::Event::MouseButtonPressed:
+                    handleMouse(event.mouseButton.button);
+                    break;
+                default:
+                    break;
             }
         }
 
+        handleInput();
         handleButtonHover(mousePos);
 
         if (m_window.isOpen()) {
@@ -261,6 +279,10 @@ void Client::run()
                 m_window.draw(m_menu.m_startGame);
                 m_window.draw(m_menu.m_Exit);
                 m_window.draw(m_menu.m_Options);
+            } else if (m_currentScene == ClientScene::MODE) {
+                m_window.draw(m_mode.m_background_mode);
+                m_window.draw(m_mode.m_solo);
+                m_window.draw(m_mode.m_multi);
             } else if (m_currentScene == ClientScene::GAME) {
                 if (timeSinceLastMove >= moveInterval) {
                     m_parallax.moveHorizontally(moveOffset);
@@ -276,16 +298,8 @@ void Client::run()
                     m_game.m_hp_sprite.setPosition(50 + i * 50, 110);
                     m_window.draw(m_game.m_hp_sprite);
                 }
-                if (m_game.waveBool == true) {
-                    m_game.m_text_wave.setString("Wave : " + std::to_string(m_game.m_data.wave - 1));
-                    m_window.draw(m_game.m_text_wave);
-                    std::cout << "Wave bool is true" << std::endl;
-                }
-                if (m_game.waveBool == false) {
-                    m_game.m_text_wave.setString("");
-                    m_window.draw(m_game.m_text_wave);
-                    std::cout << "Wave bool is false" << std::endl;
-                }
+                m_game.m_text_wave.setString("Wave : " + std::to_string(m_game.m_data.wave));
+                m_window.draw(m_game.m_text_wave);
             } else if (m_currentScene == ClientScene::OPTIONS) {
                 display_options();
             }
@@ -327,6 +341,8 @@ void Client::handleButtonHover(sf::Vector2i mousePos)
     checkButtonHover(m_options.m_60fps, mousePos);
     checkButtonHover(m_options.m_off_sound, mousePos);
     checkButtonHover(m_options.m_on_sound, mousePos);
+    checkButtonHover(m_mode.m_solo, mousePos);
+    checkButtonHover(m_mode.m_multi, mousePos);
 }
 
 void Client::handleMouse(sf::Mouse::Button button)
@@ -337,6 +353,8 @@ void Client::handleMouse(sf::Mouse::Button button)
     if (button == sf::Mouse::Left) {
         sf::Vector2i mousePos = sf::Mouse::getPosition(m_window);
         sf::FloatRect exitBounds = m_menu.m_Exit.getGlobalBounds();
+        // sf::FloatRect soloGameBounds = m_mode.m_solo.getGlobalBounds();
+        sf::FloatRect multiGameBounds = m_mode.m_multi.getGlobalBounds();
         sf::FloatRect startGameBounds = m_menu.m_startGame.getGlobalBounds();
         sf::FloatRect optionsBounds = m_menu.m_Options.getGlobalBounds();
         sf::FloatRect soundOnBounds = m_options.m_on_sound.getGlobalBounds();
@@ -347,8 +365,17 @@ void Client::handleMouse(sf::Mouse::Button button)
             std::exit(0);
         }
         if (startGameBounds.contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
+            setScene(ClientScene::MODE);
+        }
+        if (multiGameBounds.contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y)) && game_started == false) {
             setScene(ClientScene::GAME);
             send_message_to_server("START");
+            std::string message = "wave=" + std::to_string(wave);
+            send_message_to_server(message.c_str());
+            game_started = true;
+        }
+        if (multiGameBounds.contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y)) && game_started == true) {
+            setScene(ClientScene::GAME);
         }
         if (optionsBounds.contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
             setScene(ClientScene::OPTIONS);
@@ -362,38 +389,34 @@ void Client::handleMouse(sf::Mouse::Button button)
     }
 }
 
-void Client::handleInput(sf::Keyboard::Key key)
-{
-    switch (key) {
-        case sf::Keyboard::Escape:
-            setScene(ClientScene::MENU);
-            break;
-        case sf::Keyboard::Q: exit(0);
-        case sf::Keyboard::Enter:
-            if (client_id == 0) {
-                setScene(ClientScene::GAME);
-                send_message_to_server("START");
-            }
-            break;
-        case sf::Keyboard::Space:
-            if (m_currentScene == ClientScene::GAME) {
-                m_bullet_sound.play();
-                send_message_to_server("SHOOT");
-            }
-            break;
-        case sf::Keyboard::Left:
-            send_message_to_server("LEFT");
-            break;
-        case sf::Keyboard::Right:
-            send_message_to_server("RIGHT");
-            break;
-        case sf::Keyboard::Up:
-            send_message_to_server("UP");
-            break;
-        case sf::Keyboard::Down:
-            send_message_to_server("DOWN");
-            break;
-        default:
-            break;
+void Client::handleInput() {
+    auto now = std::chrono::steady_clock::now();
+
+    if (keyStatus[sf::Keyboard::Escape] && now - lastKeyPressTime[sf::Keyboard::Escape] > keyPressInterval) {
+        setScene(ClientScene::MENU);
+        lastKeyPressTime[sf::Keyboard::Escape] = now;
+    }
+    if (keyStatus[sf::Keyboard::Space] && now - lastKeyPressTime[sf::Keyboard::Space] > keyPressInterval) {
+        if (m_currentScene == ClientScene::GAME) {
+            m_bullet_sound.play();
+            send_message_to_server("SHOOT");
+        }
+        lastKeyPressTime[sf::Keyboard::Space] = now;
+    }
+    if (keyStatus[sf::Keyboard::Left] && now - lastKeyPressTime[sf::Keyboard::Left] > keyPressInterval) {
+        send_message_to_server("LEFT");
+        lastKeyPressTime[sf::Keyboard::Left] = now;
+    }
+    if (keyStatus[sf::Keyboard::Right] && now - lastKeyPressTime[sf::Keyboard::Right] > keyPressInterval) {
+        send_message_to_server("RIGHT");
+        lastKeyPressTime[sf::Keyboard::Right] = now;
+    }
+    if (keyStatus[sf::Keyboard::Up] && now - lastKeyPressTime[sf::Keyboard::Up] > keyPressInterval) {
+        send_message_to_server("UP");
+        lastKeyPressTime[sf::Keyboard::Up] = now;
+    }
+    if (keyStatus[sf::Keyboard::Down] && now - lastKeyPressTime[sf::Keyboard::Down] > keyPressInterval) {
+        send_message_to_server("DOWN");
+        lastKeyPressTime[sf::Keyboard::Down] = now;
     }
 }

@@ -13,8 +13,10 @@
 #include "Game.hpp"
 #include "Menu.hpp"
 #include "Options.hpp"
+#include "Mode.hpp"
 #include "SpriteObject.hpp"
 #include <SFML/Graphics.hpp>
+#include <iostream>
 #include <vector>
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -37,6 +39,8 @@ enum class ClientStep {
 enum class ClientScene {
     MENU,
     GAME,
+    MODE,
+    SOLO,
     OPTIONS,
     GAME_OVER,
 };
@@ -48,7 +52,7 @@ class Client {
         ClientStep getStatus() const { return m_status;};
         void setStatus(ClientStep newStatus) { m_status = newStatus; }
 
-        void handleInput(sf::Keyboard::Key key);
+        void handleInput();
         void setScene(ClientScene newScene) {m_currentScene = newScene; }
         void run();
         void init();
@@ -60,9 +64,13 @@ class Client {
         void handleMouse(sf::Mouse::Button button);
         void handleButtonHover(sf::Vector2i mousePos);
         std::string send_message_to_server_with_reponse(const char *message);
+        int wave = 1;
 
         sf::Music m_bullet_sound;
     private:
+        std::array<bool, sf::Keyboard::KeyCount> keyStatus;
+        std::array<std::chrono::steady_clock::time_point, sf::Keyboard::KeyCount> lastKeyPressTime;
+        const std::chrono::milliseconds keyPressInterval{90};
         sf::RenderWindow m_window;
         ClientStep m_status;
         ClientScene m_currentScene;
@@ -70,10 +78,11 @@ class Client {
         Game m_game;
         Menu m_menu;
         Options m_options;
+        Mode m_mode;
         SpriteObject m_parallax;
         TextureManager m_texture;
         int client_id = 0;
-
+        bool game_started = false;
         int m_sock;
         sockaddr_in m_server_addr;
 

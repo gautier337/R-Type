@@ -8,25 +8,44 @@
 #include "../include/Client.hpp"
 #include <iostream>
 #include <string>
-
-#include "../include/Client.hpp"
-#include <iostream>
-#include <string>
+#include <regex>
+#include <sstream>
 
 void showHelp() {
-    std::cout << "Usage: r-type_client [server_address] [-p port]\n"
+    std::cout << "Usage: r-type_client [--ip server_address] [-p port] [--wave=number]\n"
               << "Options:\n"
-              << "  -h, -help           Afficher ce message d'aide.\n"
-              << "  -p port             Spécifier le port du serveur (par défaut: 8000).\n"
-              << "Arguments:\n"
-              << "  server_address      Adresse IP du serveur (par défaut: 127.0.0.1).\n"
+              << "  -h, -help           Show this help message.\n"
+              << "  --ip server_address Specify server IP address (default: 127.0.0.1).\n"
+              << "  -p port             Specify server port (default: 8000).\n"
+              << "  --wave=number       Choose a wave from 1 to 10.\n"
               << std::endl;
+}
+
+static bool isValidIpAddress(const std::string &ipAddress) {
+    // Regular expression for validating an IP address
+    std::regex ipFormat("^(\\d{1,3})(\\.\\d{1,3}){3}$");
+    
+    // Check if the IP address matches the regular expression
+    if (std::regex_match(ipAddress, ipFormat)) {
+        std::istringstream iss(ipAddress);
+        std::string byte;
+        
+        while (std::getline(iss, byte, '.')) {
+            int num = std::stoi(byte);
+            if (num < 0 || num > 255) {
+                return false;
+            }
+        }
+        return true;
+    }
+    return false;
 }
 
 int main(int argc, char* argv[])
 {
     std::string server_address = "127.0.0.1";
     int server_port = 8000;
+    int wave_number = 1;
 
     for (int i = 1; i < argc; ++i) {
         std::string arg = argv[i];
@@ -34,10 +53,23 @@ int main(int argc, char* argv[])
         if (arg == "-h" || arg == "-help") {
             showHelp();
             return 0;
-        } else if (arg == "-p" && i + 1 < argc) {
+        } else if (arg.substr(0, 4) == "--ip" && i + 1 < argc) {
+            server_address = argv[++i];
+            if (!isValidIpAddress(server_address)) {
+                std::cerr << "Invalid IP address: " << server_address << std::endl;
+                return 1;
+            }
+        } else if (arg.substr(0, 2) == "-p" && i + 1 < argc) {
             server_port = std::stoi(argv[++i]);
+        } else if (arg.substr(0, 7) == "--wave=") {
+            wave_number = std::stoi(arg.substr(7));
+            if (wave_number < 1 || wave_number > 10) {
+                std::cerr << "Invalid wave number. Please choose a wave from 1 to 10." << std::endl;
+                return 1;
+            }
         } else {
-            server_address = argv[i];
+            std::cerr << "Invalid argument: " << arg << std::endl;
+            return 1;
         }
     }
 
@@ -46,6 +78,7 @@ int main(int argc, char* argv[])
               << " and port: " << server_port << std::endl;
 
     client.init();
+    client.wave = wave_number;
     client.run();
     return int(client.getStatus());
 }

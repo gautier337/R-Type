@@ -370,8 +370,6 @@ void Client::handleMouse(sf::Mouse::Button button)
         if (multiGameBounds.contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y)) && game_started == false) {
             setScene(ClientScene::GAME);
             send_message_to_server("START");
-            std::string message = "wave=" + std::to_string(wave);
-            send_message_to_server(message.c_str());
             game_started = true;
         }
         if (multiGameBounds.contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y)) && game_started == true) {

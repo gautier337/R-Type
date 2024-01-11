@@ -30,7 +30,7 @@ namespace std
 
 class Server {
     public:
-        Server(asio::io_context& io_context, int port);
+        Server(asio::io_context& io_context, int port, int wave);
         Ecs::HitboxSystem hitbox;
 
         Ecs::EntitySystem entitySystem;

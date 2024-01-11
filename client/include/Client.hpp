@@ -63,8 +63,6 @@ class Client {
         void checkButtonHover(sf::Sprite& button, const sf::Vector2i& mousePos);
         void handleMouse(sf::Mouse::Button button);
         void handleButtonHover(sf::Vector2i mousePos);
-        std::string send_message_to_server_with_reponse(const char *message);
-        int wave = 1;
 
         sf::Music m_bullet_sound;
     private:

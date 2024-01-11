@@ -14,7 +14,7 @@
 #include <chrono>
 #include <fstream>
 
-Server::Server(asio::io_context& io_context, int port)
+Server::Server(asio::io_context& io_context, int port, int wave)
     : socket_(io_context, asio::ip::udp::endpoint(asio::ip::udp::v4(), port)),
       tick_timer_(io_context, std::chrono::milliseconds(16)),
       entitySystem(entities_),
@@ -22,7 +22,10 @@ Server::Server(asio::io_context& io_context, int port)
       monsterSystem(entities_, entitySystem),
       playerSystem(entities_)
 {
+    entitySystem.wave = wave;
     start_receive();
+    std::cout << "Server started on port " << port << std::endl;
+    std::cout << "Wave: " << wave << std::endl;
     handle_tick({});
 }
 
@@ -72,20 +75,6 @@ void Server::handle_receive(const std::string& data, const asio::ip::udp::endpoi
     if (isNewClient) {
         std::string welcomeMessage = std::to_string(clientId) + ", Bienvenue !";
         handle_send(welcomeMessage, endpoint);
-        return;
-    }
-    
-    if (data.substr(0, 5) == "wave=" && number_of_player_connected_ <= 1) {
-        try {
-            int waveValue = std::stoi(data.substr(5));
-            entitySystem.wave = waveValue;
-            std::string message = "Wave " + std::to_string(entitySystem.wave);
-            for (auto& client : client_ids_) {
-                handle_send(message, client.first);
-            }
-        } catch (const std::exception& e) {
-            std::cerr << "Invalid wave value: " << data << std::endl;
-        }
         return;
     }
 

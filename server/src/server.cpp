@@ -135,9 +135,9 @@ void Server::handle_tick(const asio::error_code& error)
             hitbox.launch(entitySystem.getEntsByComps<Ecs::Hitbox, Ecs::Position, Ecs::Damages, Ecs::Health>());
 
             std::stringstream ss;
-            if (entitySystem.interWave) {
-                ss << "Wave " << entitySystem.wave << "\n";
-            }
+            // if (entitySystem.interWave) {
+            ss << "Wave " << entitySystem.wave << "\n";
+            // }
             for (auto& entity : entitySystem.getEntsByComp<Ecs::Position>()) {
                 ss << "Entity " << entity->getEntityId() << " position: ("
                 << entity->getComponent<Ecs::Position>()->getPosition().first << ", "

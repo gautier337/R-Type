@@ -203,8 +203,9 @@ namespace Ecs {
                 monstersToKillForNextWave = 30;
             if (_entitySystem.wave == 3)
                 monstersToKillForNextWave = 31;
-            if (_entitySystem.wave == 4)
-                _entitySystem.victory = 1;
+            if (_entitySystem.wave == 4) {
+                monstersToKillForNextWave = 9999;
+            }
 
             if (_entitySystem.killedMonstersCount >= monstersToKillForNextWave)
             {

@@ -23,6 +23,12 @@ Server::Server(asio::io_context& io_context, int port, int wave)
       playerSystem(entities_)
 {
     entitySystem.wave = wave;
+    if (entitySystem.wave == 2) {
+        entitySystem.killedMonstersCount = 10;
+    }
+    if (entitySystem.wave == 3) {
+        entitySystem.killedMonstersCount = 30;
+    }
     start_receive();
     std::cout << "Server started on port " << port << std::endl;
     std::cout << "Wave: " << wave << std::endl;

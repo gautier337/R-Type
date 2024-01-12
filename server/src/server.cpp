@@ -66,11 +66,14 @@ void Server::start_receive() {
     );
 }
 
-void Server::handle_receive(const std::string& data, const asio::ip::udp::endpoint& endpoint) {
+void Server::handle_receive(const std::string& data, const asio::ip::udp::endpoint& endpoint)
+{
     std::cout << "Received message: " << data << " from " << endpoint << std::endl;
-
+    std::cout << "handle_receive called from thread: " << std::this_thread::get_id() << std::endl;
+    std::cout << "Trying to lock clients_mutex_ from thread: " << std::this_thread::get_id() << std::endl;
     {
         std::lock_guard<std::mutex> lock(clients_mutex_);
+        std::cout << "clients_mutex_ locked by thread: " << std::this_thread::get_id() << std::endl;
         // Vérifier si le client existe et traiter les nouveaux clients
         auto it = client_ids_.find(endpoint);
         if (it == client_ids_.end()) {
@@ -79,6 +82,7 @@ void Server::handle_receive(const std::string& data, const asio::ip::udp::endpoi
                 int clientId = playerSystem.createPlayer();
                 if (clientId == 0) {
                     handle_send("The room is full!", endpoint);
+                    std::cout << "clients_mutex_ unlocked by thread: " << std::this_thread::get_id() << std::endl;
                     return;
                 }
                 client_ids_[endpoint] = clientId;
@@ -90,6 +94,7 @@ void Server::handle_receive(const std::string& data, const asio::ip::udp::endpoi
                 handle_send("You are not in our list, please say START", endpoint);
                 std::cout << "A client tried to send a message but he is not in our list and he didn't say START" << std::endl;
             }
+            std::cout << "clients_mutex_ unlocked by thread: " << std::this_thread::get_id() << std::endl;
             return;
         }
 
@@ -115,18 +120,19 @@ void Server::handle_receive(const std::string& data, const asio::ip::udp::endpoi
             handle_send("Unknown Command received: " + data, endpoint);
         }
     }
+    std::cout << "clients_mutex_ unlocked by thread: " << std::this_thread::get_id() << std::endl;
 }
 
 struct Message {
-    char data[1024]; // Adaptez la taille selon vos besoins
+    char data[1024];
 };
 
 void Server::handle_send(const std::string& message, const asio::ip::udp::endpoint& endpoint)
 {
     // Création de l'objet Message
     Message message_obj;
-    memset(&message_obj, 0, sizeof(message_obj)); // Initialisation à zéro
-    strncpy(message_obj.data, message.c_str(), sizeof(message_obj.data) - 1); // Copie de la chaîne
+    memset(&message_obj, 0, sizeof(message_obj));
+    strncpy(message_obj.data, message.c_str(), sizeof(message_obj.data) - 1);
 
     auto message_data = std::make_shared<Message>(message_obj);
 
@@ -139,7 +145,6 @@ void Server::handle_send(const std::string& message, const asio::ip::udp::endpoi
         }
     );
 }
-
 
 void Server::handle_tick(const asio::error_code& error)
 {

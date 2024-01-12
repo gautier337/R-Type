@@ -106,7 +106,7 @@ SpriteObject Game::createBasicSbire(int posX, int posY, int id)
 {
     SpriteObject basic_sbire(m_textureManager.getTexture("basic_sbire"), sf::Vector2i(65, 50), 3, 8, id);
     basic_sbire.setPosition(posX, posY);
-    basic_sbire.sprite.setScale(sf::Vector2f(2, 2));
+    basic_sbire.sprite.setScale(sf::Vector2f(1, 1));
     basic_sbire.sprite.setTextureRect(sf::IntRect(0, 0, 65, 50));
 
     sf::FloatRect bounds = basic_sbire.sprite.getLocalBounds();
@@ -124,10 +124,21 @@ SpriteObject Game::createBasicSbire(int posX, int posY, int id)
 ////////////////////////////////////////////////////////////
 SpriteObject Game::createKamikaze(int posX, int posY, int id)
 {
-    SpriteObject kamikaze(m_textureManager.getTexture("kamikaze"), sf::Vector2i(35, 25), 4, 15, id);
+    SpriteObject kamikaze(m_textureManager.getTexture("kamikaze"), sf::Vector2i(35, 25), 4, 30, id);
     kamikaze.setPosition(posX, posY);
     kamikaze.sprite.setScale(sf::Vector2f(2, 2));
     kamikaze.sprite.setTextureRect(sf::IntRect(0, 0, 35, 25));
+    sf::FloatRect bounds = kamikaze.sprite.getLocalBounds();
+    kamikaze.sprite.setOrigin(bounds.width / 2.0f, bounds.height / 2.0f);
+    return kamikaze;
+}
+
+SpriteObject Game::createKamikazeElite(int posX, int posY, int id)
+{
+    SpriteObject kamikaze(m_textureManager.getTexture("kamikaze_elite"), sf::Vector2i(49, 50), 5, 30, id);
+    kamikaze.setPosition(posX, posY);
+    kamikaze.sprite.setScale(sf::Vector2f(2, 2));
+    kamikaze.sprite.setTextureRect(sf::IntRect(0, 0, 49, 50));
     sf::FloatRect bounds = kamikaze.sprite.getLocalBounds();
     kamikaze.sprite.setOrigin(bounds.width / 2.0f, bounds.height / 2.0f);
     return kamikaze;
@@ -278,14 +289,14 @@ void Game::parseBuffer(const std::string& buffer)
                 } else if (data.id >= 5 && data.id < 100) {
                     m_object.push_back(createSbire(data.position.x, data.position.y, data.id));
                 } else if (data.id >= 100 && data.id < 200) {
-                    m_object.push_back(createBasicSbire(data.position.x, data.position.y, data.id)); // SBIRE ELITE
+                    m_object.push_back(createBasicSbire(data.position.x, data.position.y, data.id));
                 } else if (data.id >= 200 && data.id < 500) {
                     m_object.push_back(createBullet(data.position.x, data.position.y, data.id));
                 }
                 else if (data.id >= 500 && data.id < 550) {
                     m_object.push_back(createKamikaze(data.position.x, data.position.y, data.id));
                 } else if (data.id >= 550 && data.id < 600) {
-                    m_object.push_back(createKamikaze(data.position.x, data.position.y, data.id)); // KAMIKAZE ELITE
+                    m_object.push_back(createKamikazeElite(data.position.x, data.position.y, data.id));
                 } else if (data.id >= 600 && data.id <= 601) {
                     m_object.push_back(createBoss(data.position.x, data.position.y, data.id));
                 } else if (data.id >= 603 && data.id < 650) {

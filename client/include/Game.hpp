@@ -38,6 +38,7 @@ class Game {
         SpriteObject createPlayer(int posX, int posY, int id);
         SpriteObject createSbire(int posX, int posY, int id);
         SpriteObject createKamikaze(int posX, int posY, int id);
+        SpriteObject createKamikazeElite(int posX, int posY, int id);
         SpriteObject createBasicSbire(int posX, int posY, int id);
         SpriteObject createBullet(int posX, int posY, int id);
         SpriteObject createBoss(int posX, int posY, int id);

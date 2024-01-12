@@ -8,7 +8,8 @@ zip_folder_name="r_type_$current_date"
 mkdir -p server/build
 cd server/build && cmake .. && make && mv r-type_server ../../
 
-cd ../../client && make && mv r-type_client ../
+mkdir -p ../../client/build
+cd ../../client/build && cmake .. && make && mv r-type_client ../../
 
 # Créez l'archive .zip en spécifiant le chemin complet des fichiers
-cd .. && zip -r "$zip_folder_name.zip" r-type_client r-type_server assets
+cd ../.. && zip -r "$zip_folder_name.zip" r-type_client r-type_server assets

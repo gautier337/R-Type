@@ -31,12 +31,13 @@ This command copies all the necessary game files to your system.
 
 ### Installation
 
+The script will create a folder r_type_DATE_TIME in the current directory with the binary files inside and the asset folder.
 
 ```bash
 ./build.sh
 ```
 
-If you don't have the necessary libraries start by installing them:
+If you don't have the necessary libraries start by installing them, notes that the cmake will automatically install asio for you but in case here are the commands:
 
 #### Ubuntu:
 

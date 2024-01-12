@@ -12,6 +12,19 @@ include_directories(/usr/local/include)
 # Add definitions
 add_definitions(-DASIO_STANDALONE)
 
+# Include FetchContent module
+include(FetchContent)
+
+# Define a variable for Asio
+FetchContent_Declare(
+    Asio
+    GIT_REPOSITORY https://github.com/chriskohlhoff/asio.git
+    GIT_TAG master # You can specify a specific version here if needed
+)
+
+# Fetch Asio
+FetchContent_MakeAvailable(Asio)
+
 # Add executable target with new source files
 add_executable(r-type_server
     src/main.cpp

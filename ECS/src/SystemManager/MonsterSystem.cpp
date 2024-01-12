@@ -6,6 +6,7 @@
 */
 
 #include "../../include/SystemManager/MonsterSystem.hpp"
+#include <iostream>
 
 namespace Ecs {
 
@@ -46,11 +47,32 @@ namespace Ecs {
         createMonster(50, 5, 1200, 540, 2, 600, 601, 160, 210);
     }
 
+    void MonsterSystem::generateBoss2()
+    {
+        createMonster(100, 10, 1200, 540, 2, 601, 602, 160, 210);
+    }
+
+    void MonsterSystem::generateBoss3()
+    {
+        createMonster(200, 15, 1200, 540, 2, 602, 603, 160, 210);
+    }
+
+    void MonsterSystem::generateSnake()
+    {
+    }
+
     void MonsterSystem::generateBasicMonster()
     {
         int xPos = random(1300, 1500);
         int yPos = random(100, 980);
-        createMonster(3, 1, xPos, yPos, 2, 5, 200, 33, 34);
+        createMonster(3, 1, xPos, yPos, 2, 5, 100, 33, 34);
+    }
+
+    void MonsterSystem::generateEliteMonster()
+    {
+        int xPos = random(1300, 1500);
+        int yPos = random(100, 980);
+        createMonster(10, 3, xPos, yPos, 2, 100, 200, 33, 34);
     }
 
     void MonsterSystem::generateAsteroid()
@@ -65,14 +87,21 @@ namespace Ecs {
             xPos = random(0, 1920);
             yPos = -40;
         }
-        createMonster(9, 1, xPos, yPos, randomSpeed, 601, 650, 60, 63);
+        createMonster(9, 1, xPos, yPos, randomSpeed, 603, 650, 60, 63);
     }
 
     void MonsterSystem::generateKamikaze()
     {
         int xPos = random(1100, 1300);
         int yPos = random(100, 980);
-        createMonster(5, 10, xPos, yPos, 8, 500, 600, 33, 32);
+        createMonster(5, 10, xPos, yPos, 8, 500, 550, 33, 32);
+    }
+
+    void MonsterSystem::generateEliteKamikaze()
+    {
+        int xPos = random(1100, 1300);
+        int yPos = random(100, 980);
+        createMonster(10, 15, xPos, yPos, 8, 550, 600, 33, 32);
     }
 
     void MonsterSystem::generateHealthBoost()
@@ -108,69 +137,147 @@ namespace Ecs {
             int randomNum = random(0, 10);
 
             if (_entitySystem.wave == 1) {
-                if (randomNum < 8) {
+                if (randomNum < 8)
                     generateBasicMonster();
-                }
-                if (randomNum < 4) {
+                if (randomNum < 4)
                     generateAsteroid();
-                }
-                if (randomNum < 2) {
+                if (randomNum == 2)
                     generateHealthBoost();
-                }
-                if (randomNum > 8) {
+                if (randomNum == 8)
                     generateShootBoost();
-                }
-                if (randomNum == 5) {
+                if (randomNum == 5)
                     generateShieldBoost();
-                }
             } else if (_entitySystem.wave == 2) {
-                if (randomNum < 8) {
+                if (randomNum < 8)
                     generateBasicMonster();
-                } else {
+                if (randomNum > 8)
                     generateKamikaze();
-                }
-                if (randomNum < 4) {
+                if (randomNum < 4)
                     generateAsteroid();
-                }
-                if (randomNum < 2) {
+                if (randomNum == 2)
                     generateHealthBoost();
-                }
-                if (randomNum > 8) {
+                if (randomNum == 8)
                     generateShootBoost();
-                }
-                if (randomNum == 5) {
+                if (randomNum == 5)
                     generateShieldBoost();
-                }
             } else if (_entitySystem.wave == 3) {
                 generateBoss1();
-                if (randomNum < 2) {
+                if (randomNum == 2)
                     generateHealthBoost();
-                }
-                if (randomNum > 8) {
+                if (randomNum == 8)
                     generateShootBoost();
-                }
-                if (randomNum == 5) {
+                if (randomNum == 5)
                     generateShieldBoost();
-                }
-            } else {
-                if (randomNum < 6) {
-                    generateBasicMonster();
-                }
-                if (randomNum > 8) {
-                    generateKamikaze();
-                }
-                if (randomNum < 4) {
+            } else if (_entitySystem.wave == 4) {
+                if (randomNum < 6)
+                    generateEliteMonster();
+                if (randomNum == 8)
+                    generateShootBoost();
+                if (randomNum == 5)
+                    generateShieldBoost();
+                if (randomNum == 2)
+                    generateHealthBoost();
+                if (randomNum < 4)
                     generateAsteroid();
-                }
-                if (randomNum < 2) {
-                    generateHealthBoost();
-                }
-                if (randomNum > 8) {
+            } else if (_entitySystem.wave == 5) {
+                if (randomNum < 6)
+                    generateEliteMonster();
+                if (randomNum > 6)
+                    generateKamikaze();
+                if (randomNum == 8)
                     generateShootBoost();
-                }
-                if (randomNum == 5) {
+                if (randomNum == 5)
                     generateShieldBoost();
-                }
+                if (randomNum == 2)
+                    generateHealthBoost();
+                if (randomNum < 4)
+                    generateAsteroid();
+            } else if (_entitySystem.wave == 6) {
+                generateBoss2();
+                if (randomNum == 8)
+                    generateShootBoost();
+                if (randomNum == 5)
+                    generateShieldBoost();
+                if (randomNum == 2)
+                    generateHealthBoost();
+            } else if (_entitySystem.wave == 7) {
+                if (randomNum < 6)
+                    generateEliteMonster();
+                if (randomNum > 6)
+                    generateEliteKamikaze();
+                if (randomNum == 8)
+                    generateShootBoost();
+                if (randomNum == 5)
+                    generateShieldBoost();
+                if (randomNum == 2)
+                    generateHealthBoost();
+                if (randomNum < 4)
+                    generateAsteroid();
+            } else if (_entitySystem.wave == 8) {
+                if (randomNum < 5)
+                    generateEliteMonster();
+                if (randomNum > 8)
+                    generateEliteKamikaze();
+                if (randomNum < 5 && randomNum > 8)
+                    generateSnake();
+                if (randomNum == 8)
+                    generateShootBoost();
+                if (randomNum == 5)
+                    generateShieldBoost();
+                if (randomNum == 2)
+                    generateHealthBoost();
+                if (randomNum < 4)
+                    generateAsteroid();
+            } else if (_entitySystem.wave == 9) {
+                generateBoss3();
+                if (randomNum == 8)
+                    generateShootBoost();
+                if (randomNum == 5)
+                    generateShieldBoost();
+                if (randomNum == 2)
+                    generateHealthBoost();
+            } else if (_entitySystem.wave == 10) {
+                if (randomNum < 4)
+                    generateEliteMonster();
+                if (randomNum > 8)
+                    generateBasicMonster();
+                if (randomNum == 4)
+                    generateKamikaze();
+                if (randomNum == 8)
+                    generateEliteKamikaze();
+                if (randomNum == 7)
+                    generateSnake();
+                if (randomNum == 9)
+                    generateShootBoost();
+                if (randomNum == 5)
+                    generateShieldBoost();
+                if (randomNum == 2)
+                    generateHealthBoost();
+                if (randomNum == 1)
+                    generateBoss1();
+                if (randomNum < 4)
+                    generateAsteroid();
+            } else {
+                if (randomNum < 4)
+                    generateBasicMonster();
+                if (randomNum > 8)
+                    generateEliteMonster();
+                if (randomNum == 4)
+                    generateKamikaze();
+                if (randomNum == 8)
+                    generateEliteKamikaze();
+                if (randomNum == 7)
+                    generateSnake();
+                if (randomNum == 9)
+                    generateShootBoost();
+                if (randomNum == 5)
+                    generateShieldBoost();
+                if (randomNum == 2)
+                    generateHealthBoost();
+                if (randomNum == 1)
+                    generateBoss1();
+                if (randomNum < 4)
+                    generateAsteroid();
             }
         }
         frameCount++;
@@ -203,9 +310,20 @@ namespace Ecs {
                 monstersToKillForNextWave = 30;
             if (_entitySystem.wave == 3)
                 monstersToKillForNextWave = 31;
-            if (_entitySystem.wave == 4) {
+            if (_entitySystem.wave == 4)
+                monstersToKillForNextWave = 45;
+            if (_entitySystem.wave == 5)
+                monstersToKillForNextWave = 75;
+            if (_entitySystem.wave == 6)
+                monstersToKillForNextWave = 76;
+            if (_entitySystem.wave == 7)
+                monstersToKillForNextWave = 100;
+            if (_entitySystem.wave == 8)
+                monstersToKillForNextWave = 130;
+            if (_entitySystem.wave == 9)
+                monstersToKillForNextWave = 131;
+            if (_entitySystem.wave == 10)
                 monstersToKillForNextWave = 9999;
-            }
 
             if (_entitySystem.killedMonstersCount >= monstersToKillForNextWave)
             {
@@ -218,7 +336,8 @@ namespace Ecs {
         }
     }
 
-    std::shared_ptr<Entity> MonsterSystem::createMissile(int entityID) noexcept {
+    std::shared_ptr<Entity> MonsterSystem::createMissile(int entityID, int posY) noexcept
+    {
         int id = 0;
         for (unsigned int i = 200; i < 500; i++)
         {
@@ -234,14 +353,14 @@ namespace Ecs {
         int spawnPosY = 0;
 
         if (entityID < 5) {
-            spawnPosX = 25;
+            spawnPosX = 35;
             speedToAdd = 20;
         }
         if (entityID >= 5 && entityID < 200) {
             spawnPosX = -40;
             speedToAdd = -15;
         }
-        if (entityID == 600) {
+        if (entityID >= 600 && entityID <= 602) {
             spawnPosX = -90;
             speedToAdd = -30;
         }
@@ -249,7 +368,7 @@ namespace Ecs {
         auto missile = std::make_shared<Entity>(id);
         auto health = std::make_shared<Health>(1);
         auto damages = std::make_shared<Damages>(getEntityById(entityID)->getComponent<Ecs::Damages>()->getDamage());
-        auto position = std::make_shared<Position>(getEntityById(entityID)->getComponent<Ecs::Position>()->getPosition().first + spawnPosX, getEntityById(entityID)->getComponent<Ecs::Position>()->getPosition().second + spawnPosY);
+        auto position = std::make_shared<Position>(getEntityById(entityID)->getComponent<Ecs::Position>()->getPosition().first + spawnPosX, getEntityById(entityID)->getComponent<Ecs::Position>()->getPosition().second + spawnPosY + posY);
         auto hitbox = std::make_shared<Hitbox>(17, 18);
         auto speed = std::make_shared<Speed>(speedToAdd);
         missile->addComponent(health);
@@ -346,7 +465,7 @@ namespace Ecs {
                     position->set_pos_y(1920);
             }
             // Boss (ID 600)
-            if (entity->getEntityId() == 600)
+            if (entity->getEntityId() >= 600 && entity->getEntityId() <= 602)
             {
                 auto position = entity->getComponent<Ecs::Position>();
                 auto speed = entity->getComponent<Ecs::Speed>();
@@ -389,12 +508,16 @@ namespace Ecs {
                 if (shootCooldown->getCd() <= 0 && random(1, 3) == 1)
                 {
                     createMissile(entity->getEntityId());
+                    if (entity->getEntityId() == 601 || entity->getEntityId() == 602)
+                        createMissile(entity->getEntityId(), 100);
+                    if (entity->getEntityId() == 602)
+                        createMissile(entity->getEntityId(), -100);
                     shootCooldown->setCd(random(180, 300)); // 60 frames per second, so 3 to 5 seconds
                 }
                 shootCooldown->decreaseCd();
             }
             //Asteroid (ID 601 to 650)
-            if (entity->getEntityId() >= 601 && entity->getEntityId() < 650)
+            if (entity->getEntityId() >= 603 && entity->getEntityId() < 650)
             {
                 auto position = entity->getComponent<Ecs::Position>();
                 int speed = entity->getComponent<Ecs::Speed>()->getSpeed();

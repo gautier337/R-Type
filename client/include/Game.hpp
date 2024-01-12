@@ -44,7 +44,7 @@ class Game {
         SpriteObject createAsteroid(int posX, int posY, int id);
         SpriteObject createBoostPack(int posX, int posY, int id);
         SpriteObject createHealthPack(int posX, int posY, int id);
-        SpriteObject createParallax(int posX, int posY);
+        SpriteObject createParallax(std::string fileName, int posX, int posY);
         SpriteObject createShieldPack(int posX, int posY, int id);
         SpriteObject createShieldField(int posX, int posY, int id);
 

@@ -85,9 +85,9 @@ SpriteObject Game::createSbire(int posX, int posY, int id)
 // @param posX pos X of the sprite
 // @param posY pos Y of the sprite
 ////////////////////////////////////////////////////////////
-SpriteObject Game::createParallax(int posX, int posY)
+SpriteObject Game::createParallax(std::string fileName, int posX, int posY)
 {
-    SpriteObject parallax(m_textureManager.getTexture("parallax"), sf::Vector2i(1920, 1080), 1, 0, 0);
+    SpriteObject parallax(m_textureManager.getTexture(fileName), sf::Vector2i(1920, 1080), 1, 0, 0);
     parallax.setPosition(posX, posY);
     parallax.sprite.setScale(sf::Vector2f(1.1, 1.1));
     parallax.sprite.setTextureRect(sf::IntRect(0, 0, 1920, 1080));
@@ -275,17 +275,25 @@ void Game::parseBuffer(const std::string& buffer)
             } else {
                 if (data.id >= 1 && data.id <= 4) {
                     m_object.push_back(createPlayer(data.position.x, data.position.y, data.id));
-                } else if (data.id >= 5 && data.id < 200) {
+                } else if (data.id >= 5 && data.id < 100) {
                     m_object.push_back(createSbire(data.position.x, data.position.y, data.id));
+                } else if (data.id >= 100 && data.id < 200) {
+                    m_object.push_back(createBasicSbire(data.position.x, data.position.y, data.id)); // SBIRE ELITE
                 } else if (data.id >= 200 && data.id < 500) {
                     m_object.push_back(createBullet(data.position.x, data.position.y, data.id));
                 }
-                else if (data.id >= 500 && data.id < 600) {
+                else if (data.id >= 500 && data.id < 550) {
                     m_object.push_back(createKamikaze(data.position.x, data.position.y, data.id));
-                } else if (data.id == 600) {
+                } else if (data.id >= 550 && data.id < 600) {
+                    m_object.push_back(createKamikaze(data.position.x, data.position.y, data.id)); // KAMIKAZE ELITE
+                } else if (data.id >= 600 && data.id <= 601) {
                     m_object.push_back(createBoss(data.position.x, data.position.y, data.id));
-                } else if (data.id >= 601 && data.id < 650) {
+                } else if (data.id >= 603 && data.id < 650) {
                     m_object.push_back(createAsteroid(data.position.x, data.position.y, data.id));
+                } else if (data.id == 650) {
+                    m_object.push_back(createAsteroid(data.position.x, data.position.y, data.id)); // TETE SERPENT BOSS
+                } else if (data.id >= 651 && data.id < 700) {
+                    m_object.push_back(createAsteroid(data.position.x, data.position.y, data.id)); // CORPS SERPENT BOSS
                 } else if (data.id >= 700 && data.id < 710) {
                     m_object.push_back(createHealthPack(data.position.x, data.position.y, data.id));
                 } else if (data.id >= 710 && data.id < 720) {
@@ -293,7 +301,7 @@ void Game::parseBuffer(const std::string& buffer)
                 } else if (data.id >= 720 && data.id < 730) {
                     m_object.push_back(createShieldPack(data.position.x, data.position.y, data.id));
                 } else if (data.id >= 801 && data.id <= 804) {
-                    m_object.push_back(createShieldField(data.position.x, data.position.y, data.id)); // ICI METTRE UN VRAI SPRITE DE SHIELD
+                    m_object.push_back(createShieldField(data.position.x, data.position.y, data.id));
                 }
             }
             if (data.id >= 1 && data.id <= 4) {

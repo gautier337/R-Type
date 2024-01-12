@@ -135,15 +135,10 @@ void Client::init()
     } else
         std::cout << "Menu music loaded successfully" << std::endl;
     m_menu.m_music.setVolume(0);
-    // Le player
     m_texture.loadTexture("player", "assets/player.gif");
-    // Sbire chelou
     m_texture.loadTexture("basic_sbire", "assets/basic_sbire.gif");;
-    // Sbire normal
     m_texture.loadTexture("sbire", "assets/sbire.gif");
-    // Missile
     m_texture.loadTexture("bullet", "assets/bullet.gif");
-    // Kamikaze
     m_texture.loadTexture("kamikaze", "assets/kamikaze.gif");
     m_texture.loadTexture("boss", "assets/boss.gif");
     m_texture.loadTexture("asteroid", "assets/asteroid.png");
@@ -151,11 +146,16 @@ void Client::init()
     m_texture.loadTexture("healthPack", "assets/healthBoost.png");
     m_texture.loadTexture("shieldPack", "assets/shieldBoost.png");
     m_texture.loadTexture("shieldField", "assets/shieldField.gif");
-    m_texture.loadTexture("parallax", "assets/parallax2.png");
-    m_texture.setTextureRepeated("parallax", true);
+    m_texture.loadTexture("parallax_space", "assets/parallax.png");
+    m_texture.loadTexture("parallax_space2", "assets/parallax2.png");
+    m_texture.loadTexture("parallax_ship", "assets/parallax_ship.png");
+
+    m_texture.setTextureRepeated("parallax_space", true);
+    m_texture.setTextureRepeated("parallax_space2", true);
+    m_texture.setTextureRepeated("parallax_ship", true);
 
     m_game.m_textureManager = m_texture;
-    m_parallax = m_game.createParallax(0, 0);
+    m_parallax = m_game.createParallax("parallax_space", 0, 0);
 
     //scene options
     m_options.m_texture_background_options.loadFromFile("assets/background_options.png");
@@ -285,6 +285,10 @@ void Client::run()
                     m_window.draw(m_game.m_hp_sprite);
                 }
                 m_game.m_text_wave.setString("Wave : " + std::to_string(m_game.m_data.wave));
+                if (m_game.m_data.wave == 4)
+                    m_parallax = m_game.createParallax("parallax_ship", 0, 0);
+                else if (m_game.m_data.wave == 7)
+                    m_parallax = m_game.createParallax("parallax_space2", 0, 0);
                 m_window.draw(m_game.m_text_wave);
             } else if (m_currentScene == ClientScene::OPTIONS) {
                 display_options();
@@ -334,8 +338,6 @@ void Client::handleMouse(sf::Mouse::Button button)
         if (multiGameBounds.contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y)) && game_started == false && m_currentScene == ClientScene::MODE) {
             setScene(ClientScene::GAME);
             send_message_to_server("START");
-            std::string message = "wave=" + std::to_string(wave);
-            send_message_to_server(message.c_str());
             game_started = true;
         }
         if (multiGameBounds.contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y)) && game_started == true && m_currentScene == ClientScene::MODE) {

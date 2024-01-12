@@ -7,15 +7,29 @@
 #include "server.hpp"
 #include <fstream>
 
-const int serverPort = 8000;
-
-int main()
+int main(int argc, char* argv[])
 {
-    try {
-        std::cout << "R-Type Server Starting on port " << serverPort << std::endl;
+    int serverPort = 8000;
+    int wave = 1;
 
+    for (int i = 1; i < argc; ++i) {
+        std::string arg = argv[i];
+
+        if (arg == "--serverPort" && i + 1 < argc) {
+            serverPort = std::stoi(argv[++i]);
+        } else if (arg == "--wave" && i + 1 < argc) {
+            wave = std::stoi(argv[++i]);
+
+            if (wave < 1 || wave > 10) {
+                std::cerr << "Wave doit être entre 1 et 10." << std::endl;
+                return 1;
+            }
+        }
+    }
+
+    try {
         asio::io_context io_context;
-        Server server(io_context, serverPort);
+        Server server(io_context, serverPort, wave);
 
         std::vector<std::thread> threads;
         for (int i = 0; i < std::thread::hardware_concurrency(); ++i) {

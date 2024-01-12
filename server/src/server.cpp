@@ -14,7 +14,7 @@
 #include <chrono>
 #include <fstream>
 
-Server::Server(asio::io_context& io_context, int port)
+Server::Server(asio::io_context& io_context, int port, int wave)
     : socket_(io_context, asio::ip::udp::endpoint(asio::ip::udp::v4(), port)),
       tick_timer_(io_context, std::chrono::milliseconds(16)),
       entitySystem(entities_),
@@ -22,7 +22,28 @@ Server::Server(asio::io_context& io_context, int port)
       monsterSystem(entities_, entitySystem),
       playerSystem(entities_)
 {
+    entitySystem.wave = wave;
+    if (entitySystem.wave == 2)
+        entitySystem.killedMonstersCount = 10;
+    if (entitySystem.wave == 3)
+        entitySystem.killedMonstersCount = 30;
+    if (entitySystem.wave == 4)
+        entitySystem.killedMonstersCount = 31;
+    if (entitySystem.wave == 5)
+        entitySystem.killedMonstersCount = 45;
+    if (entitySystem.wave == 6)
+        entitySystem.killedMonstersCount = 75;
+    if (entitySystem.wave == 7)
+        entitySystem.killedMonstersCount = 76;
+    if (entitySystem.wave == 8)
+        entitySystem.killedMonstersCount = 100;
+    if (entitySystem.wave == 9)
+        entitySystem.killedMonstersCount = 130;
+    if (entitySystem.wave == 10)
+        entitySystem.killedMonstersCount = 138;
     start_receive();
+    std::cout << "Server started on port " << port << std::endl;
+    std::cout << "Wave: " << wave << std::endl;
     handle_tick({});
 }
 
@@ -47,66 +68,52 @@ void Server::start_receive() {
 
 void Server::handle_receive(const std::string& data, const asio::ip::udp::endpoint& endpoint) {
     std::cout << "Received message: " << data << " from " << endpoint << std::endl;
-    // std::cout << "handle_receive called from thread: " << std::this_thread::get_id() << std::endl;
 
-    bool isNewClient = false;
-    int clientId;
     {
         std::lock_guard<std::mutex> lock(clients_mutex_);
-        if (client_ids_.find(endpoint) == client_ids_.end() || data == "START") {
-            number_of_player_connected_++;
-            clientId = playerSystem.createPlayer();
-            if (clientId == 0) {
-                std::string welcomeMessage = "The room is full !";
+        // Vérifier si le client existe et traiter les nouveaux clients
+        auto it = client_ids_.find(endpoint);
+        if (it == client_ids_.end()) {
+            // le client n'a jamais été enrégistré, il n'existe pas dans la liste client_ids_
+            if (data == "START") {
+                int clientId = playerSystem.createPlayer();
+                if (clientId == 0) {
+                    handle_send("The room is full!", endpoint);
+                    return;
+                }
+                client_ids_[endpoint] = clientId;
+                std::string welcomeMessage = std::to_string(clientId) + ", Bienvenue !";
                 handle_send(welcomeMessage, endpoint);
-                return;
+                number_of_player_connected_++;
+                std::cout << "New client added with ID: " << clientId << std::endl;
+            } else {
+                handle_send("You are not in our list, please say START", endpoint);
+                std::cout << "A client tried to send a message but he is not in our list and he didn't say START" << std::endl;
             }
-            client_ids_[endpoint] = clientId;
-            isNewClient = true;
-            std::cout << "New client added with ID: " << clientId << std::endl;
+            return;
+        }
+
+        // Donc le client existe
+        int clientId = it->second;
+
+        if (data == "QUIT") {
+            client_ids_.erase(endpoint);
+            handle_send("Goodbye", endpoint);
+            number_of_player_connected_--;
+            std::cout << "Client " << clientId << " disconnected, clients left: " << number_of_player_connected_ << std::endl;
+        } else if (data == "LEFT") {
+            playerSystem.handlePlayerInput(clientId, 3);
+        } else if (data == "RIGHT") {
+            playerSystem.handlePlayerInput(clientId, 4);
+        } else if (data == "UP") {
+            playerSystem.handlePlayerInput(clientId, 1);
+        } else if (data == "DOWN") {
+            playerSystem.handlePlayerInput(clientId, 2);
+        } else if (data == "SHOOT") {
+            playerSystem.handlePlayerInput(clientId, 5);
         } else {
-            clientId = client_ids_[endpoint];
+            handle_send("Unknown Command received: " + data, endpoint);
         }
-    }
-
-    if (isNewClient) {
-        std::string welcomeMessage = std::to_string(clientId) + ", Bienvenue !";
-        handle_send(welcomeMessage, endpoint);
-        return;
-    }
-    
-    if (data.substr(0, 5) == "wave=" && number_of_player_connected_ <= 1) {
-        try {
-            int waveValue = std::stoi(data.substr(5));
-            entitySystem.wave = waveValue;
-            std::string message = "Wave " + std::to_string(entitySystem.wave);
-            for (auto& client : client_ids_) {
-                handle_send(message, client.first);
-            }
-        } catch (const std::exception& e) {
-            std::cerr << "Invalid wave value: " << data << std::endl;
-        }
-        return;
-    }
-
-    if (data == "QUIT") {
-        std::lock_guard<std::mutex> lock(clients_mutex_);
-        client_ids_.erase(endpoint);
-        handle_send("Goodbye", endpoint);
-        number_of_player_connected_--;
-        std::cout << "Client " << clientId << " disconnected, clients left: " << number_of_player_connected_ << std::endl;
-    } else if (data == "LEFT") {
-        playerSystem.handlePlayerInput(clientId, 3);
-    } else if (data == "RIGHT") {
-        playerSystem.handlePlayerInput(clientId, 4);
-    } else if (data == "UP") {
-        playerSystem.handlePlayerInput(clientId, 1);
-    } else if (data == "DOWN") {
-        playerSystem.handlePlayerInput(clientId, 2);
-    } else if (data == "SHOOT") {
-        playerSystem.handlePlayerInput(clientId, 5);
-    } else {
-        handle_send("Unknow Command received: " + data, endpoint);   
     }
 }
 
@@ -146,9 +153,7 @@ void Server::handle_tick(const asio::error_code& error)
             hitbox.launch(entitySystem.getEntsByComps<Ecs::Hitbox, Ecs::Position, Ecs::Damages, Ecs::Health>());
 
             std::stringstream ss;
-            if (entitySystem.interWave) {
-                ss << "Wave " << entitySystem.wave << "\n";
-            }
+            ss << "Wave " << entitySystem.wave << "\n";
             for (auto& entity : entitySystem.getEntsByComp<Ecs::Position>()) {
                 ss << "Entity " << entity->getEntityId() << " position: ("
                 << entity->getComponent<Ecs::Position>()->getPosition().first << ", "

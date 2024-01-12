@@ -134,7 +134,22 @@ void Client::init()
         std::exit(1);
     } else
         std::cout << "Menu music loaded successfully" << std::endl;
-    m_menu.m_music.setVolume(0);
+    m_menu.m_music.setVolume(100);
+
+    //music wave 4
+    if (!m_game.m_music_wave4.openFromFile("assets/music_wave4.ogg")) {
+        std::cerr << "Failed to load wave4 music" << std::endl;
+        std::exit(1);
+    } else
+        std::cout << "Wave4 music loaded successfully" << std::endl;
+    m_game.m_music_wave4.setVolume(100);
+    //music wave 7
+    if (!m_game.m_music_wave7.openFromFile("assets/music_wave7.ogg")) {
+        std::cerr << "Failed to load wave7 music" << std::endl;
+        std::exit(1);
+    } else
+        std::cout << "Wave7 music loaded successfully" << std::endl;
+    // sbires
     m_texture.loadTexture("player", "assets/player.gif");
     m_texture.loadTexture("basic_sbire", "assets/basic_sbire.gif");;
     m_texture.loadTexture("sbire", "assets/sbire.gif");
@@ -259,7 +274,7 @@ void Client::run()
         if (m_window.isOpen()) {
             m_window.clear();
             if (m_currentScene == ClientScene::MENU) {
-                if (m_menu.m_music.getStatus() != sf::SoundSource::Status::Playing) {
+                if (m_menu.m_music.getStatus() != sf::SoundSource::Status::Playing && m_game.m_data.wave <= 3) {
                     m_menu.m_music.play();
                     m_menu.m_music.setLoop(true);
                 }
@@ -287,10 +302,22 @@ void Client::run()
                     m_window.draw(m_game.m_hp_sprite);
                 }
                 m_game.m_text_wave.setString("Wave : " + std::to_string(m_game.m_data.wave));
-                if (m_game.m_data.wave == 4)
+                if (m_game.m_data.wave >= 4) {
+                    m_menu.m_music.stop();
+                if (m_game.m_data.wave >= 4 && m_game.m_data.wave <= 6 && m_game.m_music_wave4.getStatus() != sf::SoundSource::Status::Playing) {
+                    m_game.m_music_wave4.play();
+                    m_game.m_music_wave4.setLoop(true);
+                }
                     m_parallax = m_game.createParallax("parallax_ship", 0, 0);
-                else if (m_game.m_data.wave == 7)
+                }
+                else if (m_game.m_data.wave >= 7) {
+                    m_game.m_music_wave4.stop();
+                    if (m_game.m_data.wave >= 7 && m_game.m_music_wave7.getStatus() != sf::SoundSource::Status::Playing) {
+                        m_game.m_music_wave7.play();
+                        m_game.m_music_wave7.setLoop(true);
+                    }
                     m_parallax = m_game.createParallax("parallax_space2", 0, 0);
+                }
                 m_window.draw(m_game.m_text_wave);
             } else if (m_currentScene == ClientScene::OPTIONS) {
                 display_options();

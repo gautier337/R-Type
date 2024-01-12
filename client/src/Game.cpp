@@ -85,9 +85,9 @@ SpriteObject Game::createSbire(int posX, int posY, int id)
 // @param posX pos X of the sprite
 // @param posY pos Y of the sprite
 ////////////////////////////////////////////////////////////
-SpriteObject Game::createParallax(int posX, int posY)
+SpriteObject Game::createParallax(std::string fileName, int posX, int posY)
 {
-    SpriteObject parallax(m_textureManager.getTexture("parallax"), sf::Vector2i(1920, 1080), 1, 0, 0);
+    SpriteObject parallax(m_textureManager.getTexture(fileName), sf::Vector2i(1920, 1080), 1, 0, 0);
     parallax.setPosition(posX, posY);
     parallax.sprite.setScale(sf::Vector2f(1.1, 1.1));
     parallax.sprite.setTextureRect(sf::IntRect(0, 0, 1920, 1080));

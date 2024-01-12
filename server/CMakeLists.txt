@@ -6,26 +6,25 @@ set(CMAKE_CXX_STANDARD 17)
 # Include directories for header files
 include_directories(include)
 
-# If you have installed Asio in a custom directory, replace this with your Asio include path
-include_directories(/usr/local/include)
+# Include FetchContent module
+include(FetchContent)
+
+# Fetch and include Asio
+FetchContent_Declare(
+    Asio
+    URL https://github.com/chriskohlhoff/asio/archive/asio-1-18-1.tar.gz # Example URL, replace with the desired version
+)
+FetchContent_MakeAvailable(Asio)
+include_directories(${asio_SOURCE_DIR}/asio/include)
 
 # Add definitions
 add_definitions(-DASIO_STANDALONE)
 
-# Include FetchContent module
-include(FetchContent)
+if(WIN32)
+    add_definitions(-D_WIN32_WINNT=0x0A00) # For Windows 10, adjust according to your target
+endif()
 
-# Define a variable for Asio
-FetchContent_Declare(
-    Asio
-    GIT_REPOSITORY https://github.com/chriskohlhoff/asio.git
-    GIT_TAG master # You can specify a specific version here if needed
-)
-
-# Fetch Asio
-FetchContent_MakeAvailable(Asio)
-
-# Add executable target with new source files
+# Add executable target with source files
 add_executable(r-type_server
     src/main.cpp
     src/server.cpp
@@ -42,8 +41,18 @@ add_executable(r-type_server
     ../ECS/src/SystemManager/MissileSystem.cpp
     ../ECS/src/SystemManager/MonsterSystem.cpp
     ../ECS/src/SystemManager/PlayerSystem.cpp
+    # Ajoutez ici d'autres fichiers source selon vos besoins
 )
 
-# Link necessary libraries (Threads library for Asio)
+if (WIN32)
+    target_link_libraries(r-type_server PRIVATE Ws2_32)
+endif()
+
+# Link necessary libraries
 find_package(Threads REQUIRED)
 target_link_libraries(r-type_server PRIVATE Threads::Threads)
+
+# Additional specifications for Windows
+if(WIN32)
+    # Link specific libraries for Windows if necessary
+endif()

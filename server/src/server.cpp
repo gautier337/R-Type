@@ -94,7 +94,7 @@ void Server::handle_receive(const std::string& data, const asio::ip::udp::endpoi
                 handle_send("You are not in our list, please say START", endpoint);
                 std::cout << "A client tried to send a message but he is not in our list and he didn't say START" << std::endl;
             }
-            std::cout << "clients_mutex_ unlocked by thread: " << std::this_thread::get_id() << std::endl;
+            // std::cout << "clients_mutex_ unlocked by thread: " << std::this_thread::get_id() << std::endl;
             return;
         }
         if (data == "QUIT") {

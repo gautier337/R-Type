@@ -206,20 +206,6 @@ void Client::init()
     m_game.m_hp_sprite.setScale(sf::Vector2f(1.2, 1.2));
 }
 
-void Client::checkButtonHover(sf::Sprite& button, const sf::Vector2i& mousePos)
-{
-    sf::FloatRect bounds = button.getGlobalBounds();
-    float x = bounds.left + bounds.width / 2;
-    float y = bounds.top + bounds.height / 2;
-    if (bounds.contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
-        button.setScale(0.9f, 0.9f);
-        button.setPosition(x - button.getGlobalBounds().width / 2, y - button.getGlobalBounds().height / 2);
-    } else {
-        button.setScale(0.85f, 0.85f);
-        button.setPosition(x - button.getGlobalBounds().width / 2, y - button.getGlobalBounds().height / 2);
-    }
-}
-
 void Client::run()
 {
     if (!m_window.isOpen()) {
@@ -327,28 +313,6 @@ void Client::run()
     close(m_sock);
 }
 
-void Client::display_options()
-{
-    m_window.draw(m_options.m_background_options);
-    m_window.draw(m_options.m_30fps);
-    m_window.draw(m_options.m_60fps);
-    m_window.draw(m_options.m_off_sound);
-    m_window.draw(m_options.m_on_sound);
-
-}
-void Client::handleButtonHover(sf::Vector2i mousePos)
-{
-    checkButtonHover(m_menu.m_startGame, mousePos);
-    checkButtonHover(m_menu.m_Exit, mousePos);
-    checkButtonHover(m_menu.m_Options, mousePos);
-    checkButtonHover(m_options.m_30fps, mousePos);
-    checkButtonHover(m_options.m_60fps, mousePos);
-    checkButtonHover(m_options.m_off_sound, mousePos);
-    checkButtonHover(m_options.m_on_sound, mousePos);
-    checkButtonHover(m_mode.m_solo, mousePos);
-    checkButtonHover(m_mode.m_multi, mousePos);
-}
-
 void Client::handleMouse(sf::Mouse::Button button)
 {
     if (m_currentScene == ClientScene::GAME) {
@@ -364,28 +328,28 @@ void Client::handleMouse(sf::Mouse::Button button)
         sf::FloatRect soundOnBounds = m_options.m_on_sound.getGlobalBounds();
         sf::FloatRect soundOffBounds = m_options.m_off_sound.getGlobalBounds();
 
-        if (exitBounds.contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
+        if (exitBounds.contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y)) && m_currentScene == ClientScene::MENU) {
             m_window.close();
             std::exit(0);
         }
-        if (startGameBounds.contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
+        if (startGameBounds.contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y)) && m_currentScene == ClientScene::MENU) {
             setScene(ClientScene::MODE);
         }
-        if (multiGameBounds.contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y)) && game_started == false) {
+        if (multiGameBounds.contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y)) && game_started == false && m_currentScene == ClientScene::MODE) {
             setScene(ClientScene::GAME);
             send_message_to_server("START");
             game_started = true;
         }
-        if (multiGameBounds.contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y)) && game_started == true) {
+        if (multiGameBounds.contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y)) && game_started == true && m_currentScene == ClientScene::MODE) {
             setScene(ClientScene::GAME);
         }
-        if (optionsBounds.contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
+        if (optionsBounds.contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y)) && m_currentScene == ClientScene::MENU) {
             setScene(ClientScene::OPTIONS);
         }
-        if (soundOffBounds.contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
+        if (soundOffBounds.contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y)) && m_currentScene == ClientScene::OPTIONS) {
             m_menu.m_music.setVolume(0);
         }
-        if (soundOnBounds.contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
+        if (soundOnBounds.contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y)) && m_currentScene == ClientScene::OPTIONS) {
             m_menu.m_music.setVolume(100);
         }
     }
@@ -421,4 +385,40 @@ void Client::handleInput() {
         send_message_to_server("DOWN");
         lastKeyPressTime[sf::Keyboard::Down] = now;
     }
+}
+
+void Client::checkButtonHover(sf::Sprite& button, const sf::Vector2i& mousePos)
+{
+    sf::FloatRect bounds = button.getGlobalBounds();
+    float x = bounds.left + bounds.width / 2;
+    float y = bounds.top + bounds.height / 2;
+    if (bounds.contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
+        button.setScale(0.9f, 0.9f);
+        button.setPosition(x - button.getGlobalBounds().width / 2, y - button.getGlobalBounds().height / 2);
+    } else {
+        button.setScale(0.85f, 0.85f);
+        button.setPosition(x - button.getGlobalBounds().width / 2, y - button.getGlobalBounds().height / 2);
+    }
+}
+
+void Client::display_options()
+{
+    m_window.draw(m_options.m_background_options);
+    m_window.draw(m_options.m_30fps);
+    m_window.draw(m_options.m_60fps);
+    m_window.draw(m_options.m_off_sound);
+    m_window.draw(m_options.m_on_sound);
+
+}
+void Client::handleButtonHover(sf::Vector2i mousePos)
+{
+    checkButtonHover(m_menu.m_startGame, mousePos);
+    checkButtonHover(m_menu.m_Exit, mousePos);
+    checkButtonHover(m_menu.m_Options, mousePos);
+    checkButtonHover(m_options.m_30fps, mousePos);
+    checkButtonHover(m_options.m_60fps, mousePos);
+    checkButtonHover(m_options.m_off_sound, mousePos);
+    checkButtonHover(m_options.m_on_sound, mousePos);
+    checkButtonHover(m_mode.m_solo, mousePos);
+    checkButtonHover(m_mode.m_multi, mousePos);
 }

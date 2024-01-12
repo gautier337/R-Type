@@ -87,10 +87,13 @@ void Server::handle_receive(const std::string& data, const asio::ip::udp::endpoi
         }
     }
 
-    if (client_ids_.find(endpoint) == client_ids_.end()) {
-        handle_send("You are not in our list, please say START", endpoint);
-        std::cout << "A client tried to send a message but he is not in our list and he didn't say START" << std::endl;
-        return;
+    {
+        std::lock_guard<std::mutex> lock(clients_mutex_);
+        if (client_ids_.find(endpoint) == client_ids_.end()) {
+            handle_send("You are not in our list, please say START", endpoint);
+            std::cout << "A client tried to send a message but he is not in our list and he didn't say START" << std::endl;
+            return;
+        }
     }
 
     if (isNewClient) {
@@ -157,9 +160,7 @@ void Server::handle_tick(const asio::error_code& error)
             hitbox.launch(entitySystem.getEntsByComps<Ecs::Hitbox, Ecs::Position, Ecs::Damages, Ecs::Health>());
 
             std::stringstream ss;
-            // if (entitySystem.interWave) {
             ss << "Wave " << entitySystem.wave << "\n";
-            // }
             for (auto& entity : entitySystem.getEntsByComp<Ecs::Position>()) {
                 ss << "Entity " << entity->getEntityId() << " position: ("
                 << entity->getComponent<Ecs::Position>()->getPosition().first << ", "

@@ -8,4 +8,6 @@ a.out
 *.o
 .vs
 r-type_server
+r-type_server.exe
 r-type_client
+r-type_client.exe

@@ -69,13 +69,13 @@ void Server::start_receive() {
 void Server::handle_receive(const std::string& data, const asio::ip::udp::endpoint& endpoint)
 {
     std::cout << "Received message: " << data << " from " << endpoint << std::endl;
-    std::cout << "handle_receive called from thread: " << std::this_thread::get_id() << std::endl;
-    std::cout << "Trying to lock clients_mutex_ from thread: " << std::this_thread::get_id() << std::endl;
+    // std::cout << "handle_receive called from thread: " << std::this_thread::get_id() << std::endl;
+    // std::cout << "Trying to lock clients_mutex_ from thread: " << std::this_thread::get_id() << std::endl;
+    auto it = client_ids_.find(endpoint);
     {
         std::lock_guard<std::mutex> lock(clients_mutex_);
-        std::cout << "clients_mutex_ locked by thread: " << std::this_thread::get_id() << std::endl;
+        // std::cout << "clients_mutex_ locked by thread: " << std::this_thread::get_id() << std::endl;
         // Vérifier si le client existe et traiter les nouveaux clients
-        auto it = client_ids_.find(endpoint);
         if (it == client_ids_.end()) {
             // le client n'a jamais été enrégistré, il n'existe pas dans la liste client_ids_
             if (data == "START") {
@@ -97,30 +97,32 @@ void Server::handle_receive(const std::string& data, const asio::ip::udp::endpoi
             std::cout << "clients_mutex_ unlocked by thread: " << std::this_thread::get_id() << std::endl;
             return;
         }
-
-        // Donc le client existe
-        int clientId = it->second;
-
         if (data == "QUIT") {
             client_ids_.erase(endpoint);
             handle_send("Goodbye", endpoint);
             number_of_player_connected_--;
-            std::cout << "Client " << clientId << " disconnected, clients left: " << number_of_player_connected_ << std::endl;
-        } else if (data == "LEFT") {
-            playerSystem.handlePlayerInput(clientId, 3);
-        } else if (data == "RIGHT") {
-            playerSystem.handlePlayerInput(clientId, 4);
-        } else if (data == "UP") {
-            playerSystem.handlePlayerInput(clientId, 1);
-        } else if (data == "DOWN") {
-            playerSystem.handlePlayerInput(clientId, 2);
-        } else if (data == "SHOOT") {
-            playerSystem.handlePlayerInput(clientId, 5);
-        } else {
-            handle_send("Unknown Command received: " + data, endpoint);
+            std::cout << "Client " << it->second << " disconnected, clients left: " << number_of_player_connected_ << std::endl;
+            // std::cout << "clients_mutex_ unlocked by thread: " << std::this_thread::get_id() << std::endl;
+            return;
         }
     }
-    std::cout << "clients_mutex_ unlocked by thread: " << std::this_thread::get_id() << std::endl;
+
+    // std::cout << "clients_mutex_ unlocked by thread: " << std::this_thread::get_id() << std::endl;
+    int clientId = it->second;
+
+    if (data == "LEFT") {
+        playerSystem.handlePlayerInput(clientId, 3);
+    } else if (data == "RIGHT") {
+        playerSystem.handlePlayerInput(clientId, 4);
+    } else if (data == "UP") {
+        playerSystem.handlePlayerInput(clientId, 1);
+    } else if (data == "DOWN") {
+        playerSystem.handlePlayerInput(clientId, 2);
+    } else if (data == "SHOOT") {
+        playerSystem.handlePlayerInput(clientId, 5);
+    } else {
+        handle_send("Unknown Command received: " + data, endpoint);
+    }
 }
 
 struct Message {

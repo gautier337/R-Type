@@ -331,6 +331,7 @@ void Client::handleMouse(sf::Mouse::Button button)
         sf::FloatRect soundOffBounds = m_options.m_off_sound.getGlobalBounds();
 
         if (exitBounds.contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y)) && m_currentScene == ClientScene::MENU) {
+            send_message_to_server("QUIT");
             m_window.close();
             std::exit(0);
         }

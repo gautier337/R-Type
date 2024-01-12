@@ -17,6 +17,7 @@
 #include <cstdio>
 #include <set>
 #include <chrono>
+#include <SFML/Audio.hpp>
 
 struct EntityData {
     int id;
@@ -57,8 +58,17 @@ class Game {
         sf::Sprite m_game_is_over_sprite, m_hp_sprite;
         sf::Font m_font_score;
         sf::Text m_text_score, m_text_wave;
+        sf::Music m_music_wave4;
+        sf::Music m_music_wave7;
 
         EntityData m_data;
+
+        Game& operator=(const Game& other) {
+            if (this != &other) {
+                //copy data
+            }
+            return *this;
+        }
     private:
 };
 

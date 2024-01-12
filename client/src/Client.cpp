@@ -155,7 +155,7 @@ void Client::init()
     m_texture.setTextureRepeated("parallax_ship", true);
 
     m_game.m_textureManager = m_texture;
-    m_parallax = m_game.createParallax("parallax", 0, 0);
+    m_parallax = m_game.createParallax("parallax_space", 0, 0);
 
     //scene options
     m_options.m_texture_background_options.loadFromFile("assets/background_options.png");

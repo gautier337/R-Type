@@ -51,10 +51,9 @@ namespace Ecs {
 		void launch() final;
 		void generateBoss1();
 		void generateBoss2();
-		void generateBoss3();
 		void generateBasicMonster();
 		void generateEliteMonster();
-		void generateSnake();
+		void generateSnakeBoss();
 		void generateAsteroid();
 		void generateKamikaze();
 		void generateEliteKamikaze();

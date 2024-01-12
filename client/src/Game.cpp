@@ -286,10 +286,14 @@ void Game::parseBuffer(const std::string& buffer)
                     m_object.push_back(createKamikaze(data.position.x, data.position.y, data.id));
                 } else if (data.id >= 550 && data.id < 600) {
                     m_object.push_back(createKamikaze(data.position.x, data.position.y, data.id)); // KAMIKAZE ELITE
-                } else if (data.id >= 600 && data.id <= 602) {
+                } else if (data.id >= 600 && data.id <= 601) {
                     m_object.push_back(createBoss(data.position.x, data.position.y, data.id));
                 } else if (data.id >= 603 && data.id < 650) {
                     m_object.push_back(createAsteroid(data.position.x, data.position.y, data.id));
+                } else if (data.id == 650) {
+                    m_object.push_back(createAsteroid(data.position.x, data.position.y, data.id)); // TETE SERPENT BOSS
+                } else if (data.id >= 651 && data.id < 700) {
+                    m_object.push_back(createAsteroid(data.position.x, data.position.y, data.id)); // CORPS SERPENT BOSS
                 } else if (data.id >= 700 && data.id < 710) {
                     m_object.push_back(createHealthPack(data.position.x, data.position.y, data.id));
                 } else if (data.id >= 710 && data.id < 720) {

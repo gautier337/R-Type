@@ -40,7 +40,7 @@ Server::Server(asio::io_context& io_context, int port, int wave)
     if (entitySystem.wave == 9)
         entitySystem.killedMonstersCount = 130;
     if (entitySystem.wave == 10)
-        entitySystem.killedMonstersCount = 131;
+        entitySystem.killedMonstersCount = 138;
     start_receive();
     std::cout << "Server started on port " << port << std::endl;
     std::cout << "Wave: " << wave << std::endl;

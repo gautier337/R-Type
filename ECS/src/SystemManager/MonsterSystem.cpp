@@ -6,7 +6,7 @@
 */
 
 #include "../../include/SystemManager/MonsterSystem.hpp"
-#include <iostream>
+#include <cmath>
 
 namespace Ecs {
 
@@ -52,13 +52,47 @@ namespace Ecs {
         createMonster(100, 10, 1200, 540, 2, 601, 602, 160, 210);
     }
 
-    void MonsterSystem::generateBoss3()
+    void MonsterSystem::generateSnakeBoss()
     {
-        createMonster(200, 15, 1200, 540, 2, 602, 603, 160, 210);
-    }
+        // Définir la longueur du serpent (entre 3 et 8)
+        int snakeLength = 8;
 
-    void MonsterSystem::generateSnake()
-    {
+        // Coordonnées de départ du serpent (position de la tête)
+        int headPosX = random(1300, 1500);
+        int headPosY = random(100, 980);
+
+        // Créer la tête du serpent
+        auto head = createMonster(50, 10, headPosX, headPosY, 15, 650, 651, 5, 5);
+
+        // Si la création de la tête a échoué, quitter la fonction
+        if (!head)
+            return;
+
+        // Liste pour stocker les IDs des parties du corps créées
+        std::list<int> bodyIds;
+
+        // Créer le corps du serpent
+        for (int i = 1; i < snakeLength; ++i)
+        {
+            // Calculer la position du corps en fonction de la direction (par exemple, vers la gauche)
+            int bodyPosX = headPosX - i * 33; // La largeur d'une entité est supposée être de 33
+            int bodyPosY = headPosY;
+
+            // Créer une partie du corps du serpent
+            auto bodyPart = createMonster(50, 10, bodyPosX, bodyPosY, 15, 651 + i, 652 + i, 5, 5);
+
+            // Si la création du corps a échoué, détruire la tête et toutes les parties du corps déjà créées, puis quitter la fonction
+            if (!bodyPart)
+            {
+                deleteEntity(head->getEntityId());
+                for (int id : bodyIds)
+                    deleteEntity(id);
+                return;
+            }
+
+            // Ajouter l'ID de la partie du corps à la liste
+            bodyIds.push_back(bodyPart->getEntityId());
+        }
     }
 
     void MonsterSystem::generateBasicMonster()
@@ -214,12 +248,10 @@ namespace Ecs {
                 if (randomNum < 4)
                     generateAsteroid();
             } else if (_entitySystem.wave == 8) {
-                if (randomNum < 5)
+                if (randomNum < 8)
                     generateEliteMonster();
                 if (randomNum > 8)
                     generateEliteKamikaze();
-                if (randomNum < 5 && randomNum > 8)
-                    generateSnake();
                 if (randomNum == 8)
                     generateShootBoost();
                 if (randomNum == 5)
@@ -229,7 +261,7 @@ namespace Ecs {
                 if (randomNum < 4)
                     generateAsteroid();
             } else if (_entitySystem.wave == 9) {
-                generateBoss3();
+                generateSnakeBoss();
                 if (randomNum == 8)
                     generateShootBoost();
                 if (randomNum == 5)
@@ -245,8 +277,6 @@ namespace Ecs {
                     generateKamikaze();
                 if (randomNum == 8)
                     generateEliteKamikaze();
-                if (randomNum == 7)
-                    generateSnake();
                 if (randomNum == 9)
                     generateShootBoost();
                 if (randomNum == 5)
@@ -254,7 +284,7 @@ namespace Ecs {
                 if (randomNum == 2)
                     generateHealthBoost();
                 if (randomNum == 1)
-                    generateBoss1();
+                    generateBoss2();
                 if (randomNum < 4)
                     generateAsteroid();
             } else {
@@ -266,8 +296,6 @@ namespace Ecs {
                     generateKamikaze();
                 if (randomNum == 8)
                     generateEliteKamikaze();
-                if (randomNum == 7)
-                    generateSnake();
                 if (randomNum == 9)
                     generateShootBoost();
                 if (randomNum == 5)
@@ -321,7 +349,7 @@ namespace Ecs {
             if (_entitySystem.wave == 8)
                 monstersToKillForNextWave = 130;
             if (_entitySystem.wave == 9)
-                monstersToKillForNextWave = 131;
+                monstersToKillForNextWave = 138;
             if (_entitySystem.wave == 10)
                 monstersToKillForNextWave = 9999;
 
@@ -465,7 +493,7 @@ namespace Ecs {
                     position->set_pos_y(1920);
             }
             // Boss (ID 600)
-            if (entity->getEntityId() >= 600 && entity->getEntityId() <= 602)
+            if (entity->getEntityId() >= 600 && entity->getEntityId() <= 601)
             {
                 auto position = entity->getComponent<Ecs::Position>();
                 auto speed = entity->getComponent<Ecs::Speed>();
@@ -508,10 +536,10 @@ namespace Ecs {
                 if (shootCooldown->getCd() <= 0 && random(1, 3) == 1)
                 {
                     createMissile(entity->getEntityId());
-                    if (entity->getEntityId() == 601 || entity->getEntityId() == 602)
+                    if (entity->getEntityId() == 601) {
                         createMissile(entity->getEntityId(), 100);
-                    if (entity->getEntityId() == 602)
                         createMissile(entity->getEntityId(), -100);
+                    }
                     shootCooldown->setCd(random(180, 300)); // 60 frames per second, so 3 to 5 seconds
                 }
                 shootCooldown->decreaseCd();
@@ -540,7 +568,73 @@ namespace Ecs {
                 std::pair<int, int> pos = position->getPosition();
                 position->set_pos_y(pos.second + speed);
             }
-        }   
+            // Snake Head
+            if (entity->getEntityId() == 650)
+            {
+                auto position = entity->getComponent<Ecs::Position>();
+                auto speed = entity->getComponent<Ecs::Speed>();
+
+                // Update snake's position based on its speed
+                std::pair<int, int> pos = position->getPosition();
+
+
+                // Make the snake change direction every 3 seconds
+                static int tick = 0;
+                const int framesPerDirectionChange = 30; // 60 frames per second * 3 seconds
+
+                if (tick % framesPerDirectionChange == 0)
+                {
+                    // Randomly choose a direction
+                    int direction = random(1, 5); // 1: top, 2: bottom, 3: left, 4: right
+
+                    // Move the snake accordingly
+                    if (direction == 1) {
+                        position->setDirection(1);
+                    } else if (direction == 2) {
+                        position->setDirection(2);
+                    } else if (direction == 3) {
+                        position->setDirection(3);
+                    } else if (direction == 4) {
+                        position->setDirection(4);
+                    }
+                }
+                tick++; 
+
+                // Move the snake in the direction it is facing
+                if (position->getDirection() == 1) {
+                    position->set_pos_y(pos.second - speed->getSpeed()); // Move up
+                } else if (position->getDirection() == 2) {
+                    position->set_pos_y(pos.second + speed->getSpeed()); // Move down
+                } else if (position->getDirection() == 3) {
+                    position->set_pos_x(pos.first - speed->getSpeed()); // Move left
+                } else if (position->getDirection() == 4){
+                    position->set_pos_x(pos.first + speed->getSpeed()); // Move right
+                }
+            }
+            // Snake Body
+            if (entity->getEntityId() >= 651 && entity->getEntityId() < 700)
+            {
+                auto position = entity->getComponent<Ecs::Position>();
+                auto speed = entity->getComponent<Ecs::Speed>();
+
+                // Find the previous body part
+                int prevEntityId = entity->getEntityId() - 1;
+                auto prevBodyPart = getEntityById(prevEntityId);
+
+                if (prevBodyPart != nullptr)
+                {
+                    static int tickSnakeBody = 0;
+                    const int framesPerSnakeBodyMovement = 5;
+
+                    if (tickSnakeBody % framesPerSnakeBodyMovement == 0)
+                    {
+                        position->set_pos_x(prevBodyPart->getComponent<Ecs::Position>()->getPosition().first);
+                        position->set_pos_y(prevBodyPart->getComponent<Ecs::Position>()->getPosition().second);
+                    }
+                    tickSnakeBody++;
+                }
+            }
+        }
     }
 
     bool MonsterSystem::isIdTaken(unsigned int id) const noexcept {

@@ -27,7 +27,11 @@ namespace Ecs {
                     increaseKilledMonstersCount();
                     score += 20;
                 }
-                if (entity->getEntityId() == 600) {
+                if (entity->getEntityId() == 600 || entity->getEntityId() == 601) {
+                    increaseKilledMonstersCount();
+                    score += 500;
+                }
+                if (entity->getEntityId() >= 650 && entity->getEntityId() < 700) {
                     increaseKilledMonstersCount();
                     score += 500;
                 }

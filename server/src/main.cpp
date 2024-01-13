@@ -11,12 +11,15 @@ int main(int argc, char* argv[])
 {
     int serverPort = 8000;
     int wave = 1;
+    bool solo = false;
 
     for (int i = 1; i < argc; ++i) {
         std::string arg = argv[i];
 
         if (arg == "--serverPort" && i + 1 < argc) {
             serverPort = std::stoi(argv[++i]);
+        } else if (arg == "--solo") {
+            solo = true;
         } else if (arg == "--wave" && i + 1 < argc) {
             wave = std::stoi(argv[++i]);
 
@@ -29,7 +32,7 @@ int main(int argc, char* argv[])
 
     try {
         asio::io_context io_context;
-        Server server(io_context, serverPort, wave);
+        Server server(io_context, serverPort, wave, solo);
 
         std::vector<std::thread> threads;
         for (int i = 0; i < std::thread::hardware_concurrency(); ++i) {

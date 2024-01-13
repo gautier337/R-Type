@@ -14,7 +14,7 @@
 #include <chrono>
 #include <fstream>
 
-Server::Server(asio::io_context& io_context, int port, int wave)
+Server::Server(asio::io_context& io_context, int port, int wave, bool solo)
     : socket_(io_context, asio::ip::udp::endpoint(asio::ip::udp::v4(), port)),
       tick_timer_(io_context, std::chrono::milliseconds(16)),
       entitySystem(entities_),
@@ -42,6 +42,7 @@ Server::Server(asio::io_context& io_context, int port, int wave)
     if (entitySystem.wave == 10)
         entitySystem.killedMonstersCount = 138;
     start_receive();
+    solo_ = solo;
     std::cout << "Server started on port " << port << std::endl;
     std::cout << "Wave: " << wave << std::endl;
     handle_tick({});
@@ -80,7 +81,7 @@ void Server::handle_receive(const std::string& data, const asio::ip::udp::endpoi
             // le client n'a jamais été enrégistré, il n'existe pas dans la liste client_ids_
             if (data == "START") {
                 int clientId = playerSystem.createPlayer();
-                if (clientId == 0) {
+                if (clientId == 0 || accepting_connections_ == false) {
                     handle_send("The room is full!", endpoint);
                     std::cout << "clients_mutex_ unlocked by thread: " << std::this_thread::get_id() << std::endl;
                     return;
@@ -90,6 +91,9 @@ void Server::handle_receive(const std::string& data, const asio::ip::udp::endpoi
                 handle_send(welcomeMessage, endpoint);
                 number_of_player_connected_++;
                 std::cout << "New client added with ID: " << clientId << std::endl;
+                if (solo_) {
+                    accepting_connections_ = false;
+                }
             } else {
                 handle_send("You are not in our list, please say START", endpoint);
                 std::cout << "A client tried to send a message but he is not in our list and he didn't say START" << std::endl;

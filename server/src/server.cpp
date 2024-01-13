@@ -80,8 +80,12 @@ void Server::handle_receive(const std::string& data, const asio::ip::udp::endpoi
         if (it == client_ids_.end()) {
             // le client n'a jamais été enrégistré, il n'existe pas dans la liste client_ids_
             if (data == "START") {
+                if (accepting_connections_ == false) {
+                    handle_send("The game has already started and it's in solo mode", endpoint);
+                    return;
+                }
                 int clientId = playerSystem.createPlayer();
-                if (clientId == 0 || accepting_connections_ == false) {
+                if (clientId == 0) {
                     handle_send("The room is full!", endpoint);
                     std::cout << "clients_mutex_ unlocked by thread: " << std::this_thread::get_id() << std::endl;
                     return;

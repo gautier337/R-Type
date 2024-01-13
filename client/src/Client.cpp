@@ -11,37 +11,32 @@ Client::Client(const char *server_address, int server_port): m_window(sf::VideoM
 {
     std::cout << "Client created" << std::endl;
     keyStatus.fill(false);
-    for (auto& time : lastKeyPressTime) {
+    for (auto& time : lastKeyPressTime)
         time = std::chrono::steady_clock::now();
-    }
     m_sock = socket(AF_INET, SOCK_DGRAM, 0);
-    if (m_sock < 0) {
+    if (m_sock < 0)
         throw std::runtime_error("Erreur lors de la création du socket");
-    }
 
     m_server_addr.sin_family = AF_INET;
     m_server_addr.sin_port = htons(server_port);
-    if (inet_pton(AF_INET, server_address, &m_server_addr.sin_addr) <= 0) {
+    if (inet_pton(AF_INET, server_address, &m_server_addr.sin_addr) <= 0)
         throw std::runtime_error("Erreur inet_pton");
-    }
     m_listenThread = std::thread(&Client::listenToServer, this);
 }
 
 Client::~Client()
 {
     close(m_sock);
-    if (m_listenThread.joinable()) {
+    if (m_listenThread.joinable())
         m_listenThread.join();
-    }
     close(m_sock);
 }
 
 int parse_client_id(const std::string& response) {
     try {
         size_t commaPos = response.find(',');
-        if (commaPos == std::string::npos) {
+        if (commaPos == std::string::npos)
             throw std::runtime_error("Format de réponse invalide");
-        }
 
         std::string idPart = response.substr(0, commaPos);
         return std::stoi(idPart);
@@ -65,9 +60,8 @@ void Client::listenToServer()
             if(recvd >= static_cast<ssize_t>(sizeof(Message))) {
                 Message* message = reinterpret_cast<Message*>(m_buffer);
 
-                if (client_id == 0) {
+                if (client_id == 0)
                     client_id = parse_client_id(message->data);
-                }
             }
         }
     }
@@ -133,7 +127,6 @@ void Client::init()
         std::exit(1);
     } else
         std::cout << "Menu music loaded successfully" << std::endl;
-    m_menu.m_music.setVolume(100);
 
     //music wave 4
     if (!m_game.m_music_wave4.openFromFile("assets/music_wave4.ogg")) {
@@ -141,7 +134,6 @@ void Client::init()
         std::exit(1);
     } else
         std::cout << "Wave4 music loaded successfully" << std::endl;
-    m_game.m_music_wave4.setVolume(100);
     //music wave 7
     if (!m_game.m_music_wave7.openFromFile("assets/music_wave7.ogg")) {
         std::cerr << "Failed to load wave7 music" << std::endl;
@@ -228,9 +220,7 @@ void Client::run()
     float timeSinceLastMove = 0.0f;
 
     while (m_window.isOpen()) {
-
         sf::Event event;
-
         sf::Vector2i mousePos = sf::Mouse::getPosition(m_window);
         sf::Time deltaTime = clock.restart();
         timeSinceLastMove += deltaTime.asSeconds();
@@ -259,9 +249,9 @@ void Client::run()
 
         if (m_window.isOpen()) {
             m_window.clear();
-            if (m_currentScene == ClientScene::MENU) {
+            if (m_currentScene == ClientScene::MENU)
                 display_menu();
-            } else if (m_currentScene == ClientScene::GAME) {
+            else if (m_currentScene == ClientScene::GAME) {
                 if (timeSinceLastMove >= moveInterval) {
                     m_parallax.moveHorizontally(moveOffset);
                     timeSinceLastMove -= moveInterval;
@@ -293,9 +283,8 @@ void Client::run()
                     m_parallax = m_game.createParallax("parallax_space2", 0, 0);
                 }
                 m_window.draw(m_game.m_text_wave);
-            } else if (m_currentScene == ClientScene::OPTIONS) {
+            } else if (m_currentScene == ClientScene::OPTIONS)
                 display_options();
-            }
             if (m_currentScene == ClientScene::GAME_OVER) {
                 m_window.draw(m_game.m_game_is_over_sprite);
                 if (!timer_started) {
@@ -304,9 +293,8 @@ void Client::run()
                 }
                 auto current_time = std::chrono::steady_clock::now();
                 auto elapsed = std::chrono::duration_cast<std::chrono::seconds>(current_time - start_time).count();
-                if (elapsed >= 10) {
+                if (elapsed >= 10)
                     exit(0);
-                }
             }
             m_window.display();
         }
@@ -318,9 +306,8 @@ void Client::run()
 
 void Client::handleMouse(sf::Mouse::Button button)
 {
-    if (m_currentScene == ClientScene::GAME) {
+    if (m_currentScene == ClientScene::GAME)
         return;
-    }
     if (button == sf::Mouse::Left) {
         sf::Vector2i mousePos = sf::Mouse::getPosition(m_window);
         sf::FloatRect exitBounds = m_menu.m_Exit.getGlobalBounds();
@@ -339,12 +326,10 @@ void Client::handleMouse(sf::Mouse::Button button)
             send_message_to_server("START");
             game_started = true;
         }
-        if (startGameBounds.contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y)) && game_started == true && m_currentScene == ClientScene::MENU) {
+        if (startGameBounds.contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y)) && game_started == true && m_currentScene == ClientScene::MENU)
             setScene(ClientScene::GAME);
-        }
-        if (optionsBounds.contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y)) && m_currentScene == ClientScene::MENU) {
+        if (optionsBounds.contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y)) && m_currentScene == ClientScene::MENU)
             setScene(ClientScene::OPTIONS);
-        }
         if (soundOffBounds.contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y)) && m_currentScene == ClientScene::OPTIONS) {
             m_menu.m_music.setVolume(0);
             m_game.m_music_wave4.setVolume(0);
@@ -411,7 +396,6 @@ void Client::display_options()
     m_window.draw(m_options.m_60fps);
     m_window.draw(m_options.m_off_sound);
     m_window.draw(m_options.m_on_sound);
-
 }
 
 void Client::display_menu()

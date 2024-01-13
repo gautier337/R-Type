@@ -43,6 +43,8 @@ class Game {
         SpriteObject createBasicSbire(int posX, int posY, int id);
         SpriteObject createBullet(int posX, int posY, int id);
         SpriteObject createBoss(int posX, int posY, int id);
+        SpriteObject createBossHead(int posX, int posY, int id);
+        SpriteObject createBossBody(int posX, int posY, int id);
         SpriteObject createAsteroid(int posX, int posY, int id);
         SpriteObject createBoostPack(int posX, int posY, int id);
         SpriteObject createHealthPack(int posX, int posY, int id);

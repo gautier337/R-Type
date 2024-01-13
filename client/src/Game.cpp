@@ -77,6 +77,28 @@ SpriteObject Game::createSbire(int posX, int posY, int id)
     return sbire;
 }
 
+SpriteObject Game::createBossHead(int posX, int posY, int id)
+{
+    SpriteObject sbire(m_textureManager.getTexture("boss_head"), sf::Vector2i(34, 30), 16, 15, id);
+    sbire.setPosition(posX, posY);
+    sbire.sprite.setScale(sf::Vector2f(2, 2));
+    sbire.sprite.setTextureRect(sf::IntRect(0, 0, 34, 30));
+    sf::FloatRect bounds = sbire.sprite.getLocalBounds();
+    sbire.sprite.setOrigin(bounds.width / 2.0f, bounds.height / 2.0f);
+    return sbire;
+}
+
+SpriteObject Game::createBossBody(int posX, int posY, int id)
+{
+    SpriteObject sbire(m_textureManager.getTexture("boss_body"), sf::Vector2i(33, 29), 16, 15, id);
+    sbire.setPosition(posX, posY);
+    sbire.sprite.setScale(sf::Vector2f(2, 2));
+    sbire.sprite.setTextureRect(sf::IntRect(0, 0, 33, 29));
+    sf::FloatRect bounds = sbire.sprite.getLocalBounds();
+    sbire.sprite.setOrigin(bounds.width / 2.0f, bounds.height / 2.0f);
+    return sbire;
+}
+
 ////////////////////////////////////////////////////////////
 //
 // Create an instance of SpriteObject for the Parallax
@@ -301,9 +323,9 @@ void Game::parseBuffer(const std::string& buffer)
                 } else if (data.id >= 603 && data.id < 650) {
                     m_object.push_back(createAsteroid(data.position.x, data.position.y, data.id));
                 } else if (data.id == 650) {
-                    m_object.push_back(createAsteroid(data.position.x, data.position.y, data.id)); // TETE SERPENT BOSS
+                    m_object.push_back(createBossHead(data.position.x, data.position.y, data.id));
                 } else if (data.id >= 651 && data.id < 700) {
-                    m_object.push_back(createAsteroid(data.position.x, data.position.y, data.id)); // CORPS SERPENT BOSS
+                    m_object.push_back(createBossBody(data.position.x, data.position.y, data.id));
                 } else if (data.id >= 700 && data.id < 710) {
                     m_object.push_back(createHealthPack(data.position.x, data.position.y, data.id));
                 } else if (data.id >= 710 && data.id < 720) {

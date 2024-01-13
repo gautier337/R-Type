@@ -147,8 +147,9 @@ void Client::init()
     m_texture.loadTexture("bullet", "assets/bullet.gif");
     m_texture.loadTexture("kamikaze", "assets/kamikaze.gif");
     m_texture.loadTexture("kamikaze_elite", "assets/kamikaze_elite.png");
-
     m_texture.loadTexture("boss", "assets/boss.gif");
+    m_texture.loadTexture("boss_body", "assets/boss_body.png");
+    m_texture.loadTexture("boss_head", "assets/boss_head.png");
     m_texture.loadTexture("asteroid", "assets/asteroid.png");
     m_texture.loadTexture("boostPack", "assets/speedBoost.png");
     m_texture.loadTexture("healthPack", "assets/healthBoost.png");

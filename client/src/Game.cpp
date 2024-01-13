@@ -349,7 +349,6 @@ void Game::run(sf::RenderWindow &window, std::string buffer, sf::Time deltaTime,
 {
     parseBuffer(buffer);
     m_parallax.draw(window);
-    // m_parallax.setPosition(0, 0);
 
     for (auto& element: m_object) {
         element.update(deltaTime);

@@ -87,6 +87,8 @@ class Client {
         char m_buffer[m_buffer_size];
         std::thread m_listenThread;
         bool m_listening = true;
+        bool m_parallax_wave4 = false;
+        bool m_parallax_wave7 = false;
 };
 
 #endif //CLIENT_HPP

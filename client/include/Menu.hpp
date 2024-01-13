@@ -8,7 +8,6 @@
 #pragma once
 
 #include "Client.hpp"
-#include <SFML/Audio.hpp>
 
 class Menu {
     public:
@@ -21,7 +20,6 @@ class Menu {
 
         void draw(sf::RenderWindow& window) {
             window.draw(m_background);
-            std::cout << "On print le bail" << std::endl;
         }
 
         Menu& operator=(const Menu& other) {

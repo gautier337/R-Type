@@ -6,7 +6,6 @@
 */
 
 #include "Game.hpp"
-#include <chrono>
 
 Game::Game()
 {

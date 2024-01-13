@@ -9,7 +9,6 @@
 #define SPRITEOBJECT_HPP_
 
 #include <SFML/Graphics.hpp>
-#include <iostream>
 
 class SpriteObject {
     public:

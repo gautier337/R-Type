@@ -89,7 +89,6 @@ void Client::init()
     m_game = Game();
     m_menu = Menu();
     m_options = Options();
-    m_mode = Mode();
     m_texture = TextureManager();
 
     //Score font
@@ -199,19 +198,6 @@ void Client::init()
     m_options.m_60fps.setPosition(1240, 320);
     m_options.m_60fps.setScale(sf::Vector2f(0.85, 0.85));
 
-    //scene solo and online
-    m_mode.m_texture_background_mode.loadFromFile("assets/background_mode.png");
-    m_mode.m_background_mode.setTexture(m_mode.m_texture_background_mode);
-    m_mode.m_background_mode.setScale(sf::Vector2f(0.8, 0.8));
-    m_mode.m_texture_solo.loadFromFile("assets/solo_button.png");
-    m_mode.m_solo.setTexture(m_mode.m_texture_solo);
-    m_mode.m_solo.setPosition(500, 250);
-    m_mode.m_solo.setScale(sf::Vector2f(0.85, 0.85));
-    m_mode.m_texture_multi.loadFromFile("assets/online_button.png");
-    m_mode.m_multi.setTexture(m_mode.m_texture_multi);
-    m_mode.m_multi.setPosition(800, 250);
-    m_mode.m_multi.setScale(sf::Vector2f(0.85, 0.85));
-
     // game over screen
     m_game.m_game_is_over_texture.loadFromFile("assets/game_over.png");
     m_game.m_game_is_over_sprite.setTexture(m_game.m_game_is_over_texture);
@@ -274,27 +260,15 @@ void Client::run()
         if (m_window.isOpen()) {
             m_window.clear();
             if (m_currentScene == ClientScene::MENU) {
-                if (m_menu.m_music.getStatus() != sf::SoundSource::Status::Playing && m_game.m_data.wave <= 3) {
-                    m_menu.m_music.play();
-                    m_menu.m_music.setLoop(true);
-                }
-                m_window.draw(m_menu.m_background);
-                m_window.draw(m_menu.m_startGame);
-                m_window.draw(m_menu.m_Exit);
-                m_window.draw(m_menu.m_Options);
-            } else if (m_currentScene == ClientScene::MODE) {
-                m_window.draw(m_mode.m_background_mode);
-                m_window.draw(m_mode.m_solo);
-                m_window.draw(m_mode.m_multi);
+                display_menu();
             } else if (m_currentScene == ClientScene::GAME) {
                 if (timeSinceLastMove >= moveInterval) {
                     m_parallax.moveHorizontally(moveOffset);
                     timeSinceLastMove -= moveInterval;
                 }
                 m_game.run(m_window, m_buffer, deltaTime, m_parallax);
-                if (m_game.m_game_is_over) {
+                if (m_game.m_game_is_over)
                     setScene(ClientScene::GAME_OVER);
-                }
                 m_game.m_text_score.setString("Score : " + std::to_string(m_game.m_data.score));
                 m_window.draw(m_game.m_text_score);
                 for (int i = 0; i < m_game.player_hp; i++) {
@@ -310,9 +284,9 @@ void Client::run()
                 }
                     m_parallax = m_game.createParallax("parallax_ship", 0, 0);
                 }
-                else if (m_game.m_data.wave >= 7) {
+                if (m_game.m_data.wave > 6) {
                     m_game.m_music_wave4.stop();
-                    if (m_game.m_data.wave >= 7 && m_game.m_music_wave7.getStatus() != sf::SoundSource::Status::Playing) {
+                    if (m_game.m_data.wave > 6 && m_game.m_music_wave7.getStatus() != sf::SoundSource::Status::Playing) {
                         m_game.m_music_wave7.play();
                         m_game.m_music_wave7.setLoop(true);
                     }
@@ -350,8 +324,6 @@ void Client::handleMouse(sf::Mouse::Button button)
     if (button == sf::Mouse::Left) {
         sf::Vector2i mousePos = sf::Mouse::getPosition(m_window);
         sf::FloatRect exitBounds = m_menu.m_Exit.getGlobalBounds();
-        // sf::FloatRect soloGameBounds = m_mode.m_solo.getGlobalBounds();
-        sf::FloatRect multiGameBounds = m_mode.m_multi.getGlobalBounds();
         sf::FloatRect startGameBounds = m_menu.m_startGame.getGlobalBounds();
         sf::FloatRect optionsBounds = m_menu.m_Options.getGlobalBounds();
         sf::FloatRect soundOnBounds = m_options.m_on_sound.getGlobalBounds();
@@ -362,15 +334,12 @@ void Client::handleMouse(sf::Mouse::Button button)
             m_window.close();
             std::exit(0);
         }
-        if (startGameBounds.contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y)) && m_currentScene == ClientScene::MENU) {
-            setScene(ClientScene::MODE);
-        }
-        if (multiGameBounds.contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y)) && game_started == false && m_currentScene == ClientScene::MODE) {
+        if (startGameBounds.contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y)) && game_started == false && m_currentScene == ClientScene::MENU) {
             setScene(ClientScene::GAME);
             send_message_to_server("START");
             game_started = true;
         }
-        if (multiGameBounds.contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y)) && game_started == true && m_currentScene == ClientScene::MODE) {
+        if (startGameBounds.contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y)) && game_started == true && m_currentScene == ClientScene::MENU) {
             setScene(ClientScene::GAME);
         }
         if (optionsBounds.contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y)) && m_currentScene == ClientScene::MENU) {
@@ -378,9 +347,13 @@ void Client::handleMouse(sf::Mouse::Button button)
         }
         if (soundOffBounds.contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y)) && m_currentScene == ClientScene::OPTIONS) {
             m_menu.m_music.setVolume(0);
+            m_game.m_music_wave4.setVolume(0);
+            m_game.m_music_wave7.setVolume(0);
         }
         if (soundOnBounds.contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y)) && m_currentScene == ClientScene::OPTIONS) {
             m_menu.m_music.setVolume(100);
+            m_game.m_music_wave4.setVolume(100);
+            m_game.m_music_wave7.setVolume(100);
         }
     }
 }
@@ -440,6 +413,19 @@ void Client::display_options()
     m_window.draw(m_options.m_on_sound);
 
 }
+
+void Client::display_menu()
+{
+    if (m_menu.m_music.getStatus() != sf::SoundSource::Status::Playing && m_game.m_data.wave <= 3) {
+        m_menu.m_music.play();
+        m_menu.m_music.setLoop(true);
+    }
+    m_window.draw(m_menu.m_background);
+    m_window.draw(m_menu.m_startGame);
+    m_window.draw(m_menu.m_Exit);
+    m_window.draw(m_menu.m_Options);
+}
+
 void Client::handleButtonHover(sf::Vector2i mousePos)
 {
     checkButtonHover(m_menu.m_startGame, mousePos);
@@ -449,6 +435,4 @@ void Client::handleButtonHover(sf::Vector2i mousePos)
     checkButtonHover(m_options.m_60fps, mousePos);
     checkButtonHover(m_options.m_off_sound, mousePos);
     checkButtonHover(m_options.m_on_sound, mousePos);
-    checkButtonHover(m_mode.m_solo, mousePos);
-    checkButtonHover(m_mode.m_multi, mousePos);
 }

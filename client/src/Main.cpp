@@ -6,10 +6,6 @@
 */
 
 #include "../include/Client.hpp"
-#include <iostream>
-#include <string>
-#include <regex>
-#include <sstream>
 
 void showHelp() {
     std::cout << "Usage: r-type_client [--ip server_address] [-p port]\n"

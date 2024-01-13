@@ -10,7 +10,6 @@
 #include "../../ECS/include/components/Position.hpp"
 #include "../../ECS/include/components/Damages.hpp"
 #include "../../ECS/include/components/HitBox.hpp"
-#include <iostream>
 #include <chrono>
 #include <fstream>
 

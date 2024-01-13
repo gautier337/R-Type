@@ -10,10 +10,10 @@
 
 #include "Texture.hpp"
 #include "SpriteObject.hpp"
-#include <iostream>
 #include <vector>
 #include <string>
 #include <sstream>
+#include <iostream>
 #include <cstdio>
 #include <set>
 #include <chrono>

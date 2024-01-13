@@ -13,9 +13,9 @@
 #include "Game.hpp"
 #include "Menu.hpp"
 #include "Options.hpp"
-#include "Mode.hpp"
 #include "SpriteObject.hpp"
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 #include <iostream>
 #include <vector>
 #include <sys/socket.h>
@@ -27,7 +27,8 @@
 #include <string>
 #include <stdexcept>
 #include <chrono>
-#include <SFML/Audio.hpp>
+#include <regex>
+#include <sstream>
 
 enum class ClientStep {
     InitiationState,
@@ -39,8 +40,6 @@ enum class ClientStep {
 enum class ClientScene {
     MENU,
     GAME,
-    MODE,
-    SOLO,
     OPTIONS,
     GAME_OVER,
 };
@@ -59,6 +58,7 @@ class Client {
         //connection
         void listenToServer();
         void display_options();
+        void display_menu();
         void send_message_to_server(const char *message);
         void checkButtonHover(sf::Sprite& button, const sf::Vector2i& mousePos);
         void handleMouse(sf::Mouse::Button button);
@@ -76,7 +76,6 @@ class Client {
         Game m_game;
         Menu m_menu;
         Options m_options;
-        Mode m_mode;
         SpriteObject m_parallax;
         TextureManager m_texture;
         int client_id = 0;

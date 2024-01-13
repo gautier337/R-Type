@@ -30,7 +30,7 @@ namespace std
 
 class Server {
     public:
-        Server(asio::io_context& io_context, int port, int wave);
+        Server(asio::io_context& io_context, int port, int wave, bool solo);
         Ecs::HitboxSystem hitbox;
 
         Ecs::EntitySystem entitySystem;
@@ -52,5 +52,7 @@ class Server {
         int number_of_player_connected_ = 0;
         int tick = 0;
         int client_id_counter_ = 0;
+        bool solo_ = false;
+        bool accepting_connections_ = true;
         std::list<std::shared_ptr<Ecs::Entity>> entities_;
 };

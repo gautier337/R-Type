@@ -269,11 +269,14 @@ void Client::run()
                 m_game.m_text_wave.setString("Wave : " + std::to_string(m_game.m_data.wave));
                 if (m_game.m_data.wave >= 4) {
                     m_menu.m_music.stop();
-                if (m_game.m_data.wave >= 4 && m_game.m_data.wave <= 6 && m_game.m_music_wave4.getStatus() != sf::SoundSource::Status::Playing) {
-                    m_game.m_music_wave4.play();
-                    m_game.m_music_wave4.setLoop(true);
-                }
-                    m_parallax = m_game.createParallax("parallax_ship", 0, 0);
+                    if (m_game.m_data.wave >= 4 && m_game.m_data.wave <= 6 && m_game.m_music_wave4.getStatus() != sf::SoundSource::Status::Playing) {
+                        m_game.m_music_wave4.play();
+                        m_game.m_music_wave4.setLoop(true);
+                    }
+                    if (m_parallax_wave4 == false) {
+                        m_parallax = m_game.createParallax("parallax_ship", 0, 0);
+                        m_parallax_wave4 = true;
+                    }
                 }
                 if (m_game.m_data.wave > 6) {
                     m_game.m_music_wave4.stop();
@@ -281,7 +284,10 @@ void Client::run()
                         m_game.m_music_wave7.play();
                         m_game.m_music_wave7.setLoop(true);
                     }
-                    m_parallax = m_game.createParallax("parallax_space2", 0, 0);
+                    if (m_parallax_wave7 == false) {
+                        m_parallax = m_game.createParallax("parallax_space2", 0, 0);
+                        m_parallax_wave7 = true;
+                    }
                 }
                 m_window.draw(m_game.m_text_wave);
             } else if (m_currentScene == ClientScene::OPTIONS)

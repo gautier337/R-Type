@@ -66,11 +66,21 @@ namespace Ecs {
         }
 
         while (std::getline(configFile, line)) {
+            // Skip comment lines
+            if (line[0] == '#') continue;
+
             std::istringstream lineStream(line);
-            std::string key;
+            std::string key, value;
             if (std::getline(lineStream, key, '=')) {
-                std::string value;
+                // Trim whitespace from key
+                key.erase(0, key.find_first_not_of(" \t"));
+                key.erase(key.find_last_not_of(" \t") + 1);
+
                 if (std::getline(lineStream, value)) {
+                    // Trim whitespace from value
+                    value.erase(0, value.find_first_not_of(" \t"));
+                    value.erase(value.find_last_not_of(" \t") + 1);
+
                     if (key == "difficulty_level") {
                         difficulty = value;
                         break;
@@ -78,8 +88,6 @@ namespace Ecs {
                 }
             }
         }
-
-        configFile.close();
     }
 
 
@@ -209,6 +217,7 @@ namespace Ecs {
 
     void MonsterSystem::generateMonsters()
     {
+        std::cout << "dif: " << difficulty << std::endl;
         static int frameCount = 0;
         const int framesPerMonster = 180; // 60 frames per second * 3 seconds
 

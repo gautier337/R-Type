@@ -146,22 +146,22 @@ namespace Ecs {
 
     void MonsterSystem::generateBasicMonster()
     {
-        int xPos = random(1300, 1500);
-        int yPos = random(100, 980);
+        int xPos = random(1000, 1500);
+        int yPos = random(100, 864);
         createMonster(3, 1, xPos, yPos, 2, 5, 100, 33, 34);
     }
 
     void MonsterSystem::generateEliteMonster()
     {
-        int xPos = random(1300, 1500);
-        int yPos = random(100, 980);
+        int xPos = random(1000, 1500);
+        int yPos = random(100, 800);
         createMonster(10, 3, xPos, yPos, 2, 100, 200, 33, 34);
     }
 
     void MonsterSystem::generateAsteroid()
     {
         int xPos = 1950;
-        int yPos = random(0, 1080);
+        int yPos = random(0, 800);
         int randomSpeed = random(10, 13);
         if (randomSpeed == 11) {
             xPos = random(0, 1536);
@@ -176,14 +176,14 @@ namespace Ecs {
     void MonsterSystem::generateKamikaze()
     {
         int xPos = random(1100, 1300);
-        int yPos = random(100, 980);
+        int yPos = random(100, 80);
         createMonster(5, 10, xPos, yPos, 8, 500, 550, 33, 32);
     }
 
     void MonsterSystem::generateEliteKamikaze()
     {
         int xPos = random(1100, 1300);
-        int yPos = random(100, 980);
+        int yPos = random(100, 800);
         createMonster(10, 15, xPos, yPos, 8, 550, 600, 33, 32);
     }
 
@@ -537,15 +537,6 @@ namespace Ecs {
                 } else {
                     position->set_pos_x(pos.first + speed->getSpeed()); // Move right
                 }
-                // Check and adjust Y position to stay within bounds
-                if (pos.second < 0)
-                    position->set_pos_x(0);
-                if (pos.second > 1536)
-                    position->set_pos_x(1536);
-                if (pos.first < 0)
-                    position->set_pos_y(0);
-                if (pos.first > 864)
-                    position->set_pos_y(864);
                 for (const auto& entity : _Entities)
                 {
                     if (entity->getEntityId() >= 5 && entity->getEntityId() < 200)
@@ -637,11 +628,6 @@ namespace Ecs {
                     if (deltaY != 0)
                         position->set_pos_y(pos.second + (speed->getSpeed() * m));
                 }
-                // Check and adjust Y position to stay within bounds
-                if (pos.second < 0)
-                    position->set_pos_y(0);
-                if (pos.second > 1536)
-                    position->set_pos_y(1536);
                 // Shoot more frequently compared to regular monsters
                 if (shootCooldown->getCd() <= 0 && random(1, 3) == 1)
                 {

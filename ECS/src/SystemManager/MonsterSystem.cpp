@@ -147,7 +147,7 @@ namespace Ecs {
     void MonsterSystem::generateBasicMonster()
     {
         int xPos = random(1000, 1500);
-        int yPos = random(100, 864);
+        int yPos = random(100, 800);
         createMonster(3, 1, xPos, yPos, 2, 5, 100, 33, 34);
     }
 

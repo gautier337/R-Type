@@ -7,11 +7,12 @@
 
 #include "../../include/SystemManager/MonsterSystem.hpp"
 #include <cmath>
+#include <iostream>
 
 namespace Ecs {
 
-    MonsterSystem::MonsterSystem(std::list<std::shared_ptr<Entity>> &entities, EntitySystem& entitySystem)
-        : ASystem(entities), _entitySystem(entitySystem) {}
+    MonsterSystem::MonsterSystem(std::list<std::shared_ptr<Entity>> &entities, EntitySystem& entitySystem, bool solo)
+        : ASystem(entities), _entitySystem(entitySystem), _solo(solo) {}
 
     std::shared_ptr<Entity> MonsterSystem::createMonster(int hp, int dmg, int pos_x, int pos_y, int speedM, int id_min, int id_max, int hitboxX, int hitboxY) noexcept {
         int id = 0;
@@ -159,10 +160,23 @@ namespace Ecs {
         createMonster(1, 0, xPos, yPos, 2, 720, 730, 30, 30);
     }
 
+    void MonsterSystem::generateAI()
+    {
+        int xPos = 500;
+        int yPos = 100;
+        createMonster(100, 2, xPos, yPos, 10, 2, 3, 33, 34);
+    }
+
     void MonsterSystem::generateMonsters()
     {
         static int frameCount = 0;
         const int framesPerMonster = 180; // 60 frames per second * 3 seconds
+
+        if (_solo == true) {
+            if (!isIdTaken(2)) {
+                generateAI();
+            }
+        }
 
         // Generate a monster every 3 seconds
         if (frameCount % framesPerMonster == 0) {
@@ -412,6 +426,51 @@ namespace Ecs {
     void MonsterSystem::updateMonsters()
     {
         for (const auto& entity : _Entities) {
+            //AI
+            if (_solo == true) {
+                if (entity->getEntityId() == 2) {
+                    //make so the AI focus monsters and shoot every 3 seconds
+                    auto position = entity->getComponent<Ecs::Position>();
+                    auto speed = entity->getComponent<Ecs::Speed>();
+
+                    // Find the closest monster
+                    std::shared_ptr<Entity> closestMonster = nullptr;
+                    int closestMonsterDistance = 9999;
+                    for (const auto& entity : _Entities) {
+                        if (entity->getEntityId() >= 5 && entity->getEntityId() < 200) {
+                            int distance = std::abs(entity->getComponent<Ecs::Position>()->getPosition().first - position->getPosition().first);
+                            if (distance < closestMonsterDistance) {
+                                closestMonster = entity;
+                                closestMonsterDistance = distance;
+                            }
+                        }
+                    }
+
+                    // If a monster is found, move towards it
+                    if (closestMonster != nullptr) {
+                        int deltaY = closestMonster->getComponent<Ecs::Position>()->getPosition().second - position->getPosition().second;
+                        int m = 0;
+                        if (deltaY > 0)
+                            m = 1;
+                        else
+                            m = -1;
+                        position->set_pos_y(position->getPosition().second + (speed->getSpeed() * m));
+                    }
+
+                    // Shoot every 3 seconds
+                    if (entity->getEntityId() == 2)
+                    {
+                        auto shootCooldown = entity->getComponent<ShootCD>();
+                        // Shoot if the cooldown has expired
+                        if (shootCooldown->getCd() <= 0)
+                        {
+                            createMissile(entity->getEntityId());
+                            shootCooldown->setCd(random(120, 180)); // 60 frames per second, so 5 to 8 seconds
+                        }
+                        shootCooldown->decreaseCd();
+                    }
+                }
+            }
             //Basic
             if (entity->getEntityId() >= 5 && entity->getEntityId() < 200) {
                 auto position = entity->getComponent<Ecs::Position>();

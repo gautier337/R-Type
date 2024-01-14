@@ -18,7 +18,7 @@ Server::Server(asio::io_context& io_context, int port, int wave, bool solo)
       tick_timer_(io_context, std::chrono::milliseconds(16)),
       entitySystem(entities_),
       missileSystem(entities_),
-      monsterSystem(entities_, entitySystem),
+      monsterSystem(entities_, entitySystem, solo),
       playerSystem(entities_)
 {
     entitySystem.wave = wave;

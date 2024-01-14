@@ -25,7 +25,7 @@ namespace Ecs {
 
     class MonsterSystem : public ASystem {
     public:
-        MonsterSystem(std::list<std::shared_ptr<Entity>> &entities, EntitySystem& entitySystem);
+        MonsterSystem(std::list<std::shared_ptr<Entity>> &entities, EntitySystem& entitySystem, bool solo);
 
         std::shared_ptr<Entity> createMonster(int hp, int dmg, int pos_x, int pos_y, int speedM, int id_min, int id_max, int hitboxX, int hitboxY) noexcept;
         void generateMonsters();
@@ -60,9 +60,11 @@ namespace Ecs {
 		void generateHealthBoost();
 		void generateShootBoost();
 		void generateShieldBoost();
+		void generateAI();
 		void updateShields(std::shared_ptr<Entity> entity);
 	private:
 		EntitySystem& _entitySystem;
+		bool _solo = false;
     };
 
 }

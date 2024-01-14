@@ -437,7 +437,7 @@ namespace Ecs {
                     std::shared_ptr<Entity> closestMonster = nullptr;
                     int closestMonsterDistance = 9999;
                     for (const auto& entity : _Entities) {
-                        if (entity->getEntityId() >= 5 && entity->getEntityId() < 200) {
+                        if (entity->getEntityId() >= 5 && entity->getEntityId() < 700) {
                             int distance = std::abs(entity->getComponent<Ecs::Position>()->getPosition().first - position->getPosition().first);
                             if (distance < closestMonsterDistance) {
                                 closestMonster = entity;

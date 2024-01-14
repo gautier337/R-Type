@@ -19,4 +19,4 @@ cd ..\..\client
 :: Créer l'archive .zip
 cd ..
 @REM zip -r "%zip_folder_name%.zip" r-type_client.exe r-type_server.exe assets
-tar -a -c -f "%zip_folder_name%.zip" r-type_server.exe assets
+tar -a -c -f "%zip_folder_name%.zip" r-type_server.exe config_game.txt assets

@@ -115,10 +115,10 @@ namespace Ecs {
         int yPos = random(0, 1080);
         int randomSpeed = random(10, 13);
         if (randomSpeed == 11) {
-            xPos = random(0, 1920);
+            xPos = random(0, 1920 * 0.8);
             yPos = 1120;
         } else if (randomSpeed == 12) {
-            xPos = random(0, 1920);
+            xPos = random(0, 1920 * 0.8);
             yPos = -40;
         }
         createMonster(9, 1, xPos, yPos, randomSpeed, 603, 650, 60, 63);
@@ -433,9 +433,12 @@ namespace Ecs {
                 // Check and adjust Y position to stay within bounds
                 if (pos.second < 0)
                     position->set_pos_y(0);
-                if (pos.second > 1920)
-                    position->set_pos_y(1920);
-                // Shoot if the cooldown has expired
+                if (pos.second > 1920 * 0.8)
+                    position->set_pos_y(1920 * 0.8);
+                if (pos.first < 0)
+                    position->set_pos_x(0);
+                if (pos.first > 1080 * 0.8)
+                    position->set_pos_x(1080 * 0.8);
                 for (const auto& entity : _Entities)
                 {
                     if (entity->getEntityId() >= 5 && entity->getEntityId() < 200)
@@ -489,8 +492,8 @@ namespace Ecs {
                 // Check and adjust Y position to stay within bounds
                 if (pos.second < 0)
                     position->set_pos_y(0);
-                if (pos.second > 1920)
-                    position->set_pos_y(1920);
+                if (pos.second > 1920 * 0.8)
+                    position->set_pos_y(1920 * 0.8);
             }
             // Boss (ID 600)
             if (entity->getEntityId() >= 600 && entity->getEntityId() <= 601)
@@ -530,8 +533,8 @@ namespace Ecs {
                 // Check and adjust Y position to stay within bounds
                 if (pos.second < 0)
                     position->set_pos_y(0);
-                if (pos.second > 1920)
-                    position->set_pos_y(1920);
+                if (pos.second > 1920 * 0.8)
+                    position->set_pos_y(1920 * 0.8);
                 // Shoot more frequently compared to regular monsters
                 if (shootCooldown->getCd() <= 0 && random(1, 3) == 1)
                 {

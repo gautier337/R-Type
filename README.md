@@ -84,6 +84,8 @@ And start the R-TYPE client:
 ./r-type_client
 ```
 
+A release folder is created during the build process, containing the binary files and assets. The server and the client can also be run directly from this folder.
+
 ## Gameplay
 
 Upon launching the client, you'll enter the R-TYPE universe, where you can join other players in cooperative missions against various foes. Master your spacecraft, strategize with your team, and enjoy the high-octane combat that R-TYPE offers.

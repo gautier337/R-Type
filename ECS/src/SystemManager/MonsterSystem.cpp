@@ -8,13 +8,26 @@
 #include "../../include/SystemManager/MonsterSystem.hpp"
 #include <cmath>
 #include <iostream>
+#include <string>
+#include <fstream>
+#include <sstream>
 
 namespace Ecs {
 
     MonsterSystem::MonsterSystem(std::list<std::shared_ptr<Entity>> &entities, EntitySystem& entitySystem, bool solo)
-        : ASystem(entities), _entitySystem(entitySystem), _solo(solo) {}
+        : ASystem(entities), _entitySystem(entitySystem), _solo(solo) {
+            readConfig("config_game.txt");
+        }
 
     std::shared_ptr<Entity> MonsterSystem::createMonster(int hp, int dmg, int pos_x, int pos_y, int speedM, int id_min, int id_max, int hitboxX, int hitboxY) noexcept {
+        if (difficulty == "easy" && hp > 1 && dmg > 1) {
+            hp = hp / 2;
+            dmg = dmg / 2;
+        }
+        if (difficulty == "hard" && hp > 1 && dmg > 1) {
+            hp = hp * 2;
+            dmg = dmg * 2;
+        }
         int id = 0;
         for (unsigned int i = id_min; i < id_max; i++)
         {
@@ -42,6 +55,33 @@ namespace Ecs {
         _Entities.push_back(monster);
         return monster;
     }
+
+    void MonsterSystem::readConfig(const std::string& filename) {
+        std::ifstream configFile(filename);
+        std::string line;
+
+        if (!configFile.is_open()) {
+            std::cerr << "Unable to open config file: " << filename << std::endl;
+            return;
+        }
+
+        while (std::getline(configFile, line)) {
+            std::istringstream lineStream(line);
+            std::string key;
+            if (std::getline(lineStream, key, '=')) {
+                std::string value;
+                if (std::getline(lineStream, value)) {
+                    if (key == "difficulty_level") {
+                        difficulty = value;
+                        break;
+                    }
+                }
+            }
+        }
+
+        configFile.close();
+    }
+
 
     void MonsterSystem::generateBoss1()
     {

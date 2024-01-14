@@ -20,6 +20,7 @@
 	#include "../../include/components/HitBox.hpp"
 	#include "../../include/components/Constants.hpp"
 	#include "../../include/components/Position.hpp"
+	#include <string>
 
 namespace Ecs {
 
@@ -62,9 +63,11 @@ namespace Ecs {
 		void generateShieldBoost();
 		void generateAI();
 		void updateShields(std::shared_ptr<Entity> entity);
+		void readConfig(const std::string& filename);
 	private:
 		EntitySystem& _entitySystem;
 		bool _solo = false;
+		std::string difficulty = "medium";
     };
 
 }

@@ -13,6 +13,13 @@
 #include <chrono>
 #include <fstream>
 
+// Server class constructor.
+// Initializes the server with the specified IO context, port number, wave number, and solo mode.
+// Parameters:
+// - io_context: Reference to the ASIO IO context for handling asynchronous operations.
+// - port: The port number on which the server will listen for incoming connections.
+// - wave: The initial wave number in the game.
+// - solo: Boolean indicating whether the game is in solo mode.
 Server::Server(asio::io_context& io_context, int port, int wave, bool solo)
     : socket_(io_context, asio::ip::udp::endpoint(asio::ip::udp::v4(), port)),
       tick_timer_(io_context, std::chrono::milliseconds(16)),
@@ -47,6 +54,7 @@ Server::Server(asio::io_context& io_context, int port, int wave, bool solo)
     handle_tick({});
 }
 
+// Starts an asynchronous receive operation to listen for incoming data from clients.
 void Server::start_receive() {
     auto buffer = std::make_shared<std::array<char, 1024>>();
     auto endpoint = std::make_shared<asio::ip::udp::endpoint>();
@@ -66,16 +74,17 @@ void Server::start_receive() {
     );
 }
 
+// Handles the reception of data from a client.
+// Parameters:
+// - data: The received data as a string.
+// - endpoint: The endpoint from which the data was received.
 void Server::handle_receive(const std::string& data, const asio::ip::udp::endpoint& endpoint)
 {
     std::cout << "Received message: " << data << " from " << endpoint << std::endl;
     // std::cout << "handle_receive called from thread: " << std::this_thread::get_id() << std::endl;
-    // std::cout << "Trying to lock clients_mutex_ from thread: " << std::this_thread::get_id() << std::endl;
     auto it = client_ids_.find(endpoint);
     {
         std::lock_guard<std::mutex> lock(clients_mutex_);
-        // std::cout << "clients_mutex_ locked by thread: " << std::this_thread::get_id() << std::endl;
-        // Vérifier si le client existe et traiter les nouveaux clients
         if (it == client_ids_.end()) {
             // le client n'a jamais été enrégistré, il n'existe pas dans la liste client_ids_
             if (data == "START") {
@@ -101,7 +110,6 @@ void Server::handle_receive(const std::string& data, const asio::ip::udp::endpoi
                 handle_send("You are not in our list, please say START", endpoint);
                 std::cout << "A client tried to send a message but he is not in our list and he didn't say START" << std::endl;
             }
-            // std::cout << "clients_mutex_ unlocked by thread: " << std::this_thread::get_id() << std::endl;
             return;
         }
         if (data == "QUIT") {
@@ -109,12 +117,10 @@ void Server::handle_receive(const std::string& data, const asio::ip::udp::endpoi
             handle_send("Goodbye", endpoint);
             number_of_player_connected_--;
             std::cout << "Client " << it->second << " disconnected, clients left: " << number_of_player_connected_ << std::endl;
-            // std::cout << "clients_mutex_ unlocked by thread: " << std::this_thread::get_id() << std::endl;
             return;
         }
     }
 
-    // std::cout << "clients_mutex_ unlocked by thread: " << std::this_thread::get_id() << std::endl;
     int clientId = it->second;
 
     if (data == "LEFT") {
@@ -136,6 +142,10 @@ struct Message {
     char data[1024];
 };
 
+// Sends a message to a specific client.
+// Parameters:
+// - message: The message to be sent as a string.
+// - endpoint: The endpoint to which the message will be sent.
 void Server::handle_send(const std::string& message, const asio::ip::udp::endpoint& endpoint)
 {
     // Création de l'objet Message
@@ -155,6 +165,9 @@ void Server::handle_send(const std::string& message, const asio::ip::udp::endpoi
     );
 }
 
+// Handles the server tick, updating game state and sending updates to clients.
+// Parameters:
+// - error: Error code for handling asynchronous operation errors.
 void Server::handle_tick(const asio::error_code& error)
 {
     try {

@@ -302,6 +302,10 @@ void Client::run()
                 auto elapsed = std::chrono::duration_cast<std::chrono::seconds>(current_time - start_time).count();
                 if (elapsed >= 10)
                     exit(0);
+                m_game.m_text_score.setPosition(500, 310);
+                m_game.m_text_score.setCharacterSize(100);
+                m_game.m_text_score.setFillColor(sf::Color::White);
+                m_window.draw(m_game.m_text_score);
             }
             m_window.display();
         }

@@ -217,7 +217,6 @@ namespace Ecs {
 
     void MonsterSystem::generateMonsters()
     {
-        std::cout << "dif: " << difficulty << std::endl;
         static int frameCount = 0;
         const int framesPerMonster = 180; // 60 frames per second * 3 seconds
 

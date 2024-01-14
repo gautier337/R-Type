@@ -142,21 +142,21 @@ namespace Ecs {
     {
         int xPos = random(100, 1000);
         int yPos = -100;
-        createMonster(1, 1, xPos, yPos, 2, 700, 710, 30, 30);
+        createMonster(1, 0, xPos, yPos, 2, 700, 710, 30, 30);
     }
 
     void MonsterSystem::generateShootBoost()
     {
         int xPos = random(100, 1000);
         int yPos = -100;
-        createMonster(1, 1, xPos, yPos, 2, 710, 720, 30, 30);
+        createMonster(1, 0, xPos, yPos, 2, 710, 720, 30, 30);
     }
 
     void MonsterSystem::generateShieldBoost()
     {
         int xPos = random(100, 1000);
         int yPos = -100;
-        createMonster(1, 1, xPos, yPos, 2, 720, 730, 30, 30);
+        createMonster(1, 0, xPos, yPos, 2, 720, 730, 30, 30);
     }
 
     void MonsterSystem::generateMonsters()

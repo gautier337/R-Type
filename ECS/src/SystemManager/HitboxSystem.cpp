@@ -110,4 +110,11 @@ void Ecs::HitboxSystem::takeDamages(std::shared_ptr<Entity> entity,
         (otherEntity->getEntityId() >= 720 && otherEntity->getEntityId() < 730)) {
             entity->getComponent<Health>()->setShield(30);
     }
+
+    //check if the two are snakemonsters
+    if ((entity->getEntityId() >= 650 && entity->getEntityId() < 700) &&
+        (otherEntity->getEntityId() >= 650 && otherEntity->getEntityId() < 700)) {
+            entity->getComponent<Health>()->setHp(health);
+            otherEntity->getComponent<Health>()->setHp(health);
+    }
 }

@@ -107,11 +107,11 @@ namespace Ecs {
         int snakeLength = 8;
 
         // Coordonnées de départ du serpent (position de la tête)
-        int headPosX = random(1300, 1500);
-        int headPosY = random(100, 980);
+        int headPosX = 1000;
+        int headPosY = 400;
 
         // Créer la tête du serpent
-        auto head = createMonster(50, 10, headPosX, headPosY, 15, 650, 651, 5, 5);
+        auto head = createMonster(10, 2, headPosX, headPosY, 12, 650, 651, 30, 30);
 
         // Si la création de la tête a échoué, quitter la fonction
         if (!head)
@@ -124,11 +124,11 @@ namespace Ecs {
         for (int i = 1; i < snakeLength; ++i)
         {
             // Calculer la position du corps en fonction de la direction (par exemple, vers la gauche)
-            int bodyPosX = headPosX - i * 33; // La largeur d'une entité est supposée être de 33
+            int bodyPosX = headPosX + i * 33; // La largeur d'une entité est supposée être de 33
             int bodyPosY = headPosY;
 
             // Créer une partie du corps du serpent
-            auto bodyPart = createMonster(50, 10, bodyPosX, bodyPosY, 15, 651 + i, 652 + i, 5, 5);
+            auto bodyPart = createMonster(30, 2, bodyPosX, bodyPosY, 12, 651 + i, 652 + i, 30, 30);
 
             // Si la création du corps a échoué, détruire la tête et toutes les parties du corps déjà créées, puis quitter la fonction
             if (!bodyPart)
@@ -164,10 +164,10 @@ namespace Ecs {
         int yPos = random(0, 1080);
         int randomSpeed = random(10, 13);
         if (randomSpeed == 11) {
-            xPos = random(0, 1920 * 0.8);
+            xPos = random(0, 1536);
             yPos = 1120;
         } else if (randomSpeed == 12) {
-            xPos = random(0, 1920 * 0.8);
+            xPos = random(0, 1536);
             yPos = -40;
         }
         createMonster(9, 1, xPos, yPos, randomSpeed, 603, 650, 60, 63);
@@ -539,13 +539,13 @@ namespace Ecs {
                 }
                 // Check and adjust Y position to stay within bounds
                 if (pos.second < 0)
-                    position->set_pos_y(0);
-                if (pos.second > 1920 * 0.8)
-                    position->set_pos_y(1920 * 0.8);
-                if (pos.first < 0)
                     position->set_pos_x(0);
-                if (pos.first > 1080 * 0.8)
-                    position->set_pos_x(1080 * 0.8);
+                if (pos.second > 1536)
+                    position->set_pos_x(1536);
+                if (pos.first < 0)
+                    position->set_pos_y(0);
+                if (pos.first > 864)
+                    position->set_pos_y(864);
                 for (const auto& entity : _Entities)
                 {
                     if (entity->getEntityId() >= 5 && entity->getEntityId() < 200)
@@ -599,8 +599,8 @@ namespace Ecs {
                 // Check and adjust Y position to stay within bounds
                 if (pos.second < 0)
                     position->set_pos_y(0);
-                if (pos.second > 1920 * 0.8)
-                    position->set_pos_y(1920 * 0.8);
+                if (pos.second > 864)
+                    position->set_pos_y(864);
             }
             // Boss (ID 600)
             if (entity->getEntityId() >= 600 && entity->getEntityId() <= 601)
@@ -640,8 +640,8 @@ namespace Ecs {
                 // Check and adjust Y position to stay within bounds
                 if (pos.second < 0)
                     position->set_pos_y(0);
-                if (pos.second > 1920 * 0.8)
-                    position->set_pos_y(1920 * 0.8);
+                if (pos.second > 1536)
+                    position->set_pos_y(1536);
                 // Shoot more frequently compared to regular monsters
                 if (shootCooldown->getCd() <= 0 && random(1, 3) == 1)
                 {
@@ -679,7 +679,7 @@ namespace Ecs {
                 position->set_pos_y(pos.second + speed);
             }
             // Snake Head
-            if (entity->getEntityId() == 650)
+            if (entity->getEntityId() >= 650 && entity->getEntityId() < 651)
             {
                 auto position = entity->getComponent<Ecs::Position>();
                 auto speed = entity->getComponent<Ecs::Speed>();
@@ -688,60 +688,106 @@ namespace Ecs {
                 std::pair<int, int> pos = position->getPosition();
 
 
-                // Make the snake change direction every 3 seconds
+                // Make the snake change direction every second
                 static int tick = 0;
-                const int framesPerDirectionChange = 30; // 60 frames per second * 3 seconds
+                const int framesFirstChange = 30;
 
-                if (tick % framesPerDirectionChange == 0)
+                if (tick % framesFirstChange == 0)
                 {
                     // Randomly choose a direction
-                    int direction = random(1, 5); // 1: top, 2: bottom, 3: left, 4: right
-
-                    // Move the snake accordingly
-                    if (direction == 1) {
-                        position->setDirection(1);
-                    } else if (direction == 2) {
-                        position->setDirection(2);
-                    } else if (direction == 3) {
-                        position->setDirection(3);
-                    } else if (direction == 4) {
-                        position->setDirection(4);
-                    }
+                    int last = position->getDirection();
+                    int randomD = random(1, 5);
+                    for (; last == randomD;)
+                        randomD = random(1, 5);
+                    position->setDirection(randomD);
+                    tick = 0;
                 }
                 tick++; 
 
-                // Move the snake in the direction it is facing
+               // Move the snake in the direction it is facing
                 if (position->getDirection() == 1) {
-                    position->set_pos_y(pos.second - speed->getSpeed()); // Move up
+                    int newY = pos.second - speed->getSpeed();
+                    if (newY >= 0 && newY <= 864) {
+                        position->set_pos_y(newY); // Move up
+                    } else {
+                        position->setDirection(3);
+                    }
                 } else if (position->getDirection() == 2) {
-                    position->set_pos_y(pos.second + speed->getSpeed()); // Move down
+                    int newY = pos.second + speed->getSpeed();
+                    if (newY >= 0 && newY <= 864) {
+                        position->set_pos_y(newY); // Move down
+                    } else {
+                        position->setDirection(4);
+                    }
                 } else if (position->getDirection() == 3) {
-                    position->set_pos_x(pos.first - speed->getSpeed()); // Move left
+                    int newX = pos.first - speed->getSpeed();
+                    if (newX >= 0 && newX <= 1536) {
+                        position->set_pos_x(newX); // Move left
+                    } else {
+                        position->setDirection(1);
+                    }
                 } else if (position->getDirection() == 4){
-                    position->set_pos_x(pos.first + speed->getSpeed()); // Move right
+                    int newX = pos.first + speed->getSpeed();
+                    if (newX >= 0 && newX <= 1536) {
+                        position->set_pos_x(newX); // Move right
+                    } else {
+                        position->setDirection(2);
+                    }
                 }
             }
+
             // Snake Body
             if (entity->getEntityId() >= 651 && entity->getEntityId() < 700)
             {
                 auto position = entity->getComponent<Ecs::Position>();
                 auto speed = entity->getComponent<Ecs::Speed>();
 
-                // Find the previous body part
-                int prevEntityId = entity->getEntityId() - 1;
-                auto prevBodyPart = getEntityById(prevEntityId);
-
-                if (prevBodyPart != nullptr)
+                // Find the snake head
+                std::shared_ptr<Entity> snakeHead = nullptr;
+                for (const auto& entity : _Entities)
                 {
-                    static int tickSnakeBody = 0;
-                    const int framesPerSnakeBodyMovement = 5;
-
-                    if (tickSnakeBody % framesPerSnakeBodyMovement == 0)
+                    if (entity->getEntityId() >= 650 && entity->getEntityId() < 651)
                     {
-                        position->set_pos_x(prevBodyPart->getComponent<Ecs::Position>()->getPosition().first);
-                        position->set_pos_y(prevBodyPart->getComponent<Ecs::Position>()->getPosition().second);
+                        snakeHead = entity;
+                        break;
                     }
-                    tickSnakeBody++;
+                }
+
+                // Ensure the head is found
+                if (snakeHead != nullptr)
+                {
+                    // Get the direction from the head
+                    int direction = snakeHead->getComponent<Ecs::Position>()->getDirection();
+
+                    std::pair<int, int> pos = position->getPosition();
+                    if (direction == 1)
+                    {
+                        int newY = pos.second - speed->getSpeed(); // Move up
+                        if (newY >= 0)
+                            position->set_pos_y(newY);
+                    }
+                    else if (direction == 2)
+                    {
+                        int newY = pos.second + speed->getSpeed(); // Move down
+                        if (newY <= 864)
+                            position->set_pos_y(newY);
+                    }
+                    else if (direction == 3)
+                    {
+                        int newX = pos.first - speed->getSpeed(); // Move left
+                        if (newX >= 0)
+                            position->set_pos_x(newX);
+                    }
+                    else if (direction == 4)
+                    {
+                        int newX = pos.first + speed->getSpeed(); // Move right
+                        if (newX <= 1536)
+                            position->set_pos_x(newX);
+                    }
+                }
+                else {
+                    // If the head is not found, delete the body part
+                    deleteEntity(entity->getEntityId());
                 }
             }
         }
